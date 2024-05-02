@@ -52,7 +52,7 @@
 ------------ Requisição ---------------
 
 - Tempo de requisição é fixo ou variável?
-    R: Variável de Requisição para Requisição
+    R: Todos os sócios têm o mesmo tempo de requisição
 
 
 -------------- Valor da multa ----------

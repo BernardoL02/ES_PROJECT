@@ -1,0 +1,93 @@
+----------------------- Requisitos ---------------------
+
+- Registo de sócio
+- O sócio vai poder requisitar um livro
+- O sócio vai poder comprar um livro
+- O sócio vai poder devolver o livro
+- O sócio vai poder pagar as cotas
+- O sócio pode anular uma reserva
+- Os sócios podem reservar livros que se encontram requisitados por outros sócios
+- O bibliotecário pode consutar as estatísticas da biblioteca
+- O bibliotecário pode consultar a localização do livro, a sua existência bem a sua disponibilidade
+- O bibliotecário pode extrair uma lista de sócios com cotas por pagar
+- A biblioteca vai poder adquirir livros dos fornecedores
+
+-----------Perguntas para o stor---------------
+
+- Nome da biblioteca?
+  -  BiblioLiz
+
+----------------Livro-----------------------
+
+- Características do livro? 
+
+  -->título
+  -->quantidade
+  -->autor(es)
+  -->género
+  -->sub-género
+  -->ISBN
+  -->editora
+  -->número de edição
+  -->ano
+  -->código
+  -->estante
+  -->prateleira
+
+  R: No caso de um mesmo título, se existir mais que uma unidade na 
+	biblioteca, os diferentes exemplares devem ter códigos diferentes.
+
+
+---------------- Fornecedor --------------
+
+ --> Editora
+ --> Distribuidora
+
+-----------Bibliotecário ------------
+
+ R: só um user
+ R: sem login
+
+
+------------ Requisição ---------------
+
+- Tempo de requisição é fixo ou variável?
+    R: Variável de Requisição para Requisição
+
+
+-------------- Valor da multa ----------
+
+- Como é calculado o valor da multa (fixo) ou dias de atraso * x valor?
+
+   R: Fixo
+
+
+-------------- Sócios -------------------
+
+- Existem niveis de sócios?
+  R: Sim, podemos ter 3 niveis, Mensal, trimestral, Anual
+
+- Informações a reter do sócio para o registar no sistema?
+ 
+   R: Apenas a do enunciado
+   R: Melhor criar numero de sócio em vez de usar nif
+
+-------------- Prazos ------------------
+
+- Qual o prazo que um sócio pode demorar para pagar as cotas até ser enviada a notificação e a posterior multa
+
+   R: Configurável pela biblioteca para todos
+
+
+- Qual o número máximo de livros num pedido de um utilizador
+
+   R: É configuravel por parte da biblioteca, mas fixo entre utilizadores
+
+-Caso de uso de mudar o valor deixar para final
+
+
+
+----------------------------------------------------------
+- Permitir avaliar livros
+- Uma cena para os sócios onde se eles comprassem livros, ou quando requisitavam um livro e devolviam 
+  dentro do prazo estipulado podiam ganhar descontos noutros livros

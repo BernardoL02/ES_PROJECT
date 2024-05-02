@@ -14,6 +14,11 @@
 
 -----------Perguntas para o stor---------------
 
+É preciso mais algum campo para filtrar a estatistica ou só apenas os que estão no enunciado?
+
+Há um limite de tempo para manter uma reserva feita por um sócio sobre um livro requisitado por outro sócio, ativa, antes de ser cancelada automaticamente?
+
+--------------- Nome Biblioteca -------------
 - Nome da biblioteca?
   -  BiblioLiz
 

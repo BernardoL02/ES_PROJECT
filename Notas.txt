@@ -86,6 +86,10 @@
 -Caso de uso de mudar o valor deixar para final
 
 
+--------------- Aquisição de novos livros --------------
+
+ -Pode ter um campo de texto para justificar a compra do livro (não obrigatório)
+
 
 ----------------------------------------------------------
 - Permitir avaliar livros

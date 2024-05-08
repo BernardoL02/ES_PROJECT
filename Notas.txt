@@ -9,8 +9,15 @@
 - Os sócios podem reservar livros que se encontram requisitados por outros sócios
 - O bibliotecário pode consutar as estatísticas da biblioteca
 - O bibliotecário pode consultar a localização do livro, a sua existência bem a sua disponibilidade
-- O bibliotecário pode extrair uma lista de sócios com cotas por pagar
+- O bibliotecário pode extrair uma lista de sócios com valores em atraso para notificação
 - A biblioteca vai poder adquirir livros dos fornecedores
+- O sistema deve gerir pagamentos relacionados a anuidades e multas
+- O sistema deve permitir pesquisar livros por título, autor, género, etc
+- Deve ser mantido um histórico dos livros requisitados por cada sócio
+- Deve ser gerado um ranking dos livros mais requisitados
+- Deve ser enviad uma notificação quando os livros reservados estiverem disponíveis
+- Deve ser implementado um mecanismo para o pagamento das cotas por parte dos sócios
+
 
 ----------------------- Requisitos não Funcionais ---------------------
 - Data de entrega xx/xx/xxxx

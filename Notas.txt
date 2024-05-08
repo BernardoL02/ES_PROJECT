@@ -30,6 +30,22 @@
 
 Há um limite de tempo para manter uma reserva feita por um sócio sobre um livro requisitado por outro sócio, ativa, antes de ser cancelada automaticamente?
 
+Nos requisitos não funcionais as métricas têm de estar já definidas ou é algo que iremos especificar no final após a implementação no Java?
+
+No botão para validar as cotas o professor prefere que extraiamos um ficheiro com a informação do sócio e as cotas pagas ou não?
+
+No botão eliminar do livro, ao eliminarmos eliminamos uma cópia ou removemos por completo o livro (ou ao editar é que podemos remover uma quantidade) ?
+
+---------Janelaas FIG ----------------------
+
+
+Janelas --> Definições --> Miguel
+	--> Gerir sócios (add + remover + gerar listagem + numero de livros que ele já requisitou por tipo) --> Bernardo
+	--> Requisitar --> Delgado
+	--> Editar livro --> Delgado
+	--> Registar Livro --> Miguel
+	 
+
 --------------- Nome Biblioteca -------------
 - Nome da biblioteca?
   -  BiblioLiz

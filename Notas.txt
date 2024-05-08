@@ -36,6 +36,8 @@ No botão para validar as cotas o professor prefere que extraiamos um ficheiro c
 
 No botão eliminar do livro, ao eliminarmos eliminamos uma cópia ou removemos por completo o livro (ou ao editar é que podemos remover uma quantidade) ?
 
+A devolução do livro o cliente prefere uma janela separa ou podemos apenas alterar a quantidade do livro na janela "Gerir Livro"?
+
 ---------Janelaas FIG ----------------------
 
 

@@ -1,4 +1,4 @@
------------------------ Requisitos ---------------------
+----------------------- Requisitos Funcionais ---------------------
 
 - Registo de sócio
 - O sócio vai poder requisitar um livro
@@ -12,7 +12,19 @@
 - O bibliotecário pode extrair uma lista de sócios com cotas por pagar
 - A biblioteca vai poder adquirir livros dos fornecedores
 
------------Perguntas para o stor---------------
+----------------------- Requisitos não Funcionais ---------------------
+- Data de entrega xx/xx/xxxx
+- Grupo composto por 3 elementos
+- Software desenvolvido em Java com paradigma POO (programação orientada a objetos), no IDE IntelliJ
+- Metricas
+   - Tempo de resposta após requisitar um livro
+   - Tempo de resposta após registar um sócio
+   - Tempo de resposta após registar um livro
+   - Quanto tempo demora o software a reiniciar após falha 
+   - Qual a probabilidade dos dados se perderem após falha
+   - Qual a capacidade de armazenamento total da BD
+
+----------- Perguntas para o stor---------------
 
 É preciso mais algum campo para filtrar a estatistica ou só apenas os que estão no enunciado?
 
@@ -100,3 +112,4 @@ Há um limite de tempo para manter uma reserva feita por um sócio sobre um livr
 - Permitir avaliar livros
 - Uma cena para os sócios onde se eles comprassem livros, ou quando requisitavam um livro e devolviam 
   dentro do prazo estipulado podiam ganhar descontos noutros livros
+- Orcamento

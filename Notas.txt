@@ -114,7 +114,7 @@ Sem botoes de filtro
 -------------- Sócios -------------------
 
 - Existem niveis de sócios?
-  R: Sim, podemos ter 3 niveis, Mensal, trimestral, Anual
+  R: Sim, podemos ter 3 niveis, Básico, 
 
 - Informações a reter do sócio para o registar no sistema?
  

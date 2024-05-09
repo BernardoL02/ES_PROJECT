@@ -47,7 +47,7 @@ R:Quando é feito uma requisição devemos armazenar a informação do cliente b
 ---------Janelaas FIG ----------------------
 
 
-Janelas --> Definições --> Miguel
+Janelas --> Definições --> Delgado
 	--> Gerir sócios (add + remover + gerar listagem + numero de livros que ele já requisitou por tipo) --> Bernardo
 	--> Requisitar --> Miguel
 	--> Editar livro --> Delgado
@@ -60,8 +60,7 @@ Janelas --> Definições --> Miguel
 -------------Configuraçoes------------------
 -Preço das Multas por falta de devoluçao
 -Dias de requisiçao do livro por tipo de sócio
--Prazo para o pagamento das cotas
--Maximo de livros por pedido
+-Maximo de livros por socio
 
 Meter o socio primeiro que o livro
 Sem botoes de filtro

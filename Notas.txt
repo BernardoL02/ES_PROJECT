@@ -139,7 +139,12 @@ Sem botoes de filtro
 
  -Pode ter um campo de texto para justificar a compra do livro (não obrigatório)
 
+----------------Entrega---------------
 
+- Word com os requisitos e a divisão de trabalho
+- Protótipo (Figma .Fig)
+- DC Uso e Modelo de dominio (Visual Paradigm)
+- Não há necessidade de incluir os textos no DC Uso, apenas temos de garantir a qualidade dos casos de uso para que a 2 fase possa ser bem feita
 ----------------------------------------------------------
 - Permitir avaliar livros
 - Uma cena para os sócios onde se eles comprassem livros, ou quando requisitavam um livro e devolviam 

@@ -39,10 +39,10 @@ No botão para validar as cotas o professor prefere que extraiamos um ficheiro c
 R:Nao, manter tudo na aplicaçao
 
 No botão eliminar do livro, ao eliminarmos eliminamos uma cópia ou removemos por completo o livro (ou ao editar é que podemos remover uma quantidade) ?
-R: Eliminar serve para remover por completo da bliblioteca ou quando somos editamos e metemos a 0 tambem que seja eliminado
+R: Eliminar serve para remover o livro por completo da biblioteca ou quando editamos e metemos a 0 tambem que seja eliminado
 
 A devolução do livro o cliente prefere uma janela separada com os campos do livro etc ou podemos apenas alterar a quantidade do livro na janela "Gerir Livro"?
-R:Falta identificar os emprestimos e quando se devolveu
+R:Quando é feito uma requisição devemos armazenar a informação do cliente bem como do livro para que na devolução possamos usar a informação da requisição para concluir a devolução
 
 ---------Janelaas FIG ----------------------
 

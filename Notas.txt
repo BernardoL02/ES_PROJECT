@@ -57,6 +57,11 @@ Janelas --> Definições --> Miguel
 --------------- Nome Biblioteca -------------
 - Nome da biblioteca?
   -  BiblioLiz
+-------------Configuraçoes------------------
+-Preço das Multas por falta de devoluçao
+-Dias de requisiçao do livro por tipo de sócio
+-Prazo para o pagamento das cotas
+-Maximo de livros por pedido
 
 ----------------Livro-----------------------
 

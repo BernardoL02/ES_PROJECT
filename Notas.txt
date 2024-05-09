@@ -104,6 +104,7 @@ Sem botoes de filtro
     R: Todos os sócios têm o mesmo tempo de requisição
 
 
+
 -------------- Valor da multa ----------
 
 - Como é calculado o valor da multa (fixo) ou dias de atraso * x valor?
@@ -120,6 +121,10 @@ Sem botoes de filtro
  
    R: Apenas a do enunciado
    R: Melhor criar numero de sócio em vez de usar nif
+
+--> Anual: Leitor
+--> Trimestral: Académico
+--> Mensal: Entusiasta
 
 -------------- Prazos ------------------
 

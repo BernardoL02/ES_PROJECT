@@ -9,14 +9,14 @@
 - Os sócios podem reservar livros que se encontram requisitados por outros sócios
 - O bibliotecário pode consutar as estatísticas da biblioteca
 - O bibliotecário pode consultar a localização do livro, a sua existência bem a sua disponibilidade
-- O bibliotecário pode extrair uma lista de sócios com valores em atraso para notificação
-- A biblioteca vai poder adquirir livros dos fornecedores
+- O bibliotecário pode gerir os sócios com valores em atraso para notificação
+- O bibliotecário vai poder consultar as informações sobre os fornecedores
+- O bibliotecário vai poder registar os livros adquiridos
 - O sistema deve gerir pagamentos relacionados a anuidades e multas
 - O sistema deve permitir pesquisar livros por título, autor, género, etc
-- Deve ser mantido um histórico dos livros requisitados por cada sócio
-- Deve ser gerado um ranking dos livros mais requisitados
-- Deve ser enviad uma notificação quando os livros reservados estiverem disponíveis
-- Deve ser implementado um mecanismo para o pagamento das cotas por parte dos sócios
+- O sistema mantém um histórico dos livros requisitados por cada sócio
+- O sistema deve gerar um ranking dos livros mais requisitados na biblioteca
+- O sistema deve enviar uma notificação quando os livros reservados estiverem disponíveis
 
 
 ----------------------- Requisitos não Funcionais ---------------------
@@ -44,6 +44,9 @@ R: Eliminar serve para remover o livro por completo da biblioteca ou quando edit
 A devolução do livro o cliente prefere uma janela separada com os campos do livro etc ou podemos apenas alterar a quantidade do livro na janela "Gerir Livro"?
 R:Quando é feito uma requisição devemos armazenar a informação do cliente bem como do livro para que na devolução possamos usar a informação da requisição para concluir a devolução
 
+Em relação ao fornecedor, o cliente quer que a aplicação dê para registar informações sobre o mesmo ou quando adicionamos um novo livro pedimos a editora e a distribuidor criando assim o fornecedor?
+
+
 ---------Janelaas FIG ----------------------
 
 
@@ -57,6 +60,7 @@ Janelas --> Definições --> Delgado
 --------------- Nome Biblioteca -------------
 - Nome da biblioteca?
   -  BiblioLiz
+
 -------------Configuraçoes------------------
 -Preço das Multas por falta de devoluçao
 -Dias de requisiçao do livro por tipo de sócio

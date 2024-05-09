@@ -23,27 +23,26 @@
 - Data de entrega xx/xx/xxxx
 - Grupo composto por 3 elementos
 - Software desenvolvido em Java com paradigma POO (programação orientada a objetos), no IDE IntelliJ
-- Metricas
-   - Tempo de resposta após requisitar um livro
-   - Tempo de resposta após registar um sócio
-   - Tempo de resposta após registar um livro
-   - Quanto tempo demora o software a reiniciar após falha 
-   - Qual a probabilidade dos dados se perderem após falha
-   - Qual a capacidade de armazenamento total da BD
 
 ----------- Perguntas para o stor---------------
 
 É preciso mais algum campo para filtrar a estatistica ou só apenas os que estão no enunciado?
+R:Adcionar alguma coisa que faça sentido para analise das estatistica
 
 Há um limite de tempo para manter uma reserva feita por um sócio sobre um livro requisitado por outro sócio, ativa, antes de ser cancelada automaticamente?
+R:Nao tudo manual = configuravel na aplicaçao
 
 Nos requisitos não funcionais as métricas têm de estar já definidas ou é algo que iremos especificar no final após a implementação no Java?
+R:Nao é preciso entrar nesta parte
 
 No botão para validar as cotas o professor prefere que extraiamos um ficheiro com a informação do sócio e as cotas pagas ou não?
+R:Nao, manter tudo na aplicaçao
 
 No botão eliminar do livro, ao eliminarmos eliminamos uma cópia ou removemos por completo o livro (ou ao editar é que podemos remover uma quantidade) ?
+R: Eliminar serve para remover por completo da bliblioteca ou quando somos editamos e metemos a 0 tambem que seja eliminado
 
 A devolução do livro o cliente prefere uma janela separada com os campos do livro etc ou podemos apenas alterar a quantidade do livro na janela "Gerir Livro"?
+R:Falta identificar os emprestimos e quando se devolveu
 
 ---------Janelaas FIG ----------------------
 

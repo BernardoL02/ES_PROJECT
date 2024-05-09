@@ -63,6 +63,9 @@ Janelas --> Definições --> Miguel
 -Prazo para o pagamento das cotas
 -Maximo de livros por pedido
 
+Meter o socio primeiro que o livro
+Sem botoes de filtro
+
 ----------------Livro-----------------------
 
 - Características do livro? 

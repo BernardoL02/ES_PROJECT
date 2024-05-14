@@ -2,7 +2,6 @@
 
 - Registo de sócio
 - O sócio vai poder requisitar um livro
-- O sócio vai poder comprar um livro
 - O sócio vai poder devolver o livro
 - O sócio vai poder pagar as cotas
 - O sócio pode anular uma reserva
@@ -46,7 +45,9 @@ R:Quando é feito uma requisição devemos armazenar a informação do cliente b
 
 Em relação ao fornecedor, o cliente quer que a aplicação dê para registar informações sobre o mesmo ou quando adicionamos um novo livro pedimos a editora e a distribuidor criando assim o fornecedor?
 
+Vão existir tipos de sócios, o cliente quer que a aplicação permita a alteração das cotas para cada tipo de sócio ou é pré definido já pela a aplicação?
 
+Que tipos de pagamento irão ser aceites pela biblioteca?
 ---------Janelaas FIG ----------------------
 
 

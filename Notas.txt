@@ -23,6 +23,19 @@
 - Grupo composto por 3 elementos
 - Software desenvolvido em Java com paradigma POO (programação orientada a objetos), no IDE IntelliJ
 
+---------------- Diagrama de casos de uso ---------------
+Bibliotecário:
+- Adicionar Livro
+- Editar Livro
+- Remover Livro
+
+- Adicionar Sócio
+- Editar Sócio
+- Remover Sócio
+- Validar Cotas
+
+- Editar Configuraçoes
+
 ----------- Perguntas para o stor---------------
 
 É preciso mais algum campo para filtrar a estatistica ou só apenas os que estão no enunciado?
@@ -44,10 +57,14 @@ A devolução do livro o cliente prefere uma janela separada com os campos do li
 R:Quando é feito uma requisição devemos armazenar a informação do cliente bem como do livro para que na devolução possamos usar a informação da requisição para concluir a devolução
 
 Em relação ao fornecedor, o cliente quer que a aplicação dê para registar informações sobre o mesmo ou quando adicionamos um novo livro pedimos a editora e a distribuidor criando assim o fornecedor?
+R: Guardamos informações sobre os fornecedores quando registamos um livro, não existe uma janela especifica para registar fornecedores
 
 Vão existir tipos de sócios, o cliente quer que a aplicação permita a alteração das cotas para cada tipo de sócio ou é pré definido já pela a aplicação?
+R: Configuravel na aplicação
 
 Que tipos de pagamento irão ser aceites pela biblioteca?
+R: Indeferente, só deve aparecer se está pago ou não, a aplicação não gere os pagamentos apenas contem a informacão pago/nao pago
+
 ---------Janelaas FIG ----------------------
 
 

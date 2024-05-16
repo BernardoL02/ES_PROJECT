@@ -65,6 +65,12 @@ R: Configuravel na aplicação
 Que tipos de pagamento irão ser aceites pela biblioteca?
 R: Indeferente, só deve aparecer se está pago ou não, a aplicação não gere os pagamentos apenas contem a informacão pago/nao pago
 
+Qual o preço que um sócio tem de pagar se danificar um livro requisitado?
+ R: Configurável pela biblioteca (fixo entre sócios)
+
+Há mais algum campo ou critério específico para filtrar as estatísticas da biblioteca, além dos mencionados?
+R: Ano
+
 ---------Janelaas FIG ----------------------
 
 

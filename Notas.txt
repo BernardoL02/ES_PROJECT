@@ -183,6 +183,28 @@ Sem botoes de filtro
   dentro do prazo estipulado podiam ganhar descontos noutros livros
 - Orcamento
 
+---------Bernardo-------------
+- Consultar Estatística
+- Adicionar Sócio
+- Remover Sócio
+- Editar Sócio
+- Validar Cotas
+
+---------SMEGUELI-------------
+
+- Reservar Livro
+- Requisitar Livro
+- Pesquisar Livro
+- Devolver Livro
+- Remover Livro
+
+----------DELGADO------------
+
+- Adicionar Livro
+- Editar Livro
+- Editar Configurações
+- Ver Reservas
+- Cancelar Reserva
 
 ----------------Texto Casos de Uso---------------
 ----- Adicionar Livro -----

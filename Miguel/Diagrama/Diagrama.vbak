@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<sequenceDiagram>
+  <actors>
+    <actor id="actor1" name="Utilizador"/>
+    <actor id="actor2" name="PaginaInicial"/>
+    <actor id="actor3" name="GerirLivros"/>
+  </actors>
+  <messages>
+    <message id="message1" sender="actor1" receiver="actor2" name="GerirLivrosClick"/>
+    <message id="message2" sender="actor2" receiver="actor3" name="apresentar"/>
+  </messages>
+</sequenceDiagram>

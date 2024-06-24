@@ -1,0 +1,101 @@
+----------------Texto Casos de Uso---------------
+----- Remover Livro -----
+:Principal
+
+1) O utilizador clica no botão "Gerir Livros" na janela "Pagina Inicial"
+2) O sistema cria e apresenta a janela "Gerir Livros"
+3) O utilizador clica no botão "Remover Livro"
+4) O sistema apresenta a janela "EliminarFrameLivro"
+5) O utilzador clica no botão "Confirmar"
+6) O sistema verifica que nao existem resevar pendentes, remove da base de dados, de seguida redireciona o utilizador para a janela "Gerir Livros"
+7) O sistema e atualiza a tabela de livros da janela "Gerir Livros"
+
+
+:Alternativo
+5.1) O utilizador clica no botão "Cancelar" na janela "EliminarFrameLivro"
+5.1.1) O sistema redireciona o utilizador para a janela "Gerir Livros" e o caso de uso termina
+
+6.1) O sistema verifica que existem reservas pendentes,de seguida redireciona o utilizador para a janela "Gerir Livros", apresenta um erro(Existem Reservas Pendentes)
+
+
+------ Devolver Livro -----
+:Principal
+
+1) O utilizador clica no botão "Gerir Socios" na janela "Pagina Inicial"
+2) O sistema apresenta a janela "GerirSocio"
+3) O utilizador clica no botão "Editar Socio" na janela "GerirSocio"
+4) O sistema apresenta a janela "RequisicoesPorSocio"
+5) O utilizador clica no botão "Devolver" na janela "RequisiçõesPorSocio"
+6) O sistema verifica que a data de devoluçao é menor que a atual e apresenta a janela "FrameValoraPagar" com o valor a 0
+7) O utilzador clica no botão "Pago" e de seguida redireciona o utilizador para a janela "RequisiçõesPorSocio"
+8) O sistema edita a coluna "Data Devolução" e atualiza a tabela da janela "RequisiçõesPorSocio"
+
+:Alternativo
+6.1) O sistema verifica que a data de devoluçao é maior que a atual e apresenta a janela "FrameValoraPagar" com o valor a pagar
+6.1.1) O caso de uso continua no ponto 7 do caminho principal
+
+7.1) O utilizador clica no botão "Não Pago" na janela "FrameValoraPagar"
+7.1.1) O sistema redireciona o utilizador para a janela "RequisicoesPorSocio" e o caso de uso volta ao ponto 5
+
+
+
+------ Pesquisar Livro -----
+:Principal
+
+1) O utilizador clica no botão "Gerir Livros" na janela "Pagina Inicial"
+2) O sistema apresenta a janela "Gerir Livros"
+3) O utilizador preenche o "Procurar Livro"
+4) O sistema verifica quais livros pode apresentar e atualiza a tabela de livros da janela "Gerir Livros"
+
+:Alternativo
+4.1) O sistema nao consegue verificar quais livros pode apresentar e fica na janela "Gerir Livros", e apresenta um erro(Nome Introduzido Invalido)
+
+------ Requisitar Livro -----
+:Principal
+
+1) O utilizador clica no botão "Gerir Socios" na janela "Pagina Inicial"
+2) O sistema apresenta a janela "GerirSocio"
+3) O utilizador clica no botão "Editar Socio" na janela "GerirSocio"
+4) O sistema apresenta a janela "RequisicoesPorSocio"
+5) O utilizador clica no botão "Requisitar" na janela "RequisicoesPorSocio"
+6) O sistema apresenta a janela "Requisitar Livros"
+7) O utilizador clica no botão "Requisitar" do livro pretendido na janela "Requisitar Livros"
+8) O sistema valida que o socio tem as cotas pagas e calcula datas de levantamento, devoluçao e apresenta a janela "ConfirmaRequisição"
+9) O utilizador clica no botão "Guardar" na janela "ConfirmaRequisição"
+10) O sistema edita a coluna "Quantidade", redireciona o utilizador para a janela "Requisitar Livros" e atualiza a tabela de livros da janela "Requisitar Livros"
+
+:Alternativo
+7.1) O sistema valida que o socio tem cotas por pagar,redireciona o utilizador para a janela "Requisitar Livros" e apresenta um Aviso(Impossivel Requisitar o Socio tem cotas por pagar!)
+
+9.1) O utilizador clica no botão "Cancelar" na janela "ConfirmaRequisição"
+9.1.1) o sistema apresenta a janela "ConfirmarCancelamento"
+9.1.2) O utilizador clica no botão "Sim" na janela "ConfirmarCancelamento"
+9.1.1) O caso de uso volta ao ponto 5 do caminho principal
+
+9.1.2.1) O utilizador clica no botão "Não" na janela "ConfirmarCancelamento"
+9.1.2.2) O caso de uso volta ao ponto 8 do caminho principal
+
+
+------ Reservar Livro -----
+:Principal
+
+1) O utilizador clica no botão "Gerir Socios" na janela "Pagina Inicial"
+2) O sistema apresenta a janela "GerirSocio"
+3) O utilizador clica no botão "Editar Socio" na janela "GerirSocio"
+4) O sistema apresenta a janela "RequisicoesPorSocio"
+5) O utilizador clica no botão "Requisitar" na janela "RequisicoesPorSocio"
+6) O sistema apresenta a janela "Requisitar Livros"
+7) O utilizador clica no botão "Reservar" na janela "Requisitar Livros"
+8) O sistema sistema calcula o numero de Reservas e apresenta a janela "ConfirmaReserva"
+9) O utilizador clica no botão "Guardar" na janela "ConfirmaReserva"
+10) O sistema adiciona a reserva no sistema e redireciona para a janela "Requisitar Livros"
+
+:Alternativo
+9.1) O utilizador clica no botão "Cancelar" na janela "ConfirmaReserva"
+9.1.1) o sistema apresenta a janela "ConfirmarCancelamento"
+9.1.2) O utilizador clica no botão "Sim" na janela "ConfirmarCancelamento"
+9.1.3) O caso de uso volta ao ponto 6 do caminho principal
+
+9.1.2.1) O utilizador clica no botão "Não" na janela "ConfirmarCancelamento"
+9.1.2.2) O caso de uso volta ao ponto 8 do caminho principal
+

@@ -50,7 +50,7 @@ public class Configuracoes extends BasePage {
         backgroundPanel.setOpaque(true);
         backgroundPanel.setLayout(null); // Definindo layout absoluto para posicionamento personalizado
 
-// Configurando o JTextField para aceitar apenas números inteiros, mas permitindo que seja vazio
+        // Configurando o JTextField para aceitar apenas números inteiros, mas permitindo que seja vazio
         NumberFormatter formatter = new NumberFormatter() {
             @Override
             public Object stringToValue(String text) throws ParseException {

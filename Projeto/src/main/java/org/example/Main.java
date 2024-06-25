@@ -1,5 +1,7 @@
 package org.example;
 
+import javax.swing.*;
+
 public class Main {
     public static void main(String[] args) {
 
@@ -28,6 +30,7 @@ public class Main {
                 "bernardo@example.com",
                 TipoDeSocio.ENTUSIASTA
         );
+
 
         // Exibir informações do sócio
         System.out.println(socio);

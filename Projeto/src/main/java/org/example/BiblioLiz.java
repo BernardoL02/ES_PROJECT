@@ -77,9 +77,47 @@ public class BiblioLiz extends JFrame {
                 });
             }
 
+            Socio socio1 = new Socio(
+                    "Bernardo",
+                    "123456789",
+                    "Rua A, 123 - Bairro B",
+                    "987654321",
+                    "bernardo@example.com",
+                    TipoDeSocio.ENTUSIASTA
+            );
+            Socio socio2 = new Socio(
+                    "Miguel",
+                    "123456789",
+                    "Rua B, 123 - Bairro A",
+                    "912345671",
+                    "bernardo@example.com",
+                    TipoDeSocio.ACADEMICO
+            );
+            Socio socio3 = new Socio(
+                    "Delgado",
+                    "123456789",
+                    "Rua C, 123 - Bairro C",
+                    "923456787",
+                    "bernardo@example.com",
+                    TipoDeSocio.ACADEMICO
+            );
+            Socio[] socios = {socio1, socio2, socio3};
+
+            if (label.equals("Gerir Sócios")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new GerirSocio(socios);
+                        dispose();
+                    }
+                });
+            }
+
             backgroundPanel.add(button);
             yPosition += buttonHeight + 36; // Espaçamento vertical entre os botões
         }
+
+
 
         // Adicionar botão de imagem para configurações
         ImageIcon configIcon = new ImageIcon(getClass().getResource("/config.png"));

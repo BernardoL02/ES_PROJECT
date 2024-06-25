@@ -7,6 +7,7 @@ public class Socio {
     private String telefone;
     private String email;
     private TipoDeSocio tipoDeSocio;
+    private boolean pago;
 
     // Construtor
     public Socio(String nome, String nif, String morada, String telefone, String email, TipoDeSocio tipoDeSocio) {
@@ -16,6 +17,7 @@ public class Socio {
         this.telefone = telefone;
         this.email = email;
         this.tipoDeSocio = tipoDeSocio;
+        this.pago = true;
     }
 
     // Getters e Setters
@@ -37,6 +39,14 @@ public class Socio {
 
     public String getMorada() {
         return morada;
+    }
+
+    public boolean isPago() {
+        return pago;
+    }
+
+    public void setPago(boolean pago) {
+        this.pago = pago;
     }
 
     public void setMorada(String morada) {

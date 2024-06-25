@@ -9,15 +9,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GerirLivros extends BasePage {
-    public GerirLivros() {
-        super("Gerir Livros", "/HeaderGerirLivros.png", new ActionListener() {
+public class RequisitarLivro extends BasePage {
+    public RequisitarLivro() {
+        super("Requisitar Livro", "/HeaderRequisitarLivro.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new BiblioLiz();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
-        }, true);
+        }, false);
 
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -26,7 +26,7 @@ public class GerirLivros extends BasePage {
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel topPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -40,7 +40,7 @@ public class GerirLivros extends BasePage {
             }
         };
         searchPanel.setLayout(new BorderLayout());
-        searchPanel.setPreferredSize(new Dimension(600, 40));
+        searchPanel.setPreferredSize(new Dimension(700, 45));
         searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         searchPanel.setBackground(Color.WHITE);
 
@@ -49,32 +49,18 @@ public class GerirLivros extends BasePage {
         searchText.setBorder(BorderFactory.createEmptyBorder(5, 55, 5, 5));
         searchPanel.add(searchText, BorderLayout.CENTER);
 
-        RoundButton addButton = new RoundButton("Adicionar Livro");
-        addButton.setBackground(new Color(0x99D4FF));
-        addButton.setForeground(Color.BLACK);
-        addButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        addButton.setPreferredSize(new Dimension(160, 40));
+        // Centraliza a barra de pesquisa
+        JPanel searchContainerPanel = new JPanel(new GridBagLayout());
+        searchContainerPanel.setBackground(Color.WHITE);
+        searchContainerPanel.add(searchPanel);
 
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new AdicionarLivro();
-                dispose(); // Fecha a janela principal
-            }
-        });
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        buttonPanel.setBackground(new Color(0xFFFFFF));
-        buttonPanel.add(addButton);
-
-        topPanel.add(searchPanel, BorderLayout.CENTER);
-        topPanel.add(buttonPanel, BorderLayout.EAST);
+        topPanel.add(searchContainerPanel, BorderLayout.CENTER);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = {"ISBN", "Título", "Edição", "Gênero", "Localização", "Quantidade", "Ações"};
         Object[][] data = {
-                {"78853330227123123123123", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""}
+                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
+                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "0/5", ""}
         };
 
         JTable table = new JTable(data, columnNames) {
@@ -106,7 +92,6 @@ public class GerirLivros extends BasePage {
         table.setGridColor(Color.WHITE);
         table.setShowGrid(true);
         table.getTableHeader().setReorderingAllowed(false);
-        table.getTableHeader().setResizingAllowed(true); // Permite redimensionar colunas
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -123,39 +108,36 @@ public class GerirLivros extends BasePage {
         columnModel.getColumn(5).setPreferredWidth(120);
         columnModel.getColumn(6).setPreferredWidth(180);
 
+        table.getTableHeader().setResizingAllowed(false);
+
         columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
             private final JPanel panel = new JPanel(new GridBagLayout());
-            private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
-            private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");  // Use RoundButton here
+            private final JButton actionButton = new RoundButton("");
 
             {
-                editButton.setBorder(null);
-                editButton.setContentAreaFilled(false);
-                editButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                deleteButton.setBorder(null);
-                deleteButton.setContentAreaFilled(false);
-                deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
+                actionButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 14)); // Ajusta o tamanho da fonte
+                actionButton.setBorder(null);
+                actionButton.setContentAreaFilled(true);
+                actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-                ImageIcon editIcon = new ImageIcon(getClass().getResource("/edit.png"));
-                Image editImg = editIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-                editButton.setIcon(new ImageIcon(editImg));
-
-                ImageIcon deleteIcon = new ImageIcon(getClass().getResource("/delete.png"));
-                Image deleteImg = deleteIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-                deleteButton.setIcon(new ImageIcon(deleteImg));
-
-                reserveButton.setBackground(Color.BLACK);
-                reserveButton.setForeground(Color.WHITE);
-                reserveButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-                panel.add(editButton);
-                panel.add(deleteButton);
-                panel.add(reserveButton);
+                panel.add(actionButton);
             }
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                int quantidade = Integer.parseInt(table.getValueAt(row, 5).toString().split("/")[0]);
+                if (quantidade > 0) {
+                    actionButton.setText("Requisitar");
+                    actionButton.setBackground(new Color(0x99D4FF));
+                    actionButton.setBackground(Color.BLACK);
+                    actionButton.setForeground(Color.WHITE);
+                } else {
+                    actionButton.setText("Reservar");
+                    actionButton.setBackground(Color.BLACK);
+                    actionButton.setForeground(Color.WHITE);
+                }
+
                 panel.setOpaque(true);
                 if (isSelected) {
                     panel.setBackground(table.getSelectionBackground());
@@ -168,58 +150,45 @@ public class GerirLivros extends BasePage {
 
         columnModel.getColumn(6).setCellEditor(new TableCellEditor() {
             private final JPanel panel = new JPanel(new GridBagLayout());
-            private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
-            private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");  // Use RoundButton here
+            private final JButton actionButton = new RoundButton("");
 
             {
-                editButton.setBorder(null);
-                editButton.setContentAreaFilled(false);
-                editButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                deleteButton.setBorder(null);
-                deleteButton.setContentAreaFilled(false);
-                deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
+                actionButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 14)); // Ajusta o tamanho da fonte
+                actionButton.setBorder(null);
+                actionButton.setContentAreaFilled(true);
+                actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-                ImageIcon editIcon = new ImageIcon(getClass().getResource("/edit.png"));
-                Image editImg = editIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-                editButton.setIcon(new ImageIcon(editImg));
-
-                ImageIcon deleteIcon = new ImageIcon(getClass().getResource("/delete.png"));
-                Image deleteImg = deleteIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-                deleteButton.setIcon(new ImageIcon(deleteImg));
-
-                reserveButton.setBackground(Color.BLACK);
-                reserveButton.setForeground(Color.WHITE);
-                reserveButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-                editButton.addActionListener(new ActionListener() {
+                actionButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Editar Livro");
+                        int row = table.getEditingRow();
+                        int quantidade = Integer.parseInt(table.getValueAt(row, 5).toString().split("/")[0]);
+                        if (quantidade > 0) {
+                            JOptionPane.showMessageDialog(null, "Livro requisitado!");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Livro reservado!");
+                        }
                     }
                 });
 
-                deleteButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Excluir Livro");
-                    }
-                });
-
-                reserveButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Reservar Livro");
-                    }
-                });
-
-                panel.add(editButton);
-                panel.add(deleteButton);
-                panel.add(reserveButton);
+                panel.add(actionButton);
             }
 
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                int quantidade = Integer.parseInt(table.getValueAt(row, 5).toString().split("/")[0]);
+                if (quantidade > 0) {
+                    actionButton.setText("Requisitar");
+                    actionButton.setBackground(new Color(0x99D4FF));
+                    actionButton.setBackground(Color.BLACK);
+                    actionButton.setForeground(Color.WHITE);
+                } else {
+                    actionButton.setText("Reservar");
+                    actionButton.setBackground(Color.BLACK);
+                    actionButton.setForeground(Color.WHITE);
+                }
+
                 panel.setOpaque(true);
                 if (isSelected) {
                     panel.setBackground(table.getSelectionBackground());
@@ -275,6 +244,6 @@ public class GerirLivros extends BasePage {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(GerirLivros::new);
+        SwingUtilities.invokeLater(RequisitarLivro::new);
     }
 }

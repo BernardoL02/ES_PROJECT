@@ -100,46 +100,6 @@ public class Configuracoes extends BasePage {
 
         wrapperPanel.add(backgroundPanel, BorderLayout.CENTER);
 
-        //Butões
-        RoundButton buttonGuardar = new RoundButton("Guardar");
-        buttonGuardar.setBackground(new Color(0x99D4FF));
-        buttonGuardar.setForeground(Color.BLACK);
-        buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonGuardar.setBounds(690, 560, 160, 40);
-        add(buttonGuardar);
-
-        // Adiciona o ActionListener ao botão Guardar
-        buttonGuardar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Exibe o diálogo de confirmação personalizado
-                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as configurações?", "Confirmação", "Cancelar", "Confirmar");
-
-                // Verifica a resposta
-                if (response == JOptionPane.YES_OPTION) {
-                    //Guardar os dados
-
-                    new BiblioLiz();
-                    dispose();
-                }
-            }
-        });
-
-        RoundButton buttonCancelar = new RoundButton("Cancelar");
-        buttonCancelar.setBackground(new Color(0xBABABA));
-        buttonCancelar.setForeground(Color.BLACK);
-        buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonCancelar.setBounds(500, 560, 160, 40);
-        add(buttonCancelar);
-
-        buttonCancelar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
-                dispose(); // Fecha a janela principal
-            }
-        });
-
         // Adiciona o wrapperPanel ao frame
         add(wrapperPanel, BorderLayout.CENTER);
 
@@ -150,5 +110,4 @@ public class Configuracoes extends BasePage {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Configuracoes::new);
     }
-
 }

@@ -79,7 +79,7 @@ public class AdicionarSocio extends BasePage{
 
                 // Verifica se o item está selecionado e ajusta as cores
                 if (isSelected) {
-                    setBackground(new Color(0x6EC2FF)); // Cor de fundo quando selecionado
+                    setBackground(Color.WHITE); // Cor de fundo quando selecionado
                     setForeground(Color.WHITE); // Cor do texto quando selecionado
                 } else {
                     setForeground(Color.BLACK); // Cor do texto quando não está selecionado

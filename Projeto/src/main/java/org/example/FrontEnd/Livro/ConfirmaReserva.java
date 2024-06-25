@@ -25,13 +25,14 @@ public class ConfirmaReserva extends BasePage {
             }
         }, false);
 
-        JPanel wrapperPanel = new JPanel(null);  // Use null layout for absolute positioning
+        JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
+        wrapperPanel.add(headerPanel, BorderLayout.NORTH);
         wrapperPanel.setBackground(Color.WHITE);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBounds(10, 10, 800, 400);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Painel de informação do livro
         JPanel bookInfoPanel = createRoundedPanel(new BorderLayout());
@@ -79,10 +80,6 @@ public class ConfirmaReserva extends BasePage {
         memberInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         memberInfoPanel.add(memberInfoLabel, BorderLayout.NORTH);
 
-        mainPanel.add(bookInfoPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainPanel.add(memberInfoPanel);
-
         // Painel de "Número de Reservas"
         JPanel numberOfReservationsPanel = new JPanel(new BorderLayout()) {
             @Override
@@ -94,22 +91,30 @@ public class ConfirmaReserva extends BasePage {
             }
         };
 
-        numberOfReservationsPanel.setPreferredSize(new Dimension(300, 50));
-        numberOfReservationsPanel.setBounds(100, 380, 300, 50);  // Position the panel
+        numberOfReservationsPanel.setPreferredSize(new Dimension(300, 50)); // Define o tamanho do painel
+        numberOfReservationsPanel.setBackground(Color.WHITE);
+
         JLabel numberOfReservationsLabel = new JLabel("Número de Reservas: 1");
         numberOfReservationsLabel.setFont(new Font("Inter", Font.BOLD, 18));
         numberOfReservationsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         numberOfReservationsPanel.add(numberOfReservationsLabel, BorderLayout.CENTER);
 
+        // Ajuste a posição do painel de reservas
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setBackground(Color.WHITE);
+        rightPanel.add(numberOfReservationsPanel, BorderLayout.NORTH);
+        rightPanel.setBounds(70, 500, 300, 50);
+
+
         // Painel de botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setBounds(10, 510, 800, 50);  // Position the panel
 
         RoundButton buttonCancelar = new RoundButton("Cancelar");
         buttonCancelar.setBackground(new Color(0xBABABA));
         buttonCancelar.setForeground(Color.BLACK);
         buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonCancelar.setBounds(500, 560, 160, 40);
 
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
@@ -123,6 +128,7 @@ public class ConfirmaReserva extends BasePage {
         buttonGuardar.setBackground(new Color(0x99D4FF));
         buttonGuardar.setForeground(Color.BLACK);
         buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonGuardar.setBounds(690, 560, 160, 40);
         buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,13 +139,22 @@ public class ConfirmaReserva extends BasePage {
                 }
             }
         });
+        add(rightPanel);
 
         buttonPanel.add(buttonCancelar);
         buttonPanel.add(buttonGuardar);
 
-        wrapperPanel.add(mainPanel);
-        wrapperPanel.add(numberOfReservationsPanel);
-        wrapperPanel.add(buttonPanel);
+        JPanel combinedPanel = new JPanel(new BorderLayout(10, 10));
+        combinedPanel.setBackground(Color.WHITE);
+        combinedPanel.add(memberInfoPanel, BorderLayout.CENTER);
+
+        mainPanel.add(bookInfoPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        mainPanel.add(combinedPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        mainPanel.add(buttonPanel);
+
+        wrapperPanel.add(mainPanel, BorderLayout.CENTER);
 
         add(wrapperPanel, BorderLayout.CENTER);
 

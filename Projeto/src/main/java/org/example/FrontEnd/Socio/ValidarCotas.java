@@ -26,12 +26,9 @@ public class ValidarCotas extends BasePage {
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
 
         // Painel para o conteúdo principal
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBackground(new Color(0xFFFFFF)); // Cor do fundo do painel principal
-
-        // Painel para o botão "Adicionar"
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.setBackground(new Color(0xFFFFFF)); // Cor do fundo do painel do botão
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel topPanel = new JPanel(new BorderLayout(10, 10));
         topPanel.setBackground(new Color(0xFFFFFF));
@@ -47,18 +44,22 @@ public class ValidarCotas extends BasePage {
             }
         };
         searchPanel.setLayout(new BorderLayout());
-        searchPanel.setPreferredSize(new Dimension(600, 40));
+        searchPanel.setPreferredSize(new Dimension(700, 45));
         searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        searchPanel.setBackground(Color.WHITE);
 
         JTextField searchText = new JTextField();
         searchText.setOpaque(false);
         searchText.setBorder(BorderFactory.createEmptyBorder(5, 55, 5, 5));
         searchPanel.add(searchText, BorderLayout.CENTER);
-        searchPanel.setBackground(Color.WHITE);
 
-        topPanel.add(searchPanel, BorderLayout.CENTER);
-        topPanel.add(buttonPanel, BorderLayout.EAST);
-        mainPanel.add(topPanel, BorderLayout.NORTH); // Adiciona o topPanel ao mainPanel
+        // Centraliza a barra de pesquisa
+        JPanel searchContainerPanel = new JPanel(new GridBagLayout());
+        searchContainerPanel.setBackground(Color.WHITE);
+        searchContainerPanel.add(searchPanel);
+
+        topPanel.add(searchContainerPanel, BorderLayout.CENTER);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = {"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago"};
         Object[][] data = {
@@ -95,6 +96,7 @@ public class ValidarCotas extends BasePage {
         table.setGridColor(Color.WHITE);
         table.setShowGrid(true);
         table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(true); // Permite redimensionar colunas
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -110,7 +112,7 @@ public class ValidarCotas extends BasePage {
         columnModel.getColumn(4).setPreferredWidth(120);
         columnModel.getColumn(5).setPreferredWidth(120);
 
-        table.getTableHeader().setResizingAllowed(false);
+        table.getTableHeader().setResizingAllowed(true);
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(Color.WHITE);

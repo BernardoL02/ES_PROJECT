@@ -2,6 +2,8 @@ package org.example.FrontEnd.Livro;
 
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.CustomPopUP;
+import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +17,7 @@ public class EditarLivro extends BasePage {
             public void actionPerformed(ActionEvent e) {
                 // Ação personalizada ao clicar no botão de voltar
                 // Exemplo: Voltar para a página inicial
-                new BiblioLiz();
+                new GerirLivros();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, true); // Passe "true" para exibir o ícone de configuração, "false" para ocultá-lo
@@ -102,6 +104,46 @@ public class EditarLivro extends BasePage {
         backgroundPanel.add(fieldQuantidade);
 
         wrapperPanel.add(backgroundPanel, BorderLayout.CENTER);
+
+        //Butões
+        RoundButton buttonGuardar = new RoundButton("Guardar");
+        buttonGuardar.setBackground(new Color(0x99D4FF));
+        buttonGuardar.setForeground(Color.BLACK);
+        buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonGuardar.setBounds(690, 560, 160, 40);
+        add(buttonGuardar);
+
+        // Adiciona o ActionListener ao botão Guardar
+        buttonGuardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Exibe o diálogo de confirmação personalizado
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
+
+                // Verifica a resposta
+                if (response == JOptionPane.YES_OPTION) {
+                    //Guardar os dados
+
+                    new GerirLivros();
+                    dispose();
+                }
+            }
+        });
+
+        RoundButton buttonCancelar = new RoundButton("Cancelar");
+        buttonCancelar.setBackground(new Color(0xBABABA));
+        buttonCancelar.setForeground(Color.BLACK);
+        buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonCancelar.setBounds(490, 560, 160, 40);
+        add(buttonCancelar);
+
+        buttonCancelar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new GerirLivros();
+                dispose(); // Fecha a janela principal
+            }
+        });
 
         // Adiciona o wrapperPanel ao frame
         add(wrapperPanel, BorderLayout.CENTER);

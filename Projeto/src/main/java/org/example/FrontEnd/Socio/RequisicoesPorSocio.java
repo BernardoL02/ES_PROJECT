@@ -118,7 +118,6 @@ public class RequisicoesPorSocio extends BasePage {
         Object[][] bookData = {
                 {"10", "78853330227", "A Fórmula de Deus", "2º Edição", "Romance", "05/05/2024", " ", "20/05/2024", ""},
                 {"11", "788324234", "O Imortal", "2º Edição", "Romance", "05/05/2024", "12/05/2024", "20/05/2024", ""}
-
         };
         JTable bookTable = createTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro

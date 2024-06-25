@@ -1,6 +1,8 @@
 package org.example.FrontEnd.Socio;
 
 import org.example.BackEnd.Socio;
+import org.example.FrontEnd.Livro.AdicionarLivro;
+import org.example.FrontEnd.Livro.GerirLivros;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -33,15 +35,12 @@ public class GerirSocio extends BasePage {
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
 
         // Painel para o conteúdo principal
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(0xFFFFFF)); // Cor do fundo do painel principal
-
-        // Painel para o botão "Adicionar"
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.setBackground(new Color(0xFFFFFF)); // Cor do fundo do painel do botão
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel topPanel = new JPanel(new BorderLayout(10, 10));
-        topPanel.setBackground(new Color(0xFFFFFF));
+        topPanel.setBackground(Color.WHITE);
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel searchPanel = new JPanel() {
@@ -56,6 +55,7 @@ public class GerirSocio extends BasePage {
         searchPanel.setLayout(new BorderLayout());
         searchPanel.setPreferredSize(new Dimension(600, 40));
         searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        searchPanel.setBackground(Color.WHITE);
 
         JTextField searchText = new JTextField();
         searchText.setOpaque(false);
@@ -63,12 +63,13 @@ public class GerirSocio extends BasePage {
         searchPanel.add(searchText, BorderLayout.CENTER);
 
         // Adicionar botão "Adicionar"
-        RoundButton adicionarButton = new RoundButton("Adicionar");
-        adicionarButton.setBackground(new Color(0x46AEB5));
-        adicionarButton.setForeground(Color.WHITE); // Definindo a cor do texto como branco
-        adicionarButton.setOpaque(true);
-        adicionarButton.setBorderPainted(false);
-        adicionarButton.addActionListener(new ActionListener() {
+        RoundButton addButton = new RoundButton("Adicionar Sócio");
+        addButton.setBackground(new Color(0x99D4FF));
+        addButton.setForeground(Color.BLACK);
+        addButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        addButton.setPreferredSize(new Dimension(160, 40));
+
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AdicionarSocio();
@@ -76,9 +77,12 @@ public class GerirSocio extends BasePage {
             }
         });
 
+        // Painel para o botão "Adicionar"
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.setBackground(Color.WHITE); // Cor do fundo do painel do botão
         topPanel.add(searchPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.EAST);
-        buttonPanel.add(adicionarButton);
+        buttonPanel.add(addButton);
 
         mainPanel.add(topPanel, BorderLayout.NORTH); // Adiciona o topPanel ao mainPanel
 
@@ -118,6 +122,7 @@ public class GerirSocio extends BasePage {
         table.setGridColor(Color.WHITE);
         table.setShowGrid(true);
         table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(true); // Permite redimensionar colunas
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -134,7 +139,7 @@ public class GerirSocio extends BasePage {
         columnModel.getColumn(5).setPreferredWidth(120);
         columnModel.getColumn(6).setPreferredWidth(180);
 
-        table.getTableHeader().setResizingAllowed(false);
+        table.getTableHeader().setResizingAllowed(true);
 
         columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
             private final JPanel panel = new JPanel(new GridBagLayout());
@@ -287,17 +292,12 @@ public class GerirSocio extends BasePage {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-
-
-        // Adiciona os componentes ao painel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         wrapperPanel.add(mainPanel, BorderLayout.CENTER);
 
-        // Adiciona o wrapperPanel ao frame
         add(wrapperPanel, BorderLayout.CENTER);
 
-        // Torna o frame visível
         setVisible(true);
     }
 }

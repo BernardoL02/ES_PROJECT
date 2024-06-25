@@ -45,6 +45,8 @@ public class BiblioLiz extends JFrame {
             }
         };
         backgroundPanel.setLayout(null);  // Layout absoluto para posicionar os botões manualmente
+        backgroundPanel.setBackground(Color.WHITE); // Define o fundo branco para o painel
+        backgroundPanel.setOpaque(true);
 
         Font buttonFont = new Font("Inter", Font.BOLD | Font.ITALIC, 32);
 

@@ -78,7 +78,9 @@ public class GerirLivros extends BasePage {
         String[] columnNames = {"ISBN", "Título", "Edição", "Gênero", "Localização", "Quantidade", "Ações"};
         Object[][] data = {
                 {"78853330227123123123123", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""}
+                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
+                {"78853330227123123123123", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
+                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
         };
 
         JTable table = new JTable(data, columnNames) {
@@ -126,6 +128,8 @@ public class GerirLivros extends BasePage {
         columnModel.getColumn(4).setPreferredWidth(120);
         columnModel.getColumn(5).setPreferredWidth(120);
         columnModel.getColumn(6).setPreferredWidth(180);
+
+        table.getTableHeader().setResizingAllowed(true);
 
         columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
             private final JPanel panel = new JPanel(new GridBagLayout());
@@ -199,7 +203,8 @@ public class GerirLivros extends BasePage {
                 editButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Editar Livro");
+                        new EditarLivro();
+                        dispose(); // Fecha a janela principal
                     }
                 });
 
@@ -213,7 +218,8 @@ public class GerirLivros extends BasePage {
                 reserveButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Reservar Livro");
+                        new VerReservas();
+                        dispose(); // Fecha a janela principal
                     }
                 });
 

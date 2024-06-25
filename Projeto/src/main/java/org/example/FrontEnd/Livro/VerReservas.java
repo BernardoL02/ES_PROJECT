@@ -22,7 +22,7 @@ public class VerReservas extends BasePage {
         super("Ver Reservas", "/HeaderVerReservas.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
+                new GerirLivros();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
@@ -74,7 +74,7 @@ public class VerReservas extends BasePage {
         Object[][] data = {
                 {"1", "853330227", "Bernardo Lopes", "Rua Lopes, 2400-200, Leiria", "919912999", "2222048@my.ipleiria.pt", ""},
                 {"2", "853330228", "Maria Silva", "Rua Silva, 2400-201, Leiria", "919912998", "2222049@my.ipleiria.pt", ""},
-                {"3", "853330229", "João Pereira", "Rua Pereira, 2400-202, Leiria", "919912997", "2222050@my.ipleiria.pt", ""}
+                {"3", "853330229", "João Pereira", "Rua Pereira, 2400-202, Leiria", "919912997", "2222050@my.ipleiria.pt", ""},
         };
 
         JTable tabelaReservas = createTable(data, columnNames, true); // true to allow cell editing in the last column
@@ -228,8 +228,8 @@ public class VerReservas extends BasePage {
 
                             // Verifica a resposta
                             if (response == JOptionPane.YES_OPTION) {
-                                // Implementar a lógica de cancelamento da reserva
-                                JOptionPane.showMessageDialog(null, "Reserva cancelada com sucesso!");
+                                // Remover a reserva
+
                             }
                         }
                     });

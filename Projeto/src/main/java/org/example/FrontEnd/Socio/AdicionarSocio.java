@@ -14,7 +14,7 @@ public class AdicionarSocio extends BasePage {
         super("Adicionar Socio", "/HeaderRegistarSocio.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
+                new GerirSocio(null);
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);

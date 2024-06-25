@@ -17,7 +17,7 @@ public class AdicionarLivro extends BasePage {
             public void actionPerformed(ActionEvent e) {
                 // Ação personalizada ao clicar no botão de voltar
                 // Exemplo: Voltar para a página inicial
-                new BiblioLiz();
+                new GerirLivros();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, true); // Passe "true" para exibir o ícone de configuração, "false" para ocultá-lo
@@ -151,7 +151,7 @@ public class AdicionarLivro extends BasePage {
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
+                new GerirLivros();
                 dispose(); // Fecha a janela principal
             }
         });

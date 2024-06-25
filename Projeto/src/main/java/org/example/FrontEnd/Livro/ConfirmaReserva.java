@@ -14,10 +14,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ConfirmaRequisicao extends BasePage {
+public class ConfirmaReserva extends BasePage {
 
-    public ConfirmaRequisicao() {
-        super("Confirmar Requisição", "/HeaderConfirmaRequisicao.png", new ActionListener() {
+    public ConfirmaReserva() {
+        super("Confirmar Requisição", "/HeaderConfirmarReserva.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new BiblioLiz();
@@ -25,14 +25,13 @@ public class ConfirmaRequisicao extends BasePage {
             }
         }, false);
 
-        JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
-        wrapperPanel.add(headerPanel, BorderLayout.NORTH);
+        JPanel wrapperPanel = new JPanel(null);  // Use null layout for absolute positioning
         wrapperPanel.setBackground(Color.WHITE);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setBounds(10, 10, 800, 400);
 
         // Painel de informação do livro
         JPanel bookInfoPanel = createRoundedPanel(new BorderLayout());
@@ -43,88 +42,80 @@ public class ConfirmaRequisicao extends BasePage {
                 {"78853330227", "A Fórmula de Deus", "2 - 10 - 1B", "10"}
         };
         JTable bookTable = createTable(bookData, bookColumnNames);
-        bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
-        bookTable.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de livro
+        bookTable.setRowHeight(30);
+        bookTable.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height));
         JScrollPane bookScrollPane = new JScrollPane(bookTable);
         bookScrollPane.setPreferredSize(bookTable.getPreferredSize());
-        bookScrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remover a borda preta
-        bookScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
+        bookScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        bookScrollPane.getViewport().setBackground(Color.WHITE);
 
         bookInfoPanel.add(bookScrollPane, BorderLayout.CENTER);
 
         JLabel bookInfoLabel = new JLabel("Livro a Requisitar", SwingConstants.CENTER);
         bookInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        bookInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
+        bookInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         bookInfoPanel.add(bookInfoLabel, BorderLayout.NORTH);
 
         // Painel de informação do sócio
         JPanel memberInfoPanel = createRoundedPanel(new BorderLayout());
         memberInfoPanel.setBackground(Color.WHITE);
-        memberInfoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20)); // Adiciona espaçamento à direita
 
         String[] memberColumnNames = {"Nr", "Nome", "Nif", "Telefone", "Pago", "Tipo de Sócio"};
         Object[][] memberData = {
                 {"1", "Bernardo Lopes", "252490132", "999999999", "Sim", "Entusiasta"}
         };
         JTable memberTable = createTable(memberData, memberColumnNames);
-        memberTable.setRowHeight(30); // Ajusta a altura da linha da tabela de sócios
-        memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
+        memberTable.setRowHeight(30);
+        memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height));
         JScrollPane memberScrollPane = new JScrollPane(memberTable);
         memberScrollPane.setPreferredSize(memberTable.getPreferredSize());
-        memberScrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remover a borda preta
-        memberScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
+        memberScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        memberScrollPane.getViewport().setBackground(Color.WHITE);
 
         memberInfoPanel.add(memberScrollPane, BorderLayout.CENTER);
 
         JLabel memberInfoLabel = new JLabel("Sócio Associado", SwingConstants.CENTER);
         memberInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        memberInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
+        memberInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         memberInfoPanel.add(memberInfoLabel, BorderLayout.NORTH);
 
-        // Painel de datas customizado com imagem e labels
-        JPanel datesPanel = new JPanel(null) {
+        mainPanel.add(bookInfoPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        mainPanel.add(memberInfoPanel);
+
+        // Painel de "Número de Reservas"
+        JPanel numberOfReservationsPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                ImageIcon datesIcon = new ImageIcon(getClass().getResource("/Datas.png"));
-                Image datesImage = datesIcon.getImage();
-                g.drawImage(datesImage, 0, 0, getWidth(), getHeight(), this);
+                ImageIcon icon = new ImageIcon(getClass().getResource("/number_of_reservations_background.png"));
+                Image image = icon.getImage();
+                g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
             }
         };
-        datesPanel.setPreferredSize(new Dimension(220, 130));
-        datesPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20)); // Adiciona margens ao painel
 
-        // Add data labels on top of the dates panel
-        JLabel date1Label = new JLabel("09 - 05 - 2024");
-        date1Label.setFont(new Font("Inter", Font.BOLD, 18));
-        date1Label.setBounds(53, 30, 180, 30);
-        datesPanel.add(date1Label);
-
-        JLabel date2Label = new JLabel("09 - 06 - 2024");
-        date2Label.setFont(new Font("Inter", Font.BOLD, 18));
-        date2Label.setBounds(53, 95, 180, 30);
-        datesPanel.add(date2Label);
-
-        JLabel periodLabel = new JLabel("30 Dias");
-        periodLabel.setFont(new Font("Inter", Font.BOLD, 18));
-        periodLabel.setBounds(120, 153, 180, 30);
-        datesPanel.add(periodLabel);
+        numberOfReservationsPanel.setPreferredSize(new Dimension(300, 50));
+        numberOfReservationsPanel.setBounds(100, 380, 300, 50);  // Position the panel
+        JLabel numberOfReservationsLabel = new JLabel("Número de Reservas: 1");
+        numberOfReservationsLabel.setFont(new Font("Inter", Font.BOLD, 18));
+        numberOfReservationsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        numberOfReservationsPanel.add(numberOfReservationsLabel, BorderLayout.CENTER);
 
         // Painel de botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBounds(10, 510, 800, 50);  // Position the panel
 
         RoundButton buttonCancelar = new RoundButton("Cancelar");
         buttonCancelar.setBackground(new Color(0xBABABA));
         buttonCancelar.setForeground(Color.BLACK);
         buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonCancelar.setBounds(500, 560, 160, 40);
 
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new RequisicoesPorSocio();
-                dispose(); // Fecha a janela principal
+                dispose();
             }
         });
 
@@ -132,16 +123,11 @@ public class ConfirmaRequisicao extends BasePage {
         buttonGuardar.setBackground(new Color(0x99D4FF));
         buttonGuardar.setForeground(Color.BLACK);
         buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonGuardar.setBounds(690, 560, 160, 40);
         buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Exibe o diálogo de confirmação personalizado
                 int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as alterações?", "Confirmação", "Cancelar", "Confirmar");
-
-                // Verifica a resposta
                 if (response == JOptionPane.YES_OPTION) {
-                    // Guardar os dados
                     new RequisicoesPorSocio();
                     dispose();
                 }
@@ -151,18 +137,9 @@ public class ConfirmaRequisicao extends BasePage {
         buttonPanel.add(buttonCancelar);
         buttonPanel.add(buttonGuardar);
 
-        JPanel combinedPanel = new JPanel(new BorderLayout(10, 10));
-        combinedPanel.setBackground(Color.WHITE);
-        combinedPanel.add(memberInfoPanel, BorderLayout.CENTER);
-        combinedPanel.add(datesPanel, BorderLayout.EAST);
-
-        mainPanel.add(bookInfoPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Adiciona espaço entre os painéis
-        mainPanel.add(combinedPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Adiciona espaço antes dos botões
-        mainPanel.add(buttonPanel);
-
-        wrapperPanel.add(mainPanel, BorderLayout.CENTER);
+        wrapperPanel.add(mainPanel);
+        wrapperPanel.add(numberOfReservationsPanel);
+        wrapperPanel.add(buttonPanel);
 
         add(wrapperPanel, BorderLayout.CENTER);
 
@@ -214,7 +191,7 @@ public class ConfirmaRequisicao extends BasePage {
         JTable table = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Impede a edição das células
+                return false;
             }
 
             @Override
@@ -222,8 +199,8 @@ public class ConfirmaRequisicao extends BasePage {
                 Component component = super.prepareRenderer(renderer, row, column);
                 if (component instanceof JComponent) {
                     ((JComponent) component).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-                    component.setBackground(new Color(0xDFF3FF)); // Define a cor de fundo para azul claro
-                    ((JComponent) component).setOpaque(true); // Garante que seja opaco
+                    component.setBackground(new Color(0xDFF3FF));
+                    ((JComponent) component).setOpaque(true);
                 }
                 return component;
             }
@@ -239,8 +216,8 @@ public class ConfirmaRequisicao extends BasePage {
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        centerRenderer.setOpaque(true); // Garante que seja opaco
-        centerRenderer.setBackground(new Color(0x6EC2FF)); // Define a cor de fundo para azul claro
+        centerRenderer.setOpaque(true);
+        centerRenderer.setBackground(new Color(0x6EC2FF));
         for (int i = 0; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
@@ -256,6 +233,6 @@ public class ConfirmaRequisicao extends BasePage {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(ConfirmaRequisicao::new);
+        SwingUtilities.invokeLater(ConfirmaReserva::new);
     }
 }

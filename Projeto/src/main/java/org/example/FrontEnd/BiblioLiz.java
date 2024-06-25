@@ -137,7 +137,7 @@ public class BiblioLiz extends JFrame {
         configButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Configuracoes();
+                new Configs();
                 dispose();
             }
         });

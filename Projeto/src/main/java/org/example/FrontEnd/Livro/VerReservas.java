@@ -86,6 +86,7 @@ public class VerReservas extends BasePage {
         reservasScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
         reservasScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         reservasScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        reservasScrollPane.setPreferredSize(new Dimension(800, 300)); // Limitar a altura da tabela com um tamanho preferido fixo
 
         memberInfoPanel.add(reservasScrollPane, BorderLayout.CENTER);
 

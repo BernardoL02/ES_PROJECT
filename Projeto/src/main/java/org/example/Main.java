@@ -1,7 +1,5 @@
 package org.example;
 
-import javax.swing.*;
-
 public class Main {
     public static void main(String[] args) {
 
@@ -21,8 +19,11 @@ public class Main {
         // Exibir informações do livro
         System.out.println(livro);
 
-        // Criar um objeto da classe Socio
-        Socio socio = new Socio(
+        // Criar um objeto da classe BiblioLiz
+        BiblioLiz biblioLiz = new BiblioLiz();
+
+        // Criar objetos da classe Socio e adicioná-los à biblioteca
+        Socio socio1 = new Socio(
                 "Bernardo",
                 "123456789",
                 "Rua A, 123 - Bairro B",
@@ -31,10 +32,19 @@ public class Main {
                 TipoDeSocio.ENTUSIASTA
         );
 
+        Socio socio2 = new Socio(
+                "Ana",
+                "987654321",
+                "Rua B, 456 - Bairro C",
+                "123456789",
+                "ana@example.com",
+                TipoDeSocio.ACADEMICO
+        );
 
-        // Exibir informações do sócio
-        System.out.println(socio);
+        biblioLiz.addSocio(socio1);
+        biblioLiz.addSocio(socio2);
 
+        // Iniciar a aplicação
         BiblioLiz.main(args);
     }
 }

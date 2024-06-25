@@ -1,20 +1,19 @@
 package org.example;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import static org.example.TipoDeSocio.ACADEMICO;
+import java.util.ArrayList;
 
 public class GerirSocio extends BasePage {
-    private Socio[] socios;
-    public GerirSocio(Socio[] socios) {
+
+    private ArrayList<Socio> socios;
+
+    public GerirSocio(ArrayList<Socio> socios) {
         super("Gerir Sócio", "/HeaderGerirSocio.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -22,7 +21,9 @@ public class GerirSocio extends BasePage {
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, true);
+
         this.socios = socios;
+
         // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -52,7 +53,7 @@ public class GerirSocio extends BasePage {
         buttonPanel.add(adicionarButton);
 
         DefaultTableModel tableModel = new DefaultTableModel(
-                new Object[]{"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago" , " "}, 0);
+                new Object[]{"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago", " "}, 0);
 
         // Adiciona dados à tabela
         adicionarDadosNaTabela(tableModel);
@@ -84,7 +85,6 @@ public class GerirSocio extends BasePage {
         // Adicionando a tabela em um JScrollPane
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(Color.WHITE); // Cor de fundo do viewport do scrollPane
-
 
         // Adiciona os componentes ao painel principal
         mainPanel.add(buttonPanel, BorderLayout.NORTH);

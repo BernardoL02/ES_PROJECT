@@ -29,6 +29,14 @@ public class Socio {
         this.nome = nome;
     }
 
+    public boolean isPago() {
+        return pago;
+    }
+
+    public void setPago(boolean pago) {
+        this.pago = pago;
+    }
+
     public String getNif() {
         return nif;
     }
@@ -39,14 +47,6 @@ public class Socio {
 
     public String getMorada() {
         return morada;
-    }
-
-    public boolean isPago() {
-        return pago;
-    }
-
-    public void setPago(boolean pago) {
-        this.pago = pago;
     }
 
     public void setMorada(String morada) {

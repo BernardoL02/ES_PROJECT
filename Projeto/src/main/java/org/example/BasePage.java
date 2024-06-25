@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class BasePage extends JFrame {
     protected JPanel headerPanel;
@@ -67,11 +69,12 @@ public class BasePage extends JFrame {
             configButton.setBounds(getWidth() - 80, 10, 30, 30); // Ajustar conforme necessário
             configButton.setBorder(null);
             configButton.setContentAreaFilled(false);
+            configButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Define cursor de mão
             configButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Ação ao clicar no botão de configuração
-                    JOptionPane.showMessageDialog(null, "Configurações");
+                    new Configuracoes();
+                    dispose();
                 }
             });
             headerPanel.add(configButton);
@@ -84,6 +87,7 @@ public class BasePage extends JFrame {
         backButton.setBounds(10, 10, 30, 30); // Ajustar conforme necessário
         backButton.setBorder(null);
         backButton.setContentAreaFilled(false);
+        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Define cursor de mão
         backButton.addActionListener(backAction);
 
         headerPanel.add(backButton);

@@ -4,9 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class BiblioLiz extends JFrame {
+
+    private ArrayList<Socio> socios;
+
     public BiblioLiz() {
+        // Inicializa a lista de sócios
+        socios = new ArrayList<>();
+
         // Configurações do JFrame
         setTitle("BiblioLiz");
         setSize(800, 650);
@@ -36,7 +43,7 @@ public class BiblioLiz extends JFrame {
         Font buttonFont = new Font("Inter", Font.BOLD | Font.ITALIC, 32);
 
         // Botões
-        String[] buttonLabels = {"Gerir Livros", "Gerir Sócios", "Registar Livro", "Editar Livro", "Validar Cotas", "Ver Estatistica"};
+        String[] buttonLabels = {"Gerir Livros", "Gerir Sócios", "Registar Livro", "Validar Cotas", "Ver Estatistica"};
         int buttonWidth = 325;
         int buttonHeight = 52;
         int imgMargin_W = 90;
@@ -54,6 +61,7 @@ public class BiblioLiz extends JFrame {
             button.setBackground(new Color(0x99D4FF));
             button.setForeground(Color.BLACK);
             button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Define cursor de mão
 
             // Adicionar ActionListener ao botão "Gerir Livros"
             if (label.equals("Gerir Livros")) {
@@ -65,50 +73,21 @@ public class BiblioLiz extends JFrame {
                     }
                 });
             }
-
-            // Adicionar ActionListener ao botão "Gerir Livros"
-            if (label.equals("Editar Livro")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        new GerirLivros();
-                        dispose(); // Fecha a janela principal
-                    }
-                });
-            }
-
-            Socio socio1 = new Socio(
-                    "Bernardo",
-                    "123456789",
-                    "Rua A, 123 - Bairro B",
-                    "987654321",
-                    "bernardo@example.com",
-                    TipoDeSocio.ENTUSIASTA
-            );
-            Socio socio2 = new Socio(
-                    "Miguel",
-                    "123456789",
-                    "Rua B, 123 - Bairro A",
-                    "912345671",
-                    "bernardo@example.com",
-                    TipoDeSocio.ACADEMICO
-            );
-            Socio socio3 = new Socio(
-                    "Delgado",
-                    "123456789",
-                    "Rua C, 123 - Bairro C",
-                    "923456787",
-                    "bernardo@example.com",
-                    TipoDeSocio.ACADEMICO
-            );
-            Socio[] socios = {socio1, socio2, socio3};
-
             if (label.equals("Gerir Sócios")) {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        new GerirSocio(socios);
-                        dispose();
+                        new GerirSocio(getSocios());
+                        dispose(); // Fecha a janela principal
+                    }
+                });
+            }
+            if (label.equals("Registar Livro")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new AdicionarLivro();
+                        dispose(); // Fecha a janela principal
                     }
                 });
             }
@@ -117,8 +96,6 @@ public class BiblioLiz extends JFrame {
             yPosition += buttonHeight + 36; // Espaçamento vertical entre os botões
         }
 
-
-
         // Adicionar botão de imagem para configurações
         ImageIcon configIcon = new ImageIcon(getClass().getResource("/config.png"));
         Image configImage = configIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
@@ -126,11 +103,12 @@ public class BiblioLiz extends JFrame {
         configButton.setBounds(625, 50, 50, 50); // Ajustar conforme necessário
         configButton.setBorder(null);
         configButton.setContentAreaFilled(false);
+        configButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Define cursor de mão
         configButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Configuracoes();
-                dispose(); // Fecha a janela principal
+                dispose();
             }
         });
 
@@ -141,6 +119,16 @@ public class BiblioLiz extends JFrame {
 
         // Torna o frame visível
         setVisible(true);
+    }
+
+    // Método para adicionar sócios à lista
+    public void addSocio(Socio socio) {
+        socios.add(socio);
+    }
+
+    // Método para obter a lista de sócios
+    public ArrayList<Socio> getSocios() {
+        return socios;
     }
 
     public static void main(String[] args) {

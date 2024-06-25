@@ -5,6 +5,7 @@ import org.example.FrontEnd.Livro.AdicionarLivro;
 import org.example.FrontEnd.Livro.GerirLivros;
 import org.example.FrontEnd.Socio.GerirSocio;
 import org.example.FrontEnd.Socio.ValidarCotas;
+import org.example.PaginaEstatistica;
 
 import javax.swing.*;
 import java.awt.*;

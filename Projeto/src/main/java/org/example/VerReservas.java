@@ -1,4 +1,7 @@
-package org.example;
+import org.example.BasePage;
+import org.example.BiblioLiz;
+import org.example.CustomPopUP;
+import org.example.RoundButton;
 
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;
@@ -41,13 +44,17 @@ public class VerReservas extends BasePage {
         Object[][] bookData = {
                 {"78853330227", "A Fórmula de Deus"},
         };
-        JTable bookTable = createTable(bookData, bookColumnNames);
+        JTable bookTable = createTable(bookData, bookColumnNames, false); // false to prevent cell editing
         bookTable.setRowHeight(40); // Ajusta a altura da linha da tabela de livro
-        bookTable.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de livro
+        Dimension bookTableSize = new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height);
+        bookTable.setPreferredScrollableViewportSize(bookTableSize);
+
         JScrollPane bookScrollPane = new JScrollPane(bookTable);
-        bookScrollPane.setPreferredSize(bookTable.getPreferredSize());
+        bookScrollPane.setPreferredSize(bookTableSize);
         bookScrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Remover a borda preta
         bookScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
+        bookScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER); // Disable vertical scroll
+        bookScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scroll
 
         bookInfoPanel.add(bookScrollPane, BorderLayout.CENTER);
 
@@ -64,16 +71,19 @@ public class VerReservas extends BasePage {
         String[] columnNames = {"Nr", "NIF", "Nome", "Morada", "Telefone", "Email", "Ações"};
         Object[][] data = {
                 {"1", "853330227", "Bernardo Lopes", "Rua Lopes, 2400-200, Leiria", "919912999", "2222048@my.ipleiria.pt", ""},
-                {"1", "853330227", "Bernardo Lopes", "Rua Lopes, 2400-200, Leiria", "919912999", "2222048@my.ipleiria.pt", ""},
+                {"2", "853330228", "Maria Silva", "Rua Silva, 2400-201, Leiria", "919912998", "2222049@my.ipleiria.pt", ""},
+                {"3", "853330229", "João Pereira", "Rua Pereira, 2400-202, Leiria", "919912997", "2222050@my.ipleiria.pt", ""}
         };
 
-        JTable tabelaReservas = createTable(data, columnNames);
+        JTable tabelaReservas = createTable(data, columnNames, true); // true to allow cell editing in the last column
         tabelaReservas.setRowHeight(60); // Ajusta a altura da linha da tabela de sócios
-        tabelaReservas.setPreferredSize(new Dimension(tabelaReservas.getPreferredSize().width, tabelaReservas.getRowHeight() + tabelaReservas.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
+
+        // Add JScrollPane with better scroll functionality
         JScrollPane reservasScrollPane = new JScrollPane(tabelaReservas);
-        reservasScrollPane.setPreferredSize(tabelaReservas.getPreferredSize());
         reservasScrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Remover a borda preta
         reservasScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
+        reservasScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        reservasScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         memberInfoPanel.add(reservasScrollPane, BorderLayout.CENTER);
 
@@ -115,11 +125,15 @@ public class VerReservas extends BasePage {
         return label;
     }
 
-    private JTable createTable(Object[][] data, String[] columnNames) {
+    private JTable createTable(Object[][] data, String[] columnNames, boolean isActionColumnEditable) {
         JTable table = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Impede a edição das células
+                if (isActionColumnEditable) {
+                    return column == columnNames.length - 1; // Allow editing only in the last column
+                } else {
+                    return false; // Prevent editing in all columns
+                }
             }
 
             @Override
@@ -142,7 +156,7 @@ public class VerReservas extends BasePage {
         table.setFont(new Font("Inter", Font.PLAIN, 16));
         table.setGridColor(Color.WHITE);
         table.setShowGrid(true);
-        table.getTableHeader().setReorderingAllowed(true); // Permite redimensionar as colunas
+        table.getTableHeader().setReorderingAllowed(false); // Prevent column reordering
 
         // Renderizador centralizado para células
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -158,66 +172,62 @@ public class VerReservas extends BasePage {
             columnModel.getColumn(i).setPreferredWidth(120);
         }
 
-        // Adicionando um botão "Cancelar" na coluna "Ações"
-        if (columnNames.length > 0 && columnNames[columnNames.length - 1].equals("Ações")) {
+        // Adicionando um botão "Cancelar" na coluna "Ações" se a tabela permitir edição
+        if (isActionColumnEditable && columnNames.length > 0 && columnNames[columnNames.length - 1].equals("Ações")) {
             columnModel.getColumn(columnNames.length - 1).setCellRenderer(new TableCellRenderer() {
                 private final JPanel panel = new JPanel(new GridBagLayout());
-                private final JButton cancelButton = new RoundButton("Cancelar");  // Use RoundButton here
+                private final JButton cancelButton = new RoundButton("Cancelar");
 
                 {
                     cancelButton.setBackground(Color.BLACK);
                     cancelButton.setForeground(Color.WHITE);
                     cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-                    cancelButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            // Exibe o diálogo de confirmação personalizado
-                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as configurações?", "Confirmação", "Cancelar", "Confirmar");
-
-                            // Verifica a resposta
-                            if (response == JOptionPane.YES_OPTION) {
-                                //Guardar os dados
-
-                                new BiblioLiz();
-                                dispose();
-                            }
-                        }
-                    });
+                    cancelButton.setFont(new Font("Inter", Font.BOLD, 14));
+                    cancelButton.setOpaque(true);
+                    cancelButton.setBorderPainted(false);
+                    cancelButton.setContentAreaFilled(false);
+                    cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                    cancelButton.setPreferredSize(new Dimension(100, 30));
 
                     panel.add(cancelButton);
                 }
 
                 @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                               boolean hasFocus, int row, int column) {
-                    panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    if (isSelected) {
+                        panel.setBackground(table.getSelectionBackground());
+                    } else {
+                        panel.setBackground(table.getBackground());
+                    }
                     return panel;
                 }
             });
 
-            // Configurar editor de célula para permitir interação com o botão
             columnModel.getColumn(columnNames.length - 1).setCellEditor(new TableCellEditor() {
                 private final JPanel panel = new JPanel(new GridBagLayout());
-                private final JButton cancelButton = new RoundButton("Cancelar");  // Use RoundButton here
+                private final JButton cancelButton = new RoundButton("Cancelar");
 
                 {
                     cancelButton.setBackground(Color.BLACK);
                     cancelButton.setForeground(Color.WHITE);
                     cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    cancelButton.setFont(new Font("Inter", Font.BOLD, 14));
+                    cancelButton.setOpaque(true);
+                    cancelButton.setBorderPainted(false);
+                    cancelButton.setContentAreaFilled(false);
+                    cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                    cancelButton.setPreferredSize(new Dimension(100, 30));
 
                     cancelButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             // Exibe o diálogo de confirmação personalizado
-                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as configurações?", "Confirmação", "Cancelar", "Confirmar");
+                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende cancelar a reserva?", "Confirmação", "Cancelar", "Confirmar");
 
                             // Verifica a resposta
                             if (response == JOptionPane.YES_OPTION) {
-                                //Guardar os dados
-
-                                new BiblioLiz();
-                                dispose();
+                                // Implementar a lógica de cancelamento da reserva
+                                JOptionPane.showMessageDialog(null, "Reserva cancelada com sucesso!");
                             }
                         }
                     });
@@ -227,7 +237,11 @@ public class VerReservas extends BasePage {
 
                 @Override
                 public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-                    panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                    if (isSelected) {
+                        panel.setBackground(table.getSelectionBackground());
+                    } else {
+                        panel.setBackground(table.getBackground());
+                    }
                     return panel;
                 }
 
@@ -270,10 +284,7 @@ public class VerReservas extends BasePage {
         return table;
     }
 
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(VerReservas::new);
     }
 }
-
-

@@ -36,7 +36,7 @@ public class BiblioLiz extends JFrame {
         Font buttonFont = new Font("Inter", Font.BOLD | Font.ITALIC, 32);
 
         // Botões
-        String[] buttonLabels = {"Gerir Livros", "Gerir Sócios", "Registar Livro", "Validar Cotas", "Ver Estatistica"};
+        String[] buttonLabels = {"Gerir Livros", "Gerir Sócios", "Registar Livro", "Editar Livro", "Validar Cotas", "Ver Estatistica"};
         int buttonWidth = 325;
         int buttonHeight = 52;
         int imgMargin_W = 90;
@@ -57,6 +57,17 @@ public class BiblioLiz extends JFrame {
 
             // Adicionar ActionListener ao botão "Gerir Livros"
             if (label.equals("Gerir Livros")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new GerirLivros();
+                        dispose(); // Fecha a janela principal
+                    }
+                });
+            }
+
+            // Adicionar ActionListener ao botão "Gerir Livros"
+            if (label.equals("Editar Livro")) {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

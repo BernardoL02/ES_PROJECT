@@ -21,7 +21,6 @@ public class AdicionarLivro extends BasePage {
 
 
 
-
         // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -113,6 +112,46 @@ public class AdicionarLivro extends BasePage {
 
         wrapperPanel.add(backgroundPanel, BorderLayout.CENTER);
 
+        //Butões
+        RoundButton buttonGuardar = new RoundButton("Guardar");
+        buttonGuardar.setBackground(new Color(0x99D4FF));
+        buttonGuardar.setForeground(Color.BLACK);
+        buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonGuardar.setBounds(750, 560, 160, 40);
+        add(buttonGuardar);
+
+        // Adiciona o ActionListener ao botão Guardar
+        buttonGuardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Exibe o diálogo de confirmação personalizado
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
+
+                // Verifica a resposta
+                if (response == JOptionPane.YES_OPTION) {
+                    //Guardar os dados
+
+                    new GerirLivros();
+                    dispose();
+                }
+            }
+        });
+
+        RoundButton buttonCancelar = new RoundButton("Cancelar");
+        buttonCancelar.setBackground(new Color(0xBABABA));
+        buttonCancelar.setForeground(Color.BLACK);
+        buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonCancelar.setBounds(560, 560, 160, 40);
+        add(buttonCancelar);
+
+        buttonCancelar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new BiblioLiz();
+                dispose(); // Fecha a janela principal
+            }
+        });
+        
         // Adiciona o wrapperPanel ao frame
         add(wrapperPanel, BorderLayout.CENTER);
 

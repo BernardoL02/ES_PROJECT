@@ -67,15 +67,15 @@ public class VerReservas extends BasePage {
                 {"1", "853330227", "Bernardo Lopes", "Rua Lopes, 2400-200, Leiria", "919912999", "2222048@my.ipleiria.pt", ""},
         };
 
-        JTable memberTable = createTable(data, columnNames);
-        memberTable.setRowHeight(60); // Ajusta a altura da linha da tabela de sócios
-        memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
-        JScrollPane memberScrollPane = new JScrollPane(memberTable);
-        memberScrollPane.setPreferredSize(memberTable.getPreferredSize());
-        memberScrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Remover a borda preta
-        memberScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
+        JTable tabelaReservas = createTable(data, columnNames);
+        tabelaReservas.setRowHeight(60); // Ajusta a altura da linha da tabela de sócios
+        tabelaReservas.setPreferredSize(new Dimension(tabelaReservas.getPreferredSize().width, tabelaReservas.getRowHeight() + tabelaReservas.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
+        JScrollPane reservasScrollPane = new JScrollPane(tabelaReservas);
+        reservasScrollPane.setPreferredSize(tabelaReservas.getPreferredSize());
+        reservasScrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Remover a borda preta
+        reservasScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
 
-        memberInfoPanel.add(memberScrollPane, BorderLayout.CENTER);
+        memberInfoPanel.add(reservasScrollPane, BorderLayout.CENTER);
 
         JLabel memberInfoLabel = new JLabel("Reservas", SwingConstants.CENTER);
         memberInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
@@ -172,20 +172,15 @@ public class VerReservas extends BasePage {
                     cancelButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            int selectedRow = table.getSelectedRow();
-                            if (selectedRow != -1) {
-                                // Exibe o diálogo de confirmação personalizado
-                                int response = JOptionPane.showConfirmDialog(table,
-                                        "Tem a certeza que pretende cancelar a reserva?",
-                                        "Confirmar Cancelamento", JOptionPane.YES_NO_OPTION);
+                            // Exibe o diálogo de confirmação personalizado
+                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as configurações?", "Confirmação", "Cancelar", "Confirmar");
 
-                                // Verifica a resposta
-                                if (response == JOptionPane.YES_OPTION) {
-                                    // Cancelar a reserva
-                                    // Aqui você pode adicionar a lógica para cancelar a reserva
-                                    // Por exemplo:
-                                    // table.getModel().setValueAt("Cancelado", selectedRow, table.getColumnCount() - 1);
-                                }
+                            // Verifica a resposta
+                            if (response == JOptionPane.YES_OPTION) {
+                                //Guardar os dados
+
+                                new BiblioLiz();
+                                dispose();
                             }
                         }
                     });
@@ -204,7 +199,7 @@ public class VerReservas extends BasePage {
             // Configurar editor de célula para permitir interação com o botão
             columnModel.getColumn(columnNames.length - 1).setCellEditor(new TableCellEditor() {
                 private final JPanel panel = new JPanel(new GridBagLayout());
-                private final JButton cancelButton = new RoundButton("Reservas");  // Use RoundButton here
+                private final JButton cancelButton = new RoundButton("Cancelar");  // Use RoundButton here
 
                 {
                     cancelButton.setBackground(Color.BLACK);
@@ -215,7 +210,7 @@ public class VerReservas extends BasePage {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             // Exibe o diálogo de confirmação personalizado
-                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende cancelar a reserva?", "Confirmação", "Não", "Sim");
+                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as configurações?", "Confirmação", "Cancelar", "Confirmar");
 
                             // Verifica a resposta
                             if (response == JOptionPane.YES_OPTION) {

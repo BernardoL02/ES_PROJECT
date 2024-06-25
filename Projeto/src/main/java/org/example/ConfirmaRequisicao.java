@@ -74,51 +74,60 @@ public class ConfirmaRequisicao extends BasePage {
         memberInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
         memberInfoPanel.add(memberInfoLabel, BorderLayout.NORTH);
 
-        // Painel de datas customizado
-        JPanel datesPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        // Painel de datas customizado com imagem
+        JPanel datesPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon datesIcon = new ImageIcon(getClass().getResource("/Datas.png"));
+                Image datesImage = datesIcon.getImage();
+                g.drawImage(datesImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         datesPanel.setBackground(new Color(0x6EC2FF));
         datesPanel.setBorder(BorderFactory.createLineBorder(new Color(0x6EC2FF), 10));
         datesPanel.setPreferredSize(new Dimension(200, 150));
-
-        datesPanel.add(createDatePanel("09 - 05 - 2024"));
-        datesPanel.add(createDatePanel("09 - 06 - 2024"));
-
-        JPanel lastRowPanel = new JPanel(new BorderLayout());
-        lastRowPanel.setBackground(new Color(0x6EC2FF));
-        lastRowPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-
-        lastRowPanel.add(createPeriodPanel("30 Dias"), BorderLayout.EAST);
-
-        datesPanel.add(lastRowPanel);
 
         // Painel de botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setBackground(Color.WHITE);
 
-        RoundButton cancelButton = new RoundButton("Cancelar");
-        cancelButton.setBackground(Color.LIGHT_GRAY);
-        cancelButton.setPreferredSize(new Dimension(120, 40));
-        cancelButton.addActionListener(new ActionListener() {
+        RoundButton buttonCancelar = new RoundButton("Cancelar");
+        buttonCancelar.setBackground(new Color(0xBABABA));
+        buttonCancelar.setForeground(Color.BLACK);
+        buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonCancelar.setBounds(500, 560, 160, 40);
+
+        buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
-                dispose();
+                new RequisicoesPorSocio();
+                dispose(); // Fecha a janela principal
             }
         });
 
-        RoundButton saveButton = new RoundButton("Guardar");
-        saveButton.setBackground(new Color(0x64B5F6));
-        saveButton.setPreferredSize(new Dimension(120, 40));
-        saveButton.addActionListener(new ActionListener() {
+        RoundButton buttonGuardar = new RoundButton("Guardar");
+        buttonGuardar.setBackground(new Color(0x99D4FF));
+        buttonGuardar.setForeground(Color.BLACK);
+        buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonGuardar.setBounds(690, 560, 160, 40);
+        buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implementar a ação de guardar
-                JOptionPane.showMessageDialog(null, "Requisição guardada com sucesso!");
+                // Exibe o diálogo de confirmação personalizado
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as alterações?", "Confirmação", "Cancelar", "Confirmar");
+
+                // Verifica a resposta
+                if (response == JOptionPane.YES_OPTION) {
+                    // Guardar os dados
+                    new RequisicoesPorSocio();
+                    dispose();
+                }
             }
         });
 
-        buttonPanel.add(cancelButton);
-        buttonPanel.add(saveButton);
+        buttonPanel.add(buttonCancelar);
+        buttonPanel.add(buttonGuardar);
 
         JPanel combinedPanel = new JPanel(new BorderLayout(10, 10));
         combinedPanel.setBackground(Color.WHITE);
@@ -160,58 +169,6 @@ public class ConfirmaRequisicao extends BasePage {
                 g2.dispose();
             }
         };
-    }
-
-    private JPanel createDatePanel(String dateText) {
-        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-                g2.dispose();
-            }
-        };
-        datePanel.setBackground(Color.WHITE);
-        datePanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-
-        ImageIcon icon = new ImageIcon(getClass().getResource("/IconData.png"));
-        Image image = icon.getImage();
-        Image newimg = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newimg);
-
-        JLabel iconLabel = new JLabel(icon);
-        JLabel dateLabel = new JLabel(dateText);
-        dateLabel.setFont(new Font("Inter", Font.BOLD, 16));
-
-        datePanel.add(iconLabel);
-        datePanel.add(dateLabel);
-
-        return datePanel;
-    }
-
-    private JPanel createPeriodPanel(String periodText) {
-        JPanel periodPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-                g2.dispose();
-            }
-        };
-        periodPanel.setBackground(Color.WHITE);
-
-        JLabel periodLabel = new JLabel(periodText);
-        periodLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
-
-        periodPanel.add(periodLabel);
-
-        return periodPanel;
     }
 
     private JLabel createLabel(String text) {

@@ -64,7 +64,7 @@ public class RequisicoesPorSocio extends BasePage {
         Object[][] memberData = {
                 {"1", "Bernardo Lopes", "Rua Principal", "999999999", "bernardo@gmail.com", "Sim", "Entusiasta"}
         };
-        JTable memberTable = createMemberTable(memberData, memberColumnNames);
+        JTable memberTable = createTable(memberData, memberColumnNames);
         memberTable.setRowHeight(30); // Ajusta a altura da linha da tabela de sócios
         memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
         JScrollPane memberScrollPane = new JScrollPane(memberTable);
@@ -119,11 +119,10 @@ public class RequisicoesPorSocio extends BasePage {
         mainPanel.add(memberInfoPanel);
 
         // Adiciona um espaçamento entre a tabela e os botões
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 100))); // Reduza o espaçamento para 10 pixels
 
         // Adiciona o painel de botões ao mainPanel
         mainPanel.add(buttonPanel);
-
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 100))); // Reduza o espaçamento para 10 pixels
         // Painel de informação do livro
         JPanel bookInfoPanel = new JPanel(new BorderLayout());
         bookInfoPanel.setBackground(Color.WHITE);
@@ -139,7 +138,7 @@ public class RequisicoesPorSocio extends BasePage {
                 {"10", "78853330227", "A Fórmula de Deus", "2º Edição", "Romance", "05/05/2024", " ", "20/05/2024", ""},
                 {"11", "788324234", "O Imortal", "2º Edição", "Romance", "05/05/2024", "12/05/2024", "20/05/2024", ""}
         };
-        JTable bookTable = createBookTable(bookData, bookColumnNames);
+        JTable bookTable = createTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
         bookTable.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de livro
 
@@ -247,57 +246,13 @@ public class RequisicoesPorSocio extends BasePage {
         return label;
     }
 
-    private JTable createMemberTable(Object[][] data, String[] columnNames) {
+    private JTable createTable(Object[][] data, String[] columnNames) {
         JTable table = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true; // Permite editar todas as células da tabela de sócios
+                // Torna todos os campos editáveis, exceto a coluna "Ação"
+                return true;
             }
-
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                Component component = super.prepareRenderer(renderer, row, column);
-                if (component instanceof JComponent) {
-                    ((JComponent) component).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-                    component.setBackground(new Color(0xDFF3FF)); // Define a cor de fundo para azul claro
-                    ((JComponent) component).setOpaque(true); // Garante que seja opaco
-                }
-                return component;
-            }
-        };
-        table.setRowHeight(30);
-        table.getTableHeader().setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
-        table.getTableHeader().setBackground(new Color(0x6EC2FF));
-        table.getTableHeader().setForeground(Color.BLACK);
-        table.setFont(new Font("Inter", Font.PLAIN, 16));
-        table.setGridColor(Color.WHITE);
-        table.setShowGrid(true);
-        table.getTableHeader().setReorderingAllowed(true); // Permite redimensionar as colunas
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        centerRenderer.setOpaque(true); // Garante que seja opaco
-        centerRenderer.setBackground(new Color(0x6EC2FF)); // Define a cor de fundo para azul claro
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        TableColumnModel columnModel = table.getColumnModel();
-        for (int i = 0; i < columnModel.getColumnCount(); i++) {
-            columnModel.getColumn(i).setPreferredWidth(120);
-        }
-        table.setPreferredScrollableViewportSize(table.getPreferredSize());
-
-        return table;
-    }
-
-    private JTable createBookTable(Object[][] data, String[] columnNames) {
-        JTable table = new JTable(data, columnNames) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return columnNames[column].equals("Ação");
-            }
-
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);

@@ -92,6 +92,16 @@ public class BiblioLiz extends JFrame {
                 });
             }
 
+            if (label.equals("Validar Cotas")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new ValidarCotas();
+                        dispose(); // Fecha a janela principal
+                    }
+                });
+            }
+
             backgroundPanel.add(button);
             yPosition += buttonHeight + 36; // Espaçamento vertical entre os botões
         }

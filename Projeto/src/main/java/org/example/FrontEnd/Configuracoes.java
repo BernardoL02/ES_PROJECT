@@ -1,4 +1,9 @@
-package org.example;
+package org.example.FrontEnd;
+
+import org.example.FrontEnd.Livro.GerirLivros;
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.Resources.CustomPopUP;
+import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
 import java.awt.*;

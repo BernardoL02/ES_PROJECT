@@ -1,11 +1,14 @@
-package org.example;
+package org.example.FrontEnd.Socio;
+
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.BiblioLiz;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AdicionarSocio extends BasePage{
+public class AdicionarSocio extends BasePage {
 
     public AdicionarSocio(){
         super("Adicionar Socio", "/HeaderRegistarSocio.png", new ActionListener() {

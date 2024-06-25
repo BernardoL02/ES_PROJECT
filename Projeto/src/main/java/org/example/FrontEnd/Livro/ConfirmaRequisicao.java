@@ -1,4 +1,10 @@
-package org.example;
+package org.example.FrontEnd.Livro;
+
+import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.Resources.CustomPopUP;
+import org.example.FrontEnd.Resources.RoundButton;
+import org.example.FrontEnd.Socio.RequisicoesPorSocio;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

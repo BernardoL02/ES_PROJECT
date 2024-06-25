@@ -1,4 +1,7 @@
-package org.example;
+package org.example.FrontEnd.Socio;
+
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.BiblioLiz;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

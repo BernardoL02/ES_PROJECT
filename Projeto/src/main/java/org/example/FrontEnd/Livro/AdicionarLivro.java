@@ -1,7 +1,11 @@
-package org.example;
+package org.example.FrontEnd.Livro;
+
+import org.example.FrontEnd.*;
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.Resources.CustomPopUP;
+import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

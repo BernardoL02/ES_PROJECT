@@ -1,17 +1,24 @@
-package org.example;
+package org.example.FrontEnd.Socio;
+
+import org.example.BackEnd.Socio;
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.CustomPopUP;
+import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-public class GerirLivros extends BasePage {
-    public GerirLivros() {
-        super("Gerir Livros", "/HeaderGerirLivros.png", new ActionListener() {
+public class GerirSocio extends BasePage {
+
+    private ArrayList<Socio> socios;
+
+    public GerirSocio(ArrayList<Socio> socios) {
+        super("Gerir Sócio", "/HeaderGerirSocio.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new BiblioLiz();
@@ -19,15 +26,22 @@ public class GerirLivros extends BasePage {
             }
         }, true);
 
+        this.socios = socios;
+
+        // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Painel para o conteúdo principal
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(0xFFFFFF)); // Cor do fundo do painel principal
+
+        // Painel para o botão "Adicionar"
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.setBackground(new Color(0xFFFFFF)); // Cor do fundo do painel do botão
 
         JPanel topPanel = new JPanel(new BorderLayout(10, 10));
-        topPanel.setBackground(Color.WHITE);
+        topPanel.setBackground(new Color(0xFFFFFF));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel searchPanel = new JPanel() {
@@ -42,41 +56,39 @@ public class GerirLivros extends BasePage {
         searchPanel.setLayout(new BorderLayout());
         searchPanel.setPreferredSize(new Dimension(600, 40));
         searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        searchPanel.setBackground(Color.WHITE);
 
         JTextField searchText = new JTextField();
         searchText.setOpaque(false);
         searchText.setBorder(BorderFactory.createEmptyBorder(5, 55, 5, 5));
         searchPanel.add(searchText, BorderLayout.CENTER);
 
-        RoundButton addButton = new RoundButton("Adicionar Livro");
-        addButton.setBackground(new Color(0x99D4FF));
-        addButton.setForeground(Color.BLACK);
-        addButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        addButton.setPreferredSize(new Dimension(160, 40));
-
-        addButton.addActionListener(new ActionListener() {
+        // Adicionar botão "Adicionar"
+        RoundButton adicionarButton = new RoundButton("Adicionar");
+        adicionarButton.setBackground(new Color(0x46AEB5));
+        adicionarButton.setForeground(Color.WHITE); // Definindo a cor do texto como branco
+        adicionarButton.setOpaque(true);
+        adicionarButton.setBorderPainted(false);
+        adicionarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AdicionarLivro();
+                new AdicionarSocio();
                 dispose(); // Fecha a janela principal
             }
         });
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        buttonPanel.setBackground(new Color(0xFFFFFF));
-        buttonPanel.add(addButton);
-
         topPanel.add(searchPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.EAST);
-        mainPanel.add(topPanel, BorderLayout.NORTH);
+        buttonPanel.add(adicionarButton);
 
-        String[] columnNames = {"ISBN", "Título", "Edição", "Gênero", "Localização", "Quantidade", "Ações"};
+        mainPanel.add(topPanel, BorderLayout.NORTH); // Adiciona o topPanel ao mainPanel
+
+        String[] columnNames = {"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago", "Ações"};
         Object[][] data = {
-                {"78853330227123123123123", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""}
+                {"Bernardo", "bernardo@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Pago", " "},
+                {"AAAA", "aaaa@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Pago", " "}
         };
 
+        // Criando a tabela com o modelo
         JTable table = new JTable(data, columnNames) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -106,7 +118,6 @@ public class GerirLivros extends BasePage {
         table.setGridColor(Color.WHITE);
         table.setShowGrid(true);
         table.getTableHeader().setReorderingAllowed(false);
-        table.getTableHeader().setResizingAllowed(true); // Permite redimensionar colunas
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -122,6 +133,8 @@ public class GerirLivros extends BasePage {
         columnModel.getColumn(4).setPreferredWidth(120);
         columnModel.getColumn(5).setPreferredWidth(120);
         columnModel.getColumn(6).setPreferredWidth(180);
+
+        table.getTableHeader().setResizingAllowed(false);
 
         columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
             private final JPanel panel = new JPanel(new GridBagLayout());
@@ -195,21 +208,30 @@ public class GerirLivros extends BasePage {
                 editButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Editar Livro");
+                        new RequisicoesPorSocio();
+                        dispose();
                     }
                 });
 
                 deleteButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Excluir Livro");
+                        int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que deseja eliminar o sócio?", "Confirmação", "Cancelar", "Confirmar");
+
+                        // Verifica a resposta
+                        if (response == JOptionPane.YES_OPTION) {
+                            //Guardar os dados
+                            new BiblioLiz();
+                            dispose();
+                        }
+
                     }
                 });
 
                 reserveButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Reservar Livro");
+                        JOptionPane.showMessageDialog(null, "Ver Reservas");
                     }
                 });
 
@@ -265,16 +287,17 @@ public class GerirLivros extends BasePage {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+
+
+        // Adiciona os componentes ao painel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         wrapperPanel.add(mainPanel, BorderLayout.CENTER);
 
+        // Adiciona o wrapperPanel ao frame
         add(wrapperPanel, BorderLayout.CENTER);
 
+        // Torna o frame visível
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GerirLivros::new);
     }
 }

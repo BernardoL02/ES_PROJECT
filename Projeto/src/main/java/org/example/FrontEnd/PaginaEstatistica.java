@@ -1,11 +1,13 @@
-package org.example;
+package org.example.FrontEnd;
+
+import org.example.FrontEnd.Resources.BasePage;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PaginaEstatistica extends BasePage{
+public class PaginaEstatistica extends BasePage {
     public PaginaEstatistica(){
 
         super("Informações Estatistica", "/HeaderPaginaEstatistica.png", new ActionListener() {

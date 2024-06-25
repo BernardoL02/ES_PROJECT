@@ -1,4 +1,9 @@
-package org.example;
+package org.example.FrontEnd.Socio;
+
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.CustomPopUP;
+import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
 import javax.swing.table.*;

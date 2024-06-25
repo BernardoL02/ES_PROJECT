@@ -1,9 +1,9 @@
-package org.example;
+package org.example.FrontEnd.Livro;
 
-import org.example.BasePage;
-import org.example.BiblioLiz;
-import org.example.CustomPopUP;
-import org.example.RoundButton;
+import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.Resources.CustomPopUP;
+import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;

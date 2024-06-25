@@ -1,7 +1,9 @@
-package org.example;
+package org.example.FrontEnd.Livro;
+
+import org.example.FrontEnd.Resources.BasePage;
+import org.example.FrontEnd.BiblioLiz;
 
 import javax.swing.*;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

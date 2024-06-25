@@ -1,4 +1,10 @@
-package org.example;
+package org.example.FrontEnd;
+
+import org.example.BackEnd.Socio;
+import org.example.FrontEnd.Livro.AdicionarLivro;
+import org.example.FrontEnd.Livro.GerirLivros;
+import org.example.FrontEnd.Socio.GerirSocio;
+import org.example.FrontEnd.Socio.ValidarCotas;
 
 import javax.swing.*;
 import java.awt.*;

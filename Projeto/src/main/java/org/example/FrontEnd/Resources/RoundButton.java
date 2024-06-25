@@ -1,4 +1,4 @@
-package org.example;
+package org.example.FrontEnd.Resources;
 
 import javax.swing.*;
 import java.awt.*;

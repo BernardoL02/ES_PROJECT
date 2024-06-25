@@ -1,11 +1,11 @@
-package org.example;
+package org.example.FrontEnd.Resources;
+
+import org.example.FrontEnd.Configuracoes;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class BasePage extends JFrame {
     protected JPanel headerPanel;

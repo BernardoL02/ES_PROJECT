@@ -1,4 +1,4 @@
-package org.example;
+package org.example.BackEnd;
 
 public class Socio {
     private String nome;

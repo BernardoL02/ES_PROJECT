@@ -1,5 +1,6 @@
 package org.example.FrontEnd.Socio;
 
+import org.example.FrontEnd.Livro.RequisitarLivro;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -30,6 +31,24 @@ public class RequisicoesPorSocio extends BasePage {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Alinha o botão à esquerda
+        topPanel.setBackground(Color.WHITE);
+
+        RoundButton requisitarButton = new RoundButton("Requisitar");
+        requisitarButton.setBackground(new Color(0x99D4FF));
+        requisitarButton.setForeground(Color.BLACK);
+        requisitarButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        requisitarButton.setPreferredSize(new Dimension(160, 40));
+        requisitarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new RequisitarLivro();
+                dispose(); // Fecha a janela principal
+            }
+        });
+
+        topPanel.add(requisitarButton);
+        mainPanel.add(topPanel);
 
         // Painel de informação do sócio
         JPanel memberInfoPanel = new JPanel(new BorderLayout());
@@ -45,7 +64,7 @@ public class RequisicoesPorSocio extends BasePage {
         Object[][] memberData = {
                 {"1", "Bernardo Lopes", "Rua Principal", "999999999", "bernardo@gmail.com", "Sim", "Entusiasta"}
         };
-        JTable memberTable = createTable(memberData, memberColumnNames);
+        JTable memberTable = createMemberTable(memberData, memberColumnNames);
         memberTable.setRowHeight(30); // Ajusta a altura da linha da tabela de sócios
         memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
         JScrollPane memberScrollPane = new JScrollPane(memberTable);
@@ -59,15 +78,14 @@ public class RequisicoesPorSocio extends BasePage {
         mainPanel.add(memberInfoPanel);
 
         // Painel de botões
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10)); // Alinhamento ao centro
         buttonPanel.setBackground(Color.WHITE);
 
         RoundButton buttonCancelar = new RoundButton("Cancelar");
         buttonCancelar.setBackground(new Color(0xBABABA));
         buttonCancelar.setForeground(Color.BLACK);
         buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonCancelar.setBounds(500, 560, 160, 40);
-        add(buttonCancelar);
+        buttonPanel.add(buttonCancelar);
 
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
@@ -81,8 +99,7 @@ public class RequisicoesPorSocio extends BasePage {
         buttonGuardar.setBackground(new Color(0x99D4FF));
         buttonGuardar.setForeground(Color.BLACK);
         buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonGuardar.setBounds(690, 560, 160, 40);
-        add(buttonGuardar);
+        buttonPanel.add(buttonGuardar);
         buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -98,8 +115,11 @@ public class RequisicoesPorSocio extends BasePage {
             }
         });
 
-        buttonPanel.add(buttonCancelar);
-        buttonPanel.add(buttonGuardar);
+        // Adiciona o painel de informações do sócio ao mainPanel
+        mainPanel.add(memberInfoPanel);
+
+        // Adiciona um espaçamento entre a tabela e os botões
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 100))); // Reduza o espaçamento para 10 pixels
 
         // Adiciona o painel de botões ao mainPanel
         mainPanel.add(buttonPanel);
@@ -119,7 +139,7 @@ public class RequisicoesPorSocio extends BasePage {
                 {"10", "78853330227", "A Fórmula de Deus", "2º Edição", "Romance", "05/05/2024", " ", "20/05/2024", ""},
                 {"11", "788324234", "O Imortal", "2º Edição", "Romance", "05/05/2024", "12/05/2024", "20/05/2024", ""}
         };
-        JTable bookTable = createTable(bookData, bookColumnNames);
+        JTable bookTable = createBookTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
         bookTable.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de livro
 
@@ -227,12 +247,57 @@ public class RequisicoesPorSocio extends BasePage {
         return label;
     }
 
-    private JTable createTable(Object[][] data, String[] columnNames) {
+    private JTable createMemberTable(Object[][] data, String[] columnNames) {
+        JTable table = new JTable(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return true; // Permite editar todas as células da tabela de sócios
+            }
+
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                if (component instanceof JComponent) {
+                    ((JComponent) component).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+                    component.setBackground(new Color(0xDFF3FF)); // Define a cor de fundo para azul claro
+                    ((JComponent) component).setOpaque(true); // Garante que seja opaco
+                }
+                return component;
+            }
+        };
+        table.setRowHeight(30);
+        table.getTableHeader().setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
+        table.getTableHeader().setBackground(new Color(0x6EC2FF));
+        table.getTableHeader().setForeground(Color.BLACK);
+        table.setFont(new Font("Inter", Font.PLAIN, 16));
+        table.setGridColor(Color.WHITE);
+        table.setShowGrid(true);
+        table.getTableHeader().setReorderingAllowed(true); // Permite redimensionar as colunas
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        centerRenderer.setOpaque(true); // Garante que seja opaco
+        centerRenderer.setBackground(new Color(0x6EC2FF)); // Define a cor de fundo para azul claro
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            columnModel.getColumn(i).setPreferredWidth(120);
+        }
+        table.setPreferredScrollableViewportSize(table.getPreferredSize());
+
+        return table;
+    }
+
+    private JTable createBookTable(Object[][] data, String[] columnNames) {
         JTable table = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return columnNames[column].equals("Ação");
             }
+
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);

@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import javax.swing.text.NumberFormatter;
 
 public class Configuracoes extends BasePage {
@@ -44,11 +45,28 @@ public class Configuracoes extends BasePage {
         backgroundPanel.setOpaque(true);
         backgroundPanel.setLayout(null); // Definindo layout absoluto para posicionamento personalizado
 
-        // Configurando o JTextField para aceitar apenas números inteiros
-        NumberFormatter formatter = new NumberFormatter();
+// Configurando o JTextField para aceitar apenas números inteiros, mas permitindo que seja vazio
+        NumberFormatter formatter = new NumberFormatter() {
+            @Override
+            public Object stringToValue(String text) throws ParseException {
+                if (text == null || text.trim().isEmpty()) {
+                    return null; // Permite que o campo seja vazio
+                }
+                return super.stringToValue(text);
+            }
+
+            @Override
+            public String valueToString(Object value) throws ParseException {
+                if (value == null) {
+                    return ""; // Exibe uma string vazia se o valor for nulo
+                }
+                return super.valueToString(value);
+            }
+        };
         formatter.setValueClass(Integer.class); // Define o tipo de valor como Integer
         formatter.setCommitsOnValidEdit(true); // Submete o valor quando válido
-        formatter.setMaximum(999); // Valor maximo permitido (zero)
+        formatter.setAllowsInvalid(true); // Permite entrada inválida temporária
+        formatter.setMaximum(999);
 
         // Adicionando caixas de texto ao painel de fundo
         JTextField diasLeitor = new JFormattedTextField(formatter);
@@ -99,6 +117,48 @@ public class Configuracoes extends BasePage {
         backgroundPanel.add(multa);
 
         wrapperPanel.add(backgroundPanel, BorderLayout.CENTER);
+
+        //Butões
+        RoundButton buttonGuardar = new RoundButton("Guardar");
+        buttonGuardar.setBackground(new Color(0x99D4FF));
+        buttonGuardar.setForeground(Color.BLACK);
+        buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonGuardar.setBounds(685, 560, 160, 40);
+        add(buttonGuardar);
+
+        // Adiciona o ActionListener ao botão Guardar
+        buttonGuardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Exibe o diálogo de confirmação personalizado
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
+
+                // Verifica a resposta
+                if (response == JOptionPane.YES_OPTION) {
+                    //Guardar os dados
+
+                    new GerirLivros();
+                    dispose();
+                }
+            }
+        });
+
+        RoundButton buttonCancelar = new RoundButton("Cancelar");
+        buttonCancelar.setBackground(new Color(0xBABABA));
+        buttonCancelar.setForeground(Color.BLACK);
+        buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
+        buttonCancelar.setBounds(495, 560, 160, 40);
+        add(buttonCancelar);
+
+        buttonCancelar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new BiblioLiz();
+                dispose(); // Fecha a janela principal
+            }
+        });
+
+
 
         // Adiciona o wrapperPanel ao frame
         add(wrapperPanel, BorderLayout.CENTER);

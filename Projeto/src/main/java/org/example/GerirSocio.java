@@ -61,7 +61,7 @@ public class GerirSocio extends BasePage {
         adicionarButton.setBackground(new Color(0x46AEB5));
         adicionarButton.setForeground(Color.WHITE); // Definindo a cor do texto como branco
         adicionarButton.setOpaque(true);
-        adicionarButton.setBorderPainted(false); // Removendo a borda
+        adicionarButton.setBorderPainted(false);
         adicionarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -202,14 +202,23 @@ public class GerirSocio extends BasePage {
                 editButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Editar Sócio");
+                        new RequisicoesPorSocio();
+                        dispose();
                     }
                 });
 
                 deleteButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Excluir Sócio");
+                        int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que deseja eliminar o sócio?", "Confirmação", "Cancelar", "Confirmar");
+
+                        // Verifica a resposta
+                        if (response == JOptionPane.YES_OPTION) {
+                            //Guardar os dados
+                            new BiblioLiz();
+                            dispose();
+                        }
+
                     }
                 });
 

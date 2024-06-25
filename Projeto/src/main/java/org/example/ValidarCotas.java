@@ -60,9 +60,14 @@ public class ValidarCotas extends BasePage {
         String[] columnNames = {"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago"};
         Object[][] data = {
                 {"Bernardo", "bernardo@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Não"},
-                {"AAAA", "aaaa@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Sim"}
+                {"AAAA", "aaaa@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Não"}
         };
-
+        int countNaoPago = 0;
+        for (Object[] row : data) {
+            if ("Não".equals(row[5])) {
+                countNaoPago++;
+            }
+        }
         JTable table = new JTable(data, columnNames) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -108,21 +113,31 @@ public class ValidarCotas extends BasePage {
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
-        JPanel numeroSocios = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                ImageIcon numeroSociosImage = new ImageIcon(getClass().getResource("/NumSocios.png"));
-                Image image = numeroSociosImage.getImage();
-                g.drawImage(image, 0, 0, 300, 100, this);
-            }
-        };
+        // Usar JLabel para a imagem
+        JLabel numeroSocios = new JLabel(new ImageIcon(getClass().getResource("/NumSocios.png")));
         numeroSocios.setBackground(Color.WHITE);
-        numeroSocios.setPreferredSize(new Dimension(20, 100));
-        numeroSocios.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+
+        // Label para exibir a contagem
+        JLabel countLabel = new JLabel("" + countNaoPago);
+        countLabel.setFont(new Font("Inter", Font.BOLD, 38));
+        countLabel.setForeground(Color.BLACK);
+        countLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Move 30px para a direita
+
+        // Painel para posicionar a imagem e a contagem no canto inferior esquerdo
+        JPanel bottomLeftPanel = new JPanel(null); // Usar layout nulo para posicionamento absoluto
+        bottomLeftPanel.setPreferredSize(new Dimension(100, 100));
+        bottomLeftPanel.setBackground(Color.WHITE);
+
+        numeroSocios.setBounds(30, 0, 450, 100); // Definir posição e tamanho da imagem
+        countLabel.setBounds(260, 55, 100, 40); // Definir posição e tamanho do número, ajustar conforme necessário
+
+        bottomLeftPanel.add(numeroSocios);
+        bottomLeftPanel.add(countLabel);
+
         // Adiciona os componentes ao painel principal
-        mainPanel.add(numeroSocios, BorderLayout.SOUTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(bottomLeftPanel, BorderLayout.SOUTH);
 
         wrapperPanel.add(mainPanel, BorderLayout.CENTER);
 

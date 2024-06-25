@@ -102,6 +102,17 @@ public class BiblioLiz extends JFrame {
                 });
             }
 
+            if (label.equals("Ver Estatistica")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new PaginaEstatistica();
+                        dispose(); // Fecha a janela principal
+                    }
+                });
+            }
+
+
             backgroundPanel.add(button);
             yPosition += buttonHeight + 36; // Espaçamento vertical entre os botões
         }

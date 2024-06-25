@@ -1,101 +1,56 @@
 package org.example.BackEnd;
 
+import java.io.*;
+import java.util.Properties;
+
 public class Configuracoes {
+    private static final String CONFIG_FILE = "config.properties";
+    private Properties properties;
 
-    private static int diasLeitor;
-    private static int diasAcademico;
-    private static int diasEntusiasta;
-
-    private static float valorLeitor;
-    private static float valorAcademico;
-    private static float valorEntusiasta;
-
-    private static int maximoLivros;
-    private static float multaDiaria;
-    private static float danificacaoLivro;
-
-    // Método estático para inicializar as configurações
-    public static void inicializarConfiguracoes(int diasLeitor, int diasAcademico, int diasEntusiasta, float valorLeitor, float valorAcademico, float valorEntusiasta, int maximoLivros, float multaDiaria, float danificacaoLivro) {
-        Configuracoes.diasLeitor = diasLeitor;
-        Configuracoes.diasAcademico = diasAcademico;
-        Configuracoes.diasEntusiasta = diasEntusiasta;
-        Configuracoes.valorLeitor = valorLeitor;
-        Configuracoes.valorAcademico = valorAcademico;
-        Configuracoes.valorEntusiasta = valorEntusiasta;
-        Configuracoes.maximoLivros = maximoLivros;
-        Configuracoes.multaDiaria = multaDiaria;
-        Configuracoes.danificacaoLivro = danificacaoLivro;
+    public Configuracoes() {
+        properties = new Properties();
+        loadProperties();
     }
 
-    public static int getDiasLeitor() {
-        return diasLeitor;
+    private void loadProperties() {
+        File configFile = new File(CONFIG_FILE);
+        if (configFile.exists()) {
+            try (InputStream inputStream = new FileInputStream(configFile)) {
+                properties.load(inputStream);
+            } catch (IOException e) {
+                System.out.println("Erro ao carregar o arquivo de configuração: " + e.getMessage());
+            }
+        } else {
+            createDefaultProperties();
+            saveProperties();
+        }
     }
 
-    public static int getDiasAcademico() {
-        return diasAcademico;
+    private void createDefaultProperties() {
+        properties.setProperty("diasLeitor", "10");
+        properties.setProperty("diasAcademico", "20");
+        properties.setProperty("diasEntusiasta", "30");
+        properties.setProperty("cotasLeitor", "40.0");
+        properties.setProperty("cotasAcademico", "50.0");
+        properties.setProperty("cotasEntusiasta", "60.0");
+        properties.setProperty("maxLivros", "70");
+        properties.setProperty("danificacaoLivro", "80.0");
+        properties.setProperty("multa", "90.0");
     }
 
-    public static int getDiasEntusiasta() {
-        return diasEntusiasta;
+    public void saveProperties() {
+        try (OutputStream outputStream = new FileOutputStream(CONFIG_FILE)) {
+            properties.store(outputStream, "Configurações da aplicação");
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar o arquivo de configuração: " + e.getMessage());
+        }
     }
 
-    public static float getValorLeitor() {
-        return valorLeitor;
+    public String getProperty(String key) {
+        return properties.getProperty(key);
     }
 
-    public static float getValorAcademico() {
-        return valorAcademico;
-    }
-
-    public static float getValorEntusiasta() {
-        return valorEntusiasta;
-    }
-
-    public static int getMaximoLivros() {
-        return maximoLivros;
-    }
-
-    public static float getMultaDiaria() {
-        return multaDiaria;
-    }
-
-    public static float getDanificacaoLivro() {
-        return danificacaoLivro;
-    }
-
-    public static void setDiasLeitor(int diasLeitor) {
-        Configuracoes.diasLeitor = diasLeitor;
-    }
-
-    public static void setDiasAcademico(int diasAcademico) {
-        Configuracoes.diasAcademico = diasAcademico;
-    }
-
-    public static void setDiasEntusiasta(int diasEntusiasta) {
-        Configuracoes.diasEntusiasta = diasEntusiasta;
-    }
-
-    public static void setValorLeitor(float valorLeitor) {
-        Configuracoes.valorLeitor = valorLeitor;
-    }
-
-    public static void setValorAcademico(float valorAcademico) {
-        Configuracoes.valorAcademico = valorAcademico;
-    }
-
-    public static void setValorEntusiasta(float valorEntusiasta) {
-        Configuracoes.valorEntusiasta = valorEntusiasta;
-    }
-
-    public static void setMaximoLivros(int maximoLivros) {
-        Configuracoes.maximoLivros = maximoLivros;
-    }
-
-    public static void setMultaDiaria(float multaDiaria) {
-        Configuracoes.multaDiaria = multaDiaria;
-    }
-
-    public static void setDanificacaoLivro(float danificacaoLivro) {
-        Configuracoes.danificacaoLivro = danificacaoLivro;
+    public void setProperty(String key, String value) {
+        properties.setProperty(key, value);
     }
 }

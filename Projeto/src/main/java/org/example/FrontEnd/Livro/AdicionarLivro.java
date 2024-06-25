@@ -105,12 +105,12 @@ public class AdicionarLivro extends BasePage {
 
         //Informações Fornecedor
         JTextField fieldEditoraFornecedor = new JTextField();
-        fieldEditoraFornecedor.setBounds(655, 90, 200, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldEditoraFornecedor.setBounds(645, 90, 200, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
         fieldEditoraFornecedor.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldEditoraFornecedor);
 
         JTextField fieldDistribuidora = new JTextField();
-        fieldDistribuidora.setBounds(655, 165, 200, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldDistribuidora.setBounds(645, 165, 200, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
         fieldDistribuidora.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldDistribuidora);
 

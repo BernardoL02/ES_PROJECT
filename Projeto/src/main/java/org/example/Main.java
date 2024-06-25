@@ -50,8 +50,6 @@ public class Main {
         biblioLiz.addSocio(socio1);
         biblioLiz.addSocio(socio2);
 
-        // Iniciar a aplicação
-        BiblioLiz.main(args);
     }
 }
 

@@ -80,8 +80,8 @@ public class BiblioLiz extends JFrame {
         configButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Ação ao clicar no botão de configuração
-                JOptionPane.showMessageDialog(null, "Configurações");
+                new Configuracoes();
+                dispose(); // Fecha a janela principal
             }
         });
 

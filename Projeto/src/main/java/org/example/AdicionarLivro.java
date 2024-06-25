@@ -151,7 +151,7 @@ public class AdicionarLivro extends BasePage {
                 dispose(); // Fecha a janela principal
             }
         });
-        
+
         // Adiciona o wrapperPanel ao frame
         add(wrapperPanel, BorderLayout.CENTER);
 

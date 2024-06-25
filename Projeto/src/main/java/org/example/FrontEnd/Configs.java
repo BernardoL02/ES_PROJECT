@@ -1,5 +1,6 @@
 package org.example.FrontEnd;
 
+import org.example.BackEnd.Configuracoes;
 import org.example.FrontEnd.Livro.GerirLivros;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -12,8 +13,8 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import javax.swing.text.NumberFormatter;
 
-public class Configuracoes extends BasePage {
-    public Configuracoes() {
+public class Configs extends BasePage {
+    public Configs() {
         super("Configuracoes", "/HeaderConfiguracoes.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -23,6 +24,10 @@ public class Configuracoes extends BasePage {
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false); // Passe "true" para exibir o ícone de configuração, "false" para ocultá-lo
+
+        Configuracoes.inicializarConfiguracoes(10, 20, 30, 40.0f, 50.0f, 60.0f, 70, 80.0f, 90.0f);
+        
+        System.out.println(Configuracoes.getDiasLeitor());
 
         // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
@@ -173,6 +178,6 @@ public class Configuracoes extends BasePage {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Configuracoes::new);
+        SwingUtilities.invokeLater(Configs::new);
     }
 }

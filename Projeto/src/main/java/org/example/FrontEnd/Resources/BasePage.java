@@ -1,6 +1,6 @@
 package org.example.FrontEnd.Resources;
 
-import org.example.FrontEnd.Configuracoes;
+import org.example.FrontEnd.Configs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -73,7 +73,7 @@ public class BasePage extends JFrame {
             configButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Configuracoes();
+                    new Configs();
                     dispose();
                 }
             });

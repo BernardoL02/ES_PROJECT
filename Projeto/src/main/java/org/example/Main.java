@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.BackEnd.Configuracoes;
 import org.example.BackEnd.Livro;
 import org.example.BackEnd.Socio;
 import org.example.BackEnd.TipoDeSocio;
@@ -53,3 +54,12 @@ public class Main {
         BiblioLiz.main(args);
     }
 }
+
+
+
+
+
+
+
+
+

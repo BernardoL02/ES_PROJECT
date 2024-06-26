@@ -50,7 +50,6 @@ public class PopUpEstatistica {
             @Override
             public void actionPerformed(ActionEvent e) {
                 response[0] = 0; // Valor para o botão "Ano"
-                new PaginaEstatistica(); // Abre a página estatística
                 dialog.dispose(); // Fecha o popup
             }
         });
@@ -59,7 +58,6 @@ public class PopUpEstatistica {
             @Override
             public void actionPerformed(ActionEvent e) {
                 response[0] = 1; // Valor para o botão "Ranking"
-                new PaginaEstatistica(); // Abre a página estatística
                 dialog.dispose(); // Fecha o popup
             }
         });

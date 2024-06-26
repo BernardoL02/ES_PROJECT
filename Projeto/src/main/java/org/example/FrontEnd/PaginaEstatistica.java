@@ -166,7 +166,8 @@ public class PaginaEstatistica extends BasePage {
             public void actionPerformed(ActionEvent e) {
                 int response = PopUpEstatistica.showCustomConfirmDialog();
 
-                System.out.println(response);
+                System.out.println("Response from filter dialog: " + response);
+
                 // Obtém uma cópia dos top 10 livros
                 ArrayList<Livro> topLivros = new ArrayList<>(getTop10Livros());
 
@@ -174,11 +175,7 @@ public class PaginaEstatistica extends BasePage {
                 if (response == 0) {
                     // Ordenar por Ano Descendente
                     topLivros.sort(Comparator.comparingInt(Livro::getAno).reversed());
-
-                    // Exibe os livros ordenados no console (opcional)
-                    for (Livro livro : topLivros) {
-                        System.out.println(livro.getTitulo() + " - Ano: " + livro.getAno());
-                    }
+                    System.out.println("Sorted by year (descending):");
                 } else if (response == 1) {
                     // Ordenar por Ranking
                     Map<Livro, Long> livroRequisicoes = requisicoes.stream()
@@ -187,22 +184,19 @@ public class PaginaEstatistica extends BasePage {
                     topLivros.sort((livro1, livro2) ->
                             livroRequisicoes.getOrDefault(livro2, 0L).compareTo(livroRequisicoes.getOrDefault(livro1, 0L)));
 
-                    // Exibe os livros ordenados no console (opcional)
-                    for (Livro livro : topLivros) {
-                        System.out.println(livro.getTitulo() + " - Requisições: " + livroRequisicoes.getOrDefault(livro, 0L));
-                    }
+                    System.out.println("Sorted by ranking:");
+                }
+
+                // Exibe os livros ordenados no console (opcional)
+                for (Livro livro : topLivros) {
+                    System.out.println(livro.getTitulo() + " - Ano: " + livro.getAno());
                 }
 
                 // Atualiza a tabela com os livros ordenados
                 updateTable(topLivros, columnNames);
-
-                // Notifica a tabela sobre a mudança nos dados
-                table.setModel(new DefaultTableModel(data, columnNames));
-                ((DefaultTableModel)table.getModel()).fireTableDataChanged();
-
-                dispose();
             }
         });
+
     }
 
     private ArrayList<Socio> carregarSocios(String nomeArquivo) {
@@ -274,28 +268,27 @@ public class PaginaEstatistica extends BasePage {
 
     // Método para atualizar a tabela com os novos dados
     private void updateTable(ArrayList<Livro> livros, String[] columnNames) {
-        // Cria uma matriz de objetos para os dados dos livros
-        Object[][] data = new Object[livros.size()][5];
 
-        // Preenche a matriz de dados com os livros fornecidos
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         for (int i = 0; i < livros.size(); i++) {
             Livro livro = livros.get(i);
-            data[i][0] = "#" + (i + 1);      // Número de posição
-            data[i][1] = livro.getTitulo();  // Título do livro
-            data[i][2] = livro.getGenero();  // Gênero do livro
-            data[i][3] = livro.getAutor();   // Autor do livro
-            data[i][4] = livro.getAno();     // Ano do livro
+            model.addRow(new Object[]{"#" + (i + 1), livro.getTitulo(), livro.getGenero(), livro.getAutor(), livro.getAno()});
+
         }
 
-        // Cria um novo modelo de tabela com os dados atualizados
-        DefaultTableModel model = new DefaultTableModel(data, columnNames);
-
-        // Define o novo modelo para a tabela existente (assumindo que 'table' é uma variável de instância)
         table.setModel(model);
+        table.setRowHeight(60);
+        table.setFont(new Font("Inter", Font.PLAIN, 16));
 
-        // Atualiza a interface gráfica para refletir as mudanças na tabela
-        table.revalidate();
-        table.repaint();
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            columnModel.getColumn(i).setCellRenderer(centerRenderer);
+        }
+        columnModel.getColumn(0).setMaxWidth(180);
+
     }
 }
 

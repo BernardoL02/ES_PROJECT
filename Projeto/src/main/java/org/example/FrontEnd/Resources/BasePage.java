@@ -20,6 +20,8 @@ public class BasePage extends JFrame {
         setMaximumSize(new Dimension(950, 650)); // Define a resolução máxima
         setResizable(false); // Desativa o redimensionamento
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ImageIcon img = new ImageIcon(getClass().getResource("/Icon.png"));
+        setIconImage(img.getImage());
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 

@@ -1,7 +1,9 @@
 package org.example.FrontEnd.Livro;
 
 import org.example.BackEnd.Fornecedor;
+import org.example.BackEnd.GerirRequisitar;
 import org.example.BackEnd.Livro;
+import org.example.BackEnd.Reserva;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -257,6 +259,21 @@ public class GerirLivros extends BasePage {
                     public void actionPerformed(ActionEvent e) {
                         int selectedRow = table.getSelectedRow();
                         Livro livro = livros.get(selectedRow);
+
+                        ArrayList<Reserva> reservas = GerirRequisitar.carregarReservas();
+                        ArrayList<Reserva> reservasFiltradas = new ArrayList<>();
+
+                        for (Reserva reserva : reservas) {
+                            if (reserva.getLivro().getIsbn().equals(livro.getIsbn())) {
+                                reservasFiltradas.add(reserva);
+                            }
+                        }
+
+                        if(reservasFiltradas.size() == 0){
+                            JOptionPane.showMessageDialog(null, "Livro sem reservas efectuadas no momento", "Aviso", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+
                         new VerReservas(livro);
                         dispose(); // Fecha a janela principal
                     }

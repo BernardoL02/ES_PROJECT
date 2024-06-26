@@ -122,7 +122,7 @@ public class RequisicoesPorSocio extends BasePage {
 
         // Adiciona o painel de botões ao mainPanel
         mainPanel.add(buttonPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 100))); // Reduza o espaçamento para 10 pixels
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 100)));
         // Painel de informação do livro
         JPanel bookInfoPanel = new JPanel(new BorderLayout());
         bookInfoPanel.setBackground(Color.WHITE);
@@ -286,6 +286,8 @@ public class RequisicoesPorSocio extends BasePage {
             columnModel.getColumn(i).setPreferredWidth(120);
         }
         table.setPreferredScrollableViewportSize(table.getPreferredSize());
+        table.getTableHeader().setResizingAllowed(true);
+        table.getTableHeader().setReorderingAllowed(false);
 
         return table;
     }

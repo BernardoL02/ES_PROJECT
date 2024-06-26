@@ -70,6 +70,28 @@ public class Configs extends BasePage {
         formatter.setAllowsInvalid(true);
         formatter.setMaximum(999);
 
+        NumberFormatter floatFormatter = new NumberFormatter() {
+            @Override
+            public Object stringToValue(String text) throws ParseException {
+                if (text == null || text.trim().isEmpty()) {
+                    return null;
+                }
+                return super.stringToValue(text);
+            }
+
+            @Override
+            public String valueToString(Object value) throws ParseException {
+                if (value == null) {
+                    return "";
+                }
+                return super.valueToString(value);
+            }
+        };
+        floatFormatter.setValueClass(Float.class); // Define o tipo de valor como Float
+        floatFormatter.setCommitsOnValidEdit(true); // Submete o valor quando válido
+        floatFormatter.setAllowsInvalid(true); // Permite valores inválidos temporariamente
+        floatFormatter.setMaximum(999.99f);
+
         JTextField diasLeitor = new JFormattedTextField(formatter);
         diasLeitor.setText(configuracoes.getProperty("diasLeitor"));
         diasLeitor.setBounds(265, 123, 50, 25);
@@ -88,19 +110,19 @@ public class Configs extends BasePage {
         diasEntusiasta.setHorizontalAlignment(SwingConstants.CENTER);
         backgroundPanel.add(diasEntusiasta);
 
-        JTextField cotasLeitor = new JFormattedTextField(formatter);
+        JTextField cotasLeitor = new JFormattedTextField(floatFormatter);
         cotasLeitor.setText(configuracoes.getProperty("cotasLeitor"));
         cotasLeitor.setBounds(460, 123, 75, 25);
         cotasLeitor.setHorizontalAlignment(SwingConstants.CENTER);
         backgroundPanel.add(cotasLeitor);
 
-        JTextField cotasAcademico = new JFormattedTextField(formatter);
+        JTextField cotasAcademico = new JFormattedTextField(floatFormatter);
         cotasAcademico.setText(configuracoes.getProperty("cotasAcademico"));
         cotasAcademico.setBounds(460, 160, 75, 25);
         cotasAcademico.setHorizontalAlignment(SwingConstants.CENTER);
         backgroundPanel.add(cotasAcademico);
 
-        JTextField cotasEntusiasta = new JFormattedTextField(formatter);
+        JTextField cotasEntusiasta = new JFormattedTextField(floatFormatter);
         cotasEntusiasta.setText(configuracoes.getProperty("cotasEntusiasta"));
         cotasEntusiasta.setBounds(460, 198, 75, 25);
         cotasEntusiasta.setHorizontalAlignment(SwingConstants.CENTER);
@@ -112,13 +134,13 @@ public class Configs extends BasePage {
         maxLivros.setHorizontalAlignment(SwingConstants.CENTER);
         backgroundPanel.add(maxLivros);
 
-        JTextField danificacaoLivro = new JFormattedTextField(formatter);
+        JTextField danificacaoLivro = new JFormattedTextField(floatFormatter);
         danificacaoLivro.setText(configuracoes.getProperty("danificacaoLivro"));
         danificacaoLivro.setBounds(370, 290, 60, 30);
         danificacaoLivro.setHorizontalAlignment(SwingConstants.CENTER);
         backgroundPanel.add(danificacaoLivro);
 
-        JTextField multa = new JFormattedTextField(formatter);
+        JTextField multa = new JFormattedTextField(floatFormatter);
         multa.setText(configuracoes.getProperty("multa"));
         multa.setBounds(145, 375, 60, 30);
         multa.setHorizontalAlignment(SwingConstants.CENTER);
@@ -138,20 +160,58 @@ public class Configs extends BasePage {
             public void actionPerformed(ActionEvent e) {
                 int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
 
-                if (response == JOptionPane.YES_OPTION) {
-                    configuracoes.setProperty("diasLeitor", diasLeitor.getText());
-                    configuracoes.setProperty("diasAcademico", diasAcademico.getText());
-                    configuracoes.setProperty("diasEntusiasta", diasEntusiasta.getText());
-                    configuracoes.setProperty("cotasLeitor", cotasLeitor.getText());
-                    configuracoes.setProperty("cotasAcademico", cotasAcademico.getText());
-                    configuracoes.setProperty("cotasEntusiasta", cotasEntusiasta.getText());
-                    configuracoes.setProperty("maxLivros", maxLivros.getText());
-                    configuracoes.setProperty("danificacaoLivro", danificacaoLivro.getText());
-                    configuracoes.setProperty("multa", multa.getText());
-                    configuracoes.saveProperties();
+                // Verifica se alguma caixa de texto está vazia ou contém valor nulo
+                if (diasLeitor.getText().trim().isEmpty() ||
+                        diasAcademico.getText().trim().isEmpty() ||
+                        diasEntusiasta.getText().trim().isEmpty() ||
+                        cotasLeitor.getText().trim().isEmpty() ||
+                        cotasAcademico.getText().trim().isEmpty() ||
+                        cotasEntusiasta.getText().trim().isEmpty() ||
+                        maxLivros.getText().trim().isEmpty() ||
+                        danificacaoLivro.getText().trim().isEmpty() ||
+                        multa.getText().trim().isEmpty()) {
 
-                    new GerirLivros();
-                    dispose();
+                    // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
+                    JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Verifica se os valores não são negativos
+                    try {
+                        int diasLeitorValue = Integer.parseInt(diasLeitor.getText().trim());
+                        int diasAcademicoValue = Integer.parseInt(diasAcademico.getText().trim());
+                        int diasEntusiastaValue = Integer.parseInt(diasEntusiasta.getText().trim());
+                        float cotasLeitorValue = Float.parseFloat(cotasLeitor.getText().trim());
+                        float cotasAcademicoValue = Float.parseFloat(cotasAcademico.getText().trim());
+                        float cotasEntusiastaValue = Float.parseFloat(cotasEntusiasta.getText().trim());
+                        int maxLivrosValue = Integer.parseInt(maxLivros.getText().trim());
+                        float danificacaoLivroValue = Float.parseFloat(danificacaoLivro.getText().trim());
+                        float multaValue = Float.parseFloat(multa.getText().trim());
+
+                        if (diasLeitorValue < 0 || diasAcademicoValue < 0 || diasEntusiastaValue < 0 ||
+                                cotasLeitorValue < 0 || cotasAcademicoValue < 0 || cotasEntusiastaValue < 0 ||
+                                maxLivrosValue < 0 || danificacaoLivroValue < 0 || multaValue < 0) {
+
+                            JOptionPane.showMessageDialog(null, "Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        // Se todas as verificações passarem, salve as propriedades
+                        configuracoes.setProperty("diasLeitor", diasLeitor.getText());
+                        configuracoes.setProperty("diasAcademico", diasAcademico.getText());
+                        configuracoes.setProperty("diasEntusiasta", diasEntusiasta.getText());
+                        configuracoes.setProperty("cotasLeitor", cotasLeitor.getText());
+                        configuracoes.setProperty("cotasAcademico", cotasAcademico.getText());
+                        configuracoes.setProperty("cotasEntusiasta", cotasEntusiasta.getText());
+                        configuracoes.setProperty("maxLivros", maxLivros.getText());
+                        configuracoes.setProperty("danificacaoLivro", danificacaoLivro.getText());
+                        configuracoes.setProperty("multa", multa.getText());
+                        configuracoes.saveProperties();
+
+                        new GerirLivros();
+                        dispose();
+                    } catch (NumberFormatException ex) {
+                        // Exibe uma mensagem de erro se algum valor não for um número válido
+                        JOptionPane.showMessageDialog(null, "Os valores devem ser números válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
@@ -175,7 +235,4 @@ public class Configs extends BasePage {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Configs::new);
-    }
 }

@@ -7,6 +7,7 @@ import org.example.FrontEnd.Socio.GerirSocio;
 import org.example.FrontEnd.Socio.ValidarCotas;
 import org.example.PaginaEstatistica;
 
+import javax.print.DocFlavor;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

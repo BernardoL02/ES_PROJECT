@@ -232,7 +232,7 @@ public class GerirLivros extends BasePage {
                 editButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Livro livro = livros.get(table.getSelectedRow());
+                        Livro livro = livros.get(table.convertRowIndexToModel(table.getSelectedRow()));
                         new EditarLivro(livro);
                         dispose();
                     }
@@ -244,11 +244,17 @@ public class GerirLivros extends BasePage {
                         int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que deseja eliminar o livro?", "Confirmação", "Cancelar", "Confirmar");
 
                         if (response == JOptionPane.YES_OPTION) {
-                            int selectedRow = table.getSelectedRow();
+                            int selectedRow = table.convertRowIndexToModel(table.getSelectedRow());
                             if (selectedRow != -1) {
-                                livros.remove(selectedRow);
-                                tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
-                                salvarLivros("livros.ser");
+                                Livro livro = livros.get(selectedRow);
+
+                                if (hasReservations(livro)) {
+                                    JOptionPane.showMessageDialog(null, "Não é possível eliminar o livro, pois existem reservas associadas.", "Erro", JOptionPane.ERROR_MESSAGE);
+                                } else {
+                                    livros.remove(selectedRow);
+                                    tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
+                                    salvarLivros("livros.ser");
+                                }
                             }
                         }
                     }
@@ -257,7 +263,7 @@ public class GerirLivros extends BasePage {
                 reserveButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
+                        int selectedRow = table.convertRowIndexToModel(table.getSelectedRow());
                         Livro livro = livros.get(selectedRow);
 
                         ArrayList<Reserva> reservas = GerirRequisitar.carregarReservas();
@@ -269,7 +275,7 @@ public class GerirLivros extends BasePage {
                             }
                         }
 
-                        if(reservasFiltradas.size() == 0){
+                        if (reservasFiltradas.size() == 0) {
                             JOptionPane.showMessageDialog(null, "Livro sem reservas efectuadas no momento", "Aviso", JOptionPane.WARNING_MESSAGE);
                             return;
                         }
@@ -363,6 +369,16 @@ public class GerirLivros extends BasePage {
         }
     }
 
+    private boolean hasReservations(Livro livro) {
+        ArrayList<Reserva> reservas = GerirRequisitar.carregarReservas();
+        for (Reserva reserva : reservas) {
+            if (reserva.getLivro().getIsbn().equals(livro.getIsbn())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void adicionarLivro(Livro livro) {
         livros.add(livro);
         salvarLivros("livros.ser");
@@ -403,6 +419,7 @@ public class GerirLivros extends BasePage {
         }
     }
 }
+
 class LivroTableModel extends AbstractTableModel {
     private ArrayList<Livro> livros;
     private String[] columnNames;

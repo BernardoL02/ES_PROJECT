@@ -27,11 +27,13 @@ public class BiblioLiz extends JFrame {
         setSize(800, 650);
         setMinimumSize(new Dimension(800, 650)); // Define a resolução mínima
         setMaximumSize(new Dimension(800, 650)); // Define a resolução máxima
+        ImageIcon img = new ImageIcon(getClass().getResource("/Icon.png"));
+        setIconImage(img.getImage());
         setResizable(false); // Desativa o redimensionamento
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
+        
         // Painel para imagem de fundo
         JPanel backgroundPanel = new JPanel() {
             @Override

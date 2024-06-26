@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.BackEnd.Requisitar;
+import org.example.BackEnd.Socio;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -14,8 +16,17 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
 public class PaginaEstatistica extends BasePage {
+
+    private ArrayList<Socio> socios;
+    private ArrayList<Requisitar> requisicoes;
+
     public PaginaEstatistica() {
 
         super("Informações Estatistica", "/HeaderPaginaEstatistica.png", new ActionListener() {
@@ -68,12 +79,6 @@ public class PaginaEstatistica extends BasePage {
                 {"#2", "O Principezinho", "Infantil", "A. Saint-Exupéry", "2024", "Português"}
         };
 
-        int countNaoPago = 0;
-        for (Object[] row : data) {
-            if ("Não".equals(row[5])) {
-                countNaoPago++;
-            }
-        }
         JTable table = new JTable(data, columnNames) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -118,12 +123,20 @@ public class PaginaEstatistica extends BasePage {
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
+        socios = carregarSocios("socios.ser");
+        requisicoes = carregarRequisicoes("requisitar.ser");
+
         JLabel numeroSocios = new JLabel(new ImageIcon(getClass().getResource("/SocioRequisicoes.png")));
         numeroSocios.setBackground(Color.WHITE);
-        JLabel countLabel = new JLabel("" + countNaoPago);
+        JLabel countLabel = new JLabel(String.valueOf(socios.size()));
         countLabel.setFont(new Font("Inter", Font.BOLD, 38));
         countLabel.setForeground(Color.BLACK);
         countLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Move 30px para a direita
+
+        JLabel countLabelRequisicoes = new JLabel(String.valueOf(requisicoes.size()));
+        countLabelRequisicoes.setFont(new Font("Inter", Font.BOLD, 38));
+        countLabelRequisicoes.setForeground(Color.BLACK);
+        countLabelRequisicoes.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Move 30px para a direita
 
         // Painel para posicionar a imagem e a contagem no canto inferior esquerdo
         JPanel bottomLeftPanel = new JPanel(null); // Usar layout nulo para posicionamento absoluto
@@ -131,11 +144,11 @@ public class PaginaEstatistica extends BasePage {
         bottomLeftPanel.setBackground(Color.WHITE);
         numeroSocios.setBounds(300, 0, 800, 100); // Definir posição e tamanho da imagem
         countLabel.setBounds(570, 55, 100, 40); // Definir posição e tamanho do número, ajustar conforme necessário
-
+        countLabelRequisicoes.setBounds(750, 55, 100, 40);
 
         bottomLeftPanel.add(numeroSocios);
         bottomLeftPanel.add(countLabel);
-
+        bottomLeftPanel.add(countLabelRequisicoes);
 
         // Adiciona o scrollPane com a tabela ao painel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -149,4 +162,25 @@ public class PaginaEstatistica extends BasePage {
         // Torna o frame visível
         setVisible(true);
     }
+
+    private ArrayList<Socio> carregarSocios(String nomeArquivo) {
+        ArrayList<Socio> socios = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            socios = (ArrayList<Socio>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return socios;
+    }
+
+    private ArrayList<Requisitar> carregarRequisicoes(String nomeArquivo) {
+        ArrayList<Requisitar> requisicoes = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            requisicoes = (ArrayList<Requisitar>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return requisicoes;
+    }
+
 }

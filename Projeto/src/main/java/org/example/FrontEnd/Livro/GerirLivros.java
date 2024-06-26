@@ -4,6 +4,7 @@ import org.example.BackEnd.Fornecedor;
 import org.example.BackEnd.Livro;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
@@ -166,6 +167,8 @@ public class GerirLivros extends BasePage {
                 panel.add(reserveButton);
             }
 
+
+
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 panel.setOpaque(true);
@@ -177,6 +180,8 @@ public class GerirLivros extends BasePage {
                 return panel;
             }
         });
+
+
 
         columnModel.getColumn(7).setCellEditor(new TableCellEditor() {
             private final JPanel panel = new JPanel(new GridBagLayout());
@@ -209,18 +214,22 @@ public class GerirLivros extends BasePage {
                     public void actionPerformed(ActionEvent e) {
                         Livro livro = livros.get(table.getSelectedRow());
                         new EditarLivro(livro);
-                        dispose(); // Fecha a janela principal
+                        dispose(); 
                     }
                 });
 
                 deleteButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
-                        if (selectedRow != -1) {
-                            livros.remove(selectedRow);
-                            tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
-                            salvarLivros("livros.ser"); // Salva os livros após a exclusão
+                        int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que deseja eliminar o livro?", "Confirmação", "Cancelar", "Confirmar");
+
+                        if (response == JOptionPane.YES_OPTION) {
+                            int selectedRow = table.getSelectedRow();
+                            if (selectedRow != -1) {
+                                livros.remove(selectedRow);
+                                tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
+                                salvarLivros("livros.ser");
+                            }
                         }
                     }
                 });

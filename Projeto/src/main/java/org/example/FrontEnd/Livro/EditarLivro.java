@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 
 public class EditarLivro extends BasePage {
     private Livro livro;
@@ -64,14 +65,26 @@ public class EditarLivro extends BasePage {
         backgroundPanel.setLayout(null); // Definindo layout absoluto para posicionamento personalizado
 
         // Criação do NumberFormatter para números inteiros
-        NumberFormatter formatter = new NumberFormatter(new DecimalFormat("#"));
+        NumberFormatter formatter = new NumberFormatter(new DecimalFormat("#")) {
+            @Override
+            public Object stringToValue(String text) throws ParseException {
+                if (text == null || text.trim().isEmpty()) {
+                    return null;
+                }
+                return super.stringToValue(text);
+            }
+
+            @Override
+            public String valueToString(Object value) throws ParseException {
+                if (value == null) {
+                    return "";
+                }
+                return super.valueToString(value);
+            }
+        };
         formatter.setValueClass(Integer.class);
         formatter.setAllowsInvalid(true);
         formatter.setCommitsOnValidEdit(true);
-
-        // Define o comportamento para texto vazio
-        formatter.setAllowsInvalid(true);
-        formatter.setCommitsOnValidEdit(false);
 
         // Adicionando caixas de texto ao painel de fundo
         fieldTitulo = new JTextField(livro.getTitulo());
@@ -79,9 +92,10 @@ public class EditarLivro extends BasePage {
         fieldTitulo.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldTitulo);
 
-        fieldISBN = new JTextField(livro.getIsbn());
+        JFormattedTextField fieldISBN = new JFormattedTextField(formatter);
         fieldISBN.setBounds(160, 165, 250, 30);
         fieldISBN.setHorizontalAlignment(SwingConstants.LEFT);
+        fieldISBN.setValue(Integer.parseInt(livro.getIsbn()));
         backgroundPanel.add(fieldISBN);
 
         fieldEdicao = new JTextField(livro.getEdicao());
@@ -115,14 +129,17 @@ public class EditarLivro extends BasePage {
         fieldEditora.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldEditora);
 
-        fieldAno = new JTextField(String.valueOf(livro.getAno()));
+        JFormattedTextField fieldAno = new JFormattedTextField(formatter);
         fieldAno.setBounds(510, 315, 250, 30);
         fieldAno.setHorizontalAlignment(SwingConstants.LEFT);
+        fieldAno.setValue(livro.getAno());
+
         backgroundPanel.add(fieldAno);
 
-        fieldQuantidade = new JTextField(String.valueOf(livro.getQuantidade()));
+        JFormattedTextField fieldQuantidade = new JFormattedTextField(formatter);
         fieldQuantidade.setBounds(510, 390, 250, 30);
         fieldQuantidade.setHorizontalAlignment(SwingConstants.LEFT);
+        fieldQuantidade.setValue(livro.getQuantidade());
         backgroundPanel.add(fieldQuantidade);
 
         wrapperPanel.add(backgroundPanel, BorderLayout.CENTER);
@@ -158,7 +175,7 @@ public class EditarLivro extends BasePage {
                             fieldQuantidade.getText().trim().isEmpty()
                     ) {
                         // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
-                        JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Campos obrigatórios por preencher.", "Erro", JOptionPane.ERROR_MESSAGE);
                     } else {
 
                         int ISBN = Integer.parseInt(fieldISBN.getText().trim());
@@ -166,10 +183,9 @@ public class EditarLivro extends BasePage {
                         int diasAcademicoValue = Integer.parseInt(fieldQuantidade.getText().trim());
 
                         if (ISBN < 0 || diasLeitorValue < 0 || diasAcademicoValue < 0) {
-                            JOptionPane.showMessageDialog(null, "Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Dados Inválidos. Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
-
 
                         // Verificar se os campos contêm apenas dígitos numéricos
                         String textISBN = fieldISBN.getText().trim();
@@ -177,7 +193,7 @@ public class EditarLivro extends BasePage {
                         String textQuantidade = fieldQuantidade.getText().trim();
 
                         if (!textISBN.matches("\\d+") || !textAno.matches("\\d+") || !textQuantidade.matches("\\d+")) {
-                            JOptionPane.showMessageDialog(null, "Os campos ISBN, Ano e Quantidade devem conter apenas números inteiros.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Dados Inválidos.  Os campos ISBN, Ano e Quantidade devem conter apenas números inteiros.", "Erro", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
 

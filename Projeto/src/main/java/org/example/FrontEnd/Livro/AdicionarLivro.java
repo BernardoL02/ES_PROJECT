@@ -7,10 +7,12 @@ import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class AdicionarLivro extends BasePage {
@@ -59,12 +61,34 @@ public class AdicionarLivro extends BasePage {
         backgroundPanel.setOpaque(true);
         backgroundPanel.setLayout(null);
 
+        NumberFormatter formatter = new NumberFormatter() {
+            @Override
+            public Object stringToValue(String text) throws ParseException {
+                if (text == null || text.trim().isEmpty()) {
+                    return null;
+                }
+                return super.stringToValue(text);
+            }
+
+            @Override
+            public String valueToString(Object value) throws ParseException {
+                if (value == null) {
+                    return "";
+                }
+                return super.valueToString(value);
+            }
+        };
+        formatter.setValueClass(Integer.class);
+        formatter.setCommitsOnValidEdit(true);
+        formatter.setAllowsInvalid(true);
+        formatter.setMaximum(999);
+
         fieldTitulo = new JTextField();
         fieldTitulo.setBounds(55, 90, 200, 30);
         fieldTitulo.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldTitulo);
 
-        fieldISBN = new JTextField();
+        fieldISBN = new JFormattedTextField(formatter);
         fieldISBN.setBounds(55, 165, 200, 30);
         fieldISBN.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldISBN);
@@ -99,12 +123,12 @@ public class AdicionarLivro extends BasePage {
         fieldEditora.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldEditora);
 
-        fieldAno = new JTextField();
+        fieldAno = new JFormattedTextField(formatter);
         fieldAno.setBounds(310, 315, 200, 30);
         fieldAno.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldAno);
 
-        fieldQuantidade = new JTextField();
+        fieldQuantidade = new JFormattedTextField(formatter);
         fieldQuantidade.setBounds(310, 390, 200, 30);
         fieldQuantidade.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldQuantidade);
@@ -150,8 +174,9 @@ public class AdicionarLivro extends BasePage {
                     )
                     {
                         // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
-                        JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.", "Erro", JOptionPane.ERROR_MESSAGE);
-                    } else {
+                        JOptionPane.showMessageDialog(null, "Campos obrigatorios por preencher.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else {
                         try {
                             String newISBN = fieldISBN.getText().trim();
                             if (isbnExists(newISBN)) {
@@ -164,17 +189,7 @@ public class AdicionarLivro extends BasePage {
                             int diasAcademicoValue = Integer.parseInt(fieldQuantidade.getText().trim());
 
                             if (ISBN < 0 || diasLeitorValue < 0 || diasAcademicoValue < 0) {
-                                JOptionPane.showMessageDialog(null, "Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
-                                return;
-                            }
-
-                            // Verificar se os campos contêm apenas dígitos numéricos
-                            String textISBN = fieldISBN.getText().trim();
-                            String textAno = fieldAno.getText().trim();
-                            String textQuantidade = fieldQuantidade.getText().trim();
-
-                            if (!textISBN.matches("\\d+") || !textAno.matches("\\d+") || !textQuantidade.matches("\\d+")) {
-                                JOptionPane.showMessageDialog(null, "Os campos ISBN, Ano e Quantidade devem conter apenas números inteiros.", "Erro", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Dados Inválidos. Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
                                 return;
                             }
 
@@ -196,7 +211,7 @@ public class AdicionarLivro extends BasePage {
                             new GerirLivros();
                             dispose();
                         } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(null, "Por favor, insira valores válidos para Ano e Quantidade.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Dados Inválidos. Por favor, insira valores válidos para o ISBN, Ano e Quantidade.", "Erro", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 }

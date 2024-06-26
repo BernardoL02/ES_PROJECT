@@ -172,7 +172,7 @@ public class Configs extends BasePage {
                         multa.getText().trim().isEmpty()) {
 
                     // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
-                    JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Campos obrigatorios por preencher.", "Erro", JOptionPane.ERROR_MESSAGE);
                 } else {
                     // Verifica se os valores não são negativos
                     try {

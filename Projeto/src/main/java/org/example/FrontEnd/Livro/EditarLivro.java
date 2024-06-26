@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 public class EditarLivro extends BasePage {
     private Livro livro;
+    private String originalISBN;  // Armazena o ISBN original para comparação
     private JTextField fieldTitulo;
     private JTextField fieldISBN;
     private JTextField fieldEdicao;
@@ -41,6 +42,7 @@ public class EditarLivro extends BasePage {
         }, true);
 
         this.livro = livro;
+        this.originalISBN = livro.getIsbn();  // Armazena o ISBN original
 
         // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
@@ -198,7 +200,7 @@ public class EditarLivro extends BasePage {
                     } else {
 
                         String newISBN = fieldISBN.getText().trim();
-                        if (isbnExists(newISBN)) {
+                        if (!newISBN.equals(originalISBN) && isbnExists(newISBN)) {
                             JOptionPane.showMessageDialog(null, "Já existe um livro com este ISBN.", "Erro", JOptionPane.ERROR_MESSAGE);
                             return;
                         }

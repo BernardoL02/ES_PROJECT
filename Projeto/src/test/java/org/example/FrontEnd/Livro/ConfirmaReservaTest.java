@@ -1,6 +1,7 @@
 package org.example.FrontEnd.Livro;
 
 import org.example.BackEnd.*;
+import org.example.FrontEnd.Resources.CustomPopUP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,17 +43,26 @@ public class ConfirmaReservaTest {
         JButton buttonCancelar = (JButton) findButtonByText(confirmaReserva, "Cancelar");
         assertNotNull(buttonCancelar, "Botão 'Cancelar' não deve ser nulo");
 
+        // Simula resposta do diálogo personalizado como "Sim"
+        CustomPopUP.setUserResponse(JOptionPane.YES_OPTION);
+
         ActionEvent actionEvent = new ActionEvent(buttonCancelar, ActionEvent.ACTION_PERFORMED, null);
         buttonCancelar.getActionListeners()[0].actionPerformed(actionEvent);
 
-        // Simula resposta do diálogo personalizado como "Sim"
-        assertNotNull(buttonCancelar.getActionListeners()[0]);
+        // Verifica se a janela foi fechada e uma nova instância de RequisicoesPorSocio foi criada
+        assertFalse(confirmaReserva.isDisplayable(), "A janela ConfirmaReserva deve ser fechada");
+
+        // Limpa a resposta simulada
+        CustomPopUP.clearUserResponse();
     }
 
     @Test
     public void testGuardarButtonAction() {
         JButton buttonGuardar = (JButton) findButtonByText(confirmaReserva, "Guardar");
         assertNotNull(buttonGuardar, "Botão 'Guardar' não deve ser nulo");
+
+        // Simula resposta do diálogo personalizado como "Sim"
+        CustomPopUP.setUserResponse(JOptionPane.YES_OPTION);
 
         ActionEvent actionEvent = new ActionEvent(buttonGuardar, ActionEvent.ACTION_PERFORMED, null);
         buttonGuardar.getActionListeners()[0].actionPerformed(actionEvent);
@@ -63,6 +73,9 @@ public class ConfirmaReservaTest {
         Reserva reserva = reservas.get(0);
         assertEquals(socio.getNif(), reserva.getSocio().getNif(), "O NIF do sócio deve ser o esperado");
         assertEquals(livro.getIsbn(), reserva.getLivro().getIsbn(), "O ISBN do livro deve ser o esperado");
+
+        // Limpa a resposta simulada
+        CustomPopUP.clearUserResponse();
     }
 
     // Método utilitário para encontrar botão por texto

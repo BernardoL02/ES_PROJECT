@@ -1,14 +1,18 @@
 package org.example.FrontEnd.Resources;
 
-import org.example.FrontEnd.Resources.RoundButton;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CustomPopUP {
+    private static int mockUserResponse = -1;
+
     public static int showCustomConfirmDialog(String message, String title, String textoBotaoEsq, String textoBotaoDir) {
+        if (mockUserResponse != -1) {
+            return mockUserResponse;
+        }
+
         JFrame parent = new JFrame();
         JDialog dialog = new JDialog(parent, title, true);
         dialog.setSize(500, 200);
@@ -58,5 +62,13 @@ public class CustomPopUP {
         dialog.setVisible(true);
 
         return response[0];
+    }
+
+    public static void setUserResponse(int response) {
+        mockUserResponse = response;
+    }
+
+    public static void clearUserResponse() {
+        mockUserResponse = -1;
     }
 }

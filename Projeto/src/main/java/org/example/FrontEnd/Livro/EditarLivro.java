@@ -187,16 +187,6 @@ public class EditarLivro extends BasePage {
                             return;
                         }
 
-                        // Verificar se os campos contêm apenas dígitos numéricos
-                        String textISBN = fieldISBN.getText().trim();
-                        String textAno = fieldAno.getText().trim();
-                        String textQuantidade = fieldQuantidade.getText().trim();
-
-                        if (!textISBN.matches("\\d+") || !textAno.matches("\\d+") || !textQuantidade.matches("\\d+")) {
-                            JOptionPane.showMessageDialog(null, "Dados Inválidos.  Os campos ISBN, Ano e Quantidade devem conter apenas números inteiros.", "Erro", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-
                         // Atualiza os dados do livro
                         livro.setTitulo(fieldTitulo.getText());
                         livro.setIsbn(fieldISBN.getText());

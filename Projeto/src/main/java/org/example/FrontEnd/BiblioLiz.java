@@ -23,7 +23,7 @@ public class BiblioLiz extends JFrame {
         socios = new ArrayList<>();
 
         // Configurações do JFrame
-        setTitle("BiblioLiz");
+        setTitle("Página Inicial");
         setSize(800, 650);
         setMinimumSize(new Dimension(800, 650)); // Define a resolução mínima
         setMaximumSize(new Dimension(800, 650)); // Define a resolução máxima

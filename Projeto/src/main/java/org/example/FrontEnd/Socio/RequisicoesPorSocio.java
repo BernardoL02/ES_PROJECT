@@ -190,20 +190,18 @@ public class RequisicoesPorSocio extends BasePage {
         bookInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
         bookInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
         bookInfoPanel.add(bookInfoLabel, BorderLayout.NORTH);
-        bookInfoPanel.setBackground(Color.WHITE);
 
         String[] bookColumnNames = {"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolução", "Ação"};
         Object[][] bookData = criarReservasData();
         bookTable = createStyledTable(bookData, bookColumnNames);
         bookTable.setRowHeight(50); // Ajusta a altura da linha da tabela de livro
-        bookTable.setBackground(Color.WHITE);
 
         JScrollPane bookScrollPane = new JScrollPane(bookTable);
         bookScrollPane.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, 200)); // Altura fixa para o painel de informações do livro
         bookScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0x99D4FF))); // Borda com a cor desejada
         bookScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); // Margem em baixo
+        bookScrollPane.setBackground(Color.WHITE);
         bookInfoPanel.add(bookScrollPane, BorderLayout.CENTER);
-        bookInfoPanel.setBackground(Color.WHITE);
 
         // Adiciona o painel de informações do livro ao mainPanel
         mainPanel.add(bookInfoPanel);
@@ -368,7 +366,7 @@ public class RequisicoesPorSocio extends BasePage {
                     actionButton.setForeground(Color.WHITE);
                 } else {
                     actionButton.setText(""); // Botão vazio
-                    actionButton.setBackground(table.getBackground());
+                    actionButton.setBackground(new Color(0xDFF3FF));
                     actionButton.setForeground(table.getForeground());
                 }
                 panel.setOpaque(true);
@@ -428,7 +426,7 @@ public class RequisicoesPorSocio extends BasePage {
                     actionButton.setForeground(Color.WHITE);
                 } else {
                     actionButton.setText(""); // Botão vazio
-                    actionButton.setBackground(table.getBackground());
+                    actionButton.setBackground(new Color(0xDFF3FF));
                     actionButton.setForeground(table.getForeground());
                 }
                 panel.setOpaque(true);
@@ -496,7 +494,7 @@ public class RequisicoesPorSocio extends BasePage {
                 return component;
             }
         };
-        table.setRowHeight(30);
+        table.setRowHeight(40);
         table.getTableHeader().setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
         table.getTableHeader().setBackground(new Color(0x6EC2FF));
         table.getTableHeader().setForeground(Color.BLACK);

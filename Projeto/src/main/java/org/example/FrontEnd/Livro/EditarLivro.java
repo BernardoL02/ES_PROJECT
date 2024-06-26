@@ -70,11 +70,23 @@ public class EditarLivro extends BasePage {
 
         // Criação do NumberFormatter para números inteiros
         NumberFormatter formatter = new NumberFormatter(new DecimalFormat("#")) {
+            private final int MAX_VALUE = Integer.MAX_VALUE; // Máximo valor para Long
+
             @Override
             public Object stringToValue(String text) throws ParseException {
                 if (text == null || text.trim().isEmpty()) {
                     return null;
                 }
+
+                try {
+                    int parsedValue = Integer.parseInt(text);
+                    if (parsedValue > MAX_VALUE) {
+                        return null;
+                    }
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+
                 return super.stringToValue(text);
             }
 
@@ -86,9 +98,11 @@ public class EditarLivro extends BasePage {
                 return super.valueToString(value);
             }
         };
-        formatter.setValueClass(Integer.class);
+
+        formatter.setValueClass(Long.class);
         formatter.setAllowsInvalid(true);
         formatter.setCommitsOnValidEdit(true);
+
 
         // Adicionando caixas de texto ao painel de fundo
         fieldTitulo = new JTextField(livro.getTitulo());

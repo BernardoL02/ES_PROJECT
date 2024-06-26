@@ -11,7 +11,7 @@ public class PopUpEstatistica {
     public static int showCustomConfirmDialog() {
         JFrame parent = new JFrame();
         JDialog dialog = new JDialog(parent, "FiltroEstatistica", true);
-        dialog.setSize(500, 260);
+        dialog.setSize(500, 150);
         dialog.setLayout(new BorderLayout());
         dialog.getContentPane().setBackground(Color.WHITE);
 
@@ -29,53 +29,44 @@ public class PopUpEstatistica {
         anoButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
         anoButton.setPreferredSize(new Dimension(200, 40)); // Define tamanho preferido
 
-        RoundButton autorButton = new RoundButton("     Autor      ");
-        autorButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centraliza na horizontal
-        autorButton.setBackground(new Color(0x99D4FF));
-        autorButton.setForeground(Color.BLACK);
-        autorButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        autorButton.setPreferredSize(new Dimension(200, 40)); // Define tamanho preferido
-
-        RoundButton generoButton = new RoundButton("    Género    ");
+        RoundButton generoButton = new RoundButton("    Ranking    ");
         generoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         generoButton.setBackground(new Color(0x99D4FF));
         generoButton.setForeground(Color.BLACK);
         generoButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
         generoButton.setPreferredSize(new Dimension(200, 40)); // Define tamanho preferido
 
-        RoundButton subGeneroButton = new RoundButton("Sub-Género");
-        subGeneroButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centraliza na horizontal
-        subGeneroButton.setBackground(new Color(0x99D4FF));
-        subGeneroButton.setForeground(Color.BLACK);
-        subGeneroButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        subGeneroButton.setPreferredSize(new Dimension(200, 40)); // Define tamanho preferido
-
         buttonPanel.add(anoButton);
-        buttonPanel.add(Box.createVerticalStrut(5)); // Espaçamento entre os botões
-        buttonPanel.add(autorButton);
         buttonPanel.add(Box.createVerticalStrut(5)); // Espaçamento entre os botões
         buttonPanel.add(generoButton);
         buttonPanel.add(Box.createVerticalStrut(5)); // Espaçamento entre os botões
-        buttonPanel.add(subGeneroButton);
 
         dialog.add(buttonPanel, BorderLayout.CENTER);
 
-        ActionListener openPaginaEstatistica = new ActionListener() {
+        // Variável para armazenar a resposta do usuário
+        final int[] response = {-1}; // -1 indica que nenhum botão foi clicado
+
+        anoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                response[0] = 0; // Valor para o botão "Ano"
                 new PaginaEstatistica(); // Abre a página estatística
                 dialog.dispose(); // Fecha o popup
             }
-        };
+        });
 
-        anoButton.addActionListener(openPaginaEstatistica);
-        autorButton.addActionListener(openPaginaEstatistica);
-        generoButton.addActionListener(openPaginaEstatistica);
-        subGeneroButton.addActionListener(openPaginaEstatistica);
+        generoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                response[0] = 1; // Valor para o botão "Ranking"
+                new PaginaEstatistica(); // Abre a página estatística
+                dialog.dispose(); // Fecha o popup
+            }
+        });
 
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
 
-        return 0;
+        return response[0]; // Retorna o valor do botão clicado
     }
 }

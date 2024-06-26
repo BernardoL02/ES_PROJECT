@@ -1,31 +1,37 @@
 package org.example;
 
+import org.example.BackEnd.Livro;
 import org.example.BackEnd.Requisitar;
 import org.example.BackEnd.Socio;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.BasePage;
-import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.PopUpEstatistica;
 import org.example.FrontEnd.Resources.RoundButton;
-import org.example.FrontEnd.Socio.RequisicoesPorSocio;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.*;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class PaginaEstatistica extends BasePage {
 
+    private JTable table;
     private ArrayList<Socio> socios;
     private ArrayList<Requisitar> requisicoes;
+    private ArrayList<Livro> topLivros;
 
     public PaginaEstatistica() {
 
@@ -36,6 +42,10 @@ public class PaginaEstatistica extends BasePage {
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
+
+        socios = carregarSocios("socios.ser");
+        requisicoes = carregarRequisicoes("requisitar.ser");
+        topLivros = getTop10Livros();
 
         JPanel wrapperPanel = new JPanel(new BorderLayout());
 
@@ -51,35 +61,27 @@ public class PaginaEstatistica extends BasePage {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.setBackground(new Color(0xFFFFFF)); // Cor do fundo do painel do botão
 
-        RoundButton buttonFiltrar = new RoundButton("Filtrar Por:");
+        RoundButton buttonFiltrar = new RoundButton("Ordenar Por:");
         buttonFiltrar.setBackground(Color.LIGHT_GRAY);
         buttonFiltrar.setForeground(Color.BLACK);
         buttonFiltrar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
         buttonPanel.add(buttonFiltrar); // Adiciona o botão ao painel de botões
         mainPanel.add(buttonPanel, BorderLayout.NORTH); // Adiciona o painel de botões acima da tabela
 
-        // Ação ao clicar no botão "Filtrar Por"
-        buttonFiltrar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        // Neste exemplo, topLivros já contém os dados ordenados
+        String[] columnNames = {"Ranking", "Título", "Género", "Autor", "Ano"};
+        Object[][] data = new Object[topLivros.size()][5]; // Array com tamanho de topLivros
 
-                int response = PopUpEstatistica.showCustomConfirmDialog();
-
-                // Verifica a resposta
-                if (response == JOptionPane.YES_OPTION) {
-
-                    dispose();
-                }
-            }
-        });
-
-        String[] columnNames = {" ", " ", " ", " ", " ", " "};
-        Object[][] data = {
-                {"#1", "A Formula de Deus", "Romance", "J. R dos Santos", "2024", "Português"},
-                {"#2", "O Principezinho", "Infantil", "A. Saint-Exupéry", "2024", "Português"}
-        };
-
-        JTable table = new JTable(data, columnNames) {
+        // Preenchendo o array data com os dados de topLivros
+        for (int i = 0; i < topLivros.size(); i++) {
+            Livro livro = topLivros.get(i);
+            data[i][0] = "#" + (i + 1); // Número de posição
+            data[i][1] = livro.getTitulo(); // Título do livro
+            data[i][2] = livro.getGenero(); // Gênero do livro
+            data[i][3] = livro.getAutor(); // Autor do livro
+            data[i][4] = livro.getAno(); // Ano do livro
+        }
+        table = new JTable(data, columnNames) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);
@@ -112,19 +114,15 @@ public class PaginaEstatistica extends BasePage {
         }
 
         TableColumnModel columnModel = table.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(120);
+        columnModel.getColumn(0).setPreferredWidth(20);
         columnModel.getColumn(1).setPreferredWidth(180);
         columnModel.getColumn(2).setPreferredWidth(120);
         columnModel.getColumn(3).setPreferredWidth(120);
         columnModel.getColumn(4).setPreferredWidth(120);
-        columnModel.getColumn(5).setPreferredWidth(120);
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-
-        socios = carregarSocios("socios.ser");
-        requisicoes = carregarRequisicoes("requisitar.ser");
 
         JLabel numeroSocios = new JLabel(new ImageIcon(getClass().getResource("/SocioRequisicoes.png")));
         numeroSocios.setBackground(Color.WHITE);
@@ -161,6 +159,50 @@ public class PaginaEstatistica extends BasePage {
 
         // Torna o frame visível
         setVisible(true);
+
+        // Ação ao clicar no botão "Filtrar Por"
+        buttonFiltrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int response = PopUpEstatistica.showCustomConfirmDialog();
+
+                System.out.println(response);
+                // Obtém uma cópia dos top 10 livros
+                ArrayList<Livro> topLivros = new ArrayList<>(getTop10Livros());
+
+                // Verifica a resposta
+                if (response == 0) {
+                    // Ordenar por Ano Descendente
+                    topLivros.sort(Comparator.comparingInt(Livro::getAno).reversed());
+
+                    // Exibe os livros ordenados no console (opcional)
+                    for (Livro livro : topLivros) {
+                        System.out.println(livro.getTitulo() + " - Ano: " + livro.getAno());
+                    }
+                } else if (response == 1) {
+                    // Ordenar por Ranking
+                    Map<Livro, Long> livroRequisicoes = requisicoes.stream()
+                            .collect(Collectors.groupingBy(Requisitar::getLivro, Collectors.counting()));
+
+                    topLivros.sort((livro1, livro2) ->
+                            livroRequisicoes.getOrDefault(livro2, 0L).compareTo(livroRequisicoes.getOrDefault(livro1, 0L)));
+
+                    // Exibe os livros ordenados no console (opcional)
+                    for (Livro livro : topLivros) {
+                        System.out.println(livro.getTitulo() + " - Requisições: " + livroRequisicoes.getOrDefault(livro, 0L));
+                    }
+                }
+
+                // Atualiza a tabela com os livros ordenados
+                updateTable(topLivros, columnNames);
+
+                // Notifica a tabela sobre a mudança nos dados
+                table.setModel(new DefaultTableModel(data, columnNames));
+                ((DefaultTableModel)table.getModel()).fireTableDataChanged();
+
+                dispose();
+            }
+        });
     }
 
     private ArrayList<Socio> carregarSocios(String nomeArquivo) {
@@ -183,4 +225,77 @@ public class PaginaEstatistica extends BasePage {
         return requisicoes;
     }
 
+    public ArrayList<Livro> getTop10Livros() {
+        // HashMap para contar as requisições de cada livro usando o ISBN
+        Map<String, Integer> livroRequisicoes = new HashMap<>();
+
+        // Verifica se requisicoes não é nulo e está preenchido
+        if (requisicoes != null) {
+            for (Requisitar requisitar : requisicoes) {
+                Livro livro = requisitar.getLivro();
+                String isbnLivro = livro.getIsbn(); // Supondo que existe um método getISBN() na classe Livro
+
+                livroRequisicoes.put(isbnLivro, livroRequisicoes.getOrDefault(isbnLivro, 0) + 1);
+            }
+
+            // Ordena os livros pelo número de requisições em ordem decrescente
+            List<String> topLivrosIsbn = livroRequisicoes.entrySet().stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .limit(10)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+
+            // Lista de livros correspondentes aos ISBNs mais requisitados
+            ArrayList<Livro> topLivros = new ArrayList<>();
+            for (String isbn : topLivrosIsbn) {
+                // Encontrar o livro correspondente ao ISBN
+                Livro livroEncontrado = encontrarLivroPorISBN(isbn); // Método fictício para encontrar o livro
+                if (livroEncontrado != null) {
+                    topLivros.add(livroEncontrado);
+                }
+            }
+
+            return topLivros;
+        } else {
+            return new ArrayList<>(); // Retorna uma lista vazia se requisicoes for nulo
+        }
+    }
+
+    // Método fictício para encontrar o livro pelo ISBN
+    private Livro encontrarLivroPorISBN(String isbnLivro) {
+        for (Requisitar requisitar : requisicoes) {
+            Livro livro = requisitar.getLivro();
+            if (livro.getIsbn().equals(isbnLivro)) {
+                return livro;
+            }
+        }
+        return null; // Retorna null se o livro não for encontrado
+    }
+
+    // Método para atualizar a tabela com os novos dados
+    private void updateTable(ArrayList<Livro> livros, String[] columnNames) {
+        // Cria uma matriz de objetos para os dados dos livros
+        Object[][] data = new Object[livros.size()][5];
+
+        // Preenche a matriz de dados com os livros fornecidos
+        for (int i = 0; i < livros.size(); i++) {
+            Livro livro = livros.get(i);
+            data[i][0] = "#" + (i + 1);      // Número de posição
+            data[i][1] = livro.getTitulo();  // Título do livro
+            data[i][2] = livro.getGenero();  // Gênero do livro
+            data[i][3] = livro.getAutor();   // Autor do livro
+            data[i][4] = livro.getAno();     // Ano do livro
+        }
+
+        // Cria um novo modelo de tabela com os dados atualizados
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+
+        // Define o novo modelo para a tabela existente (assumindo que 'table' é uma variável de instância)
+        table.setModel(model);
+
+        // Atualiza a interface gráfica para refletir as mudanças na tabela
+        table.revalidate();
+        table.repaint();
+    }
 }
+

@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -61,12 +62,25 @@ public class AdicionarLivro extends BasePage {
         backgroundPanel.setOpaque(true);
         backgroundPanel.setLayout(null);
 
-        NumberFormatter formatter = new NumberFormatter() {
+        // Criação do NumberFormatter para números inteiros
+        NumberFormatter formatter = new NumberFormatter(new DecimalFormat("#")) {
+            private final int MAX_VALUE = Integer.MAX_VALUE; // Máximo valor para Long
+
             @Override
             public Object stringToValue(String text) throws ParseException {
                 if (text == null || text.trim().isEmpty()) {
                     return null;
                 }
+
+                try {
+                    int parsedValue = Integer.parseInt(text);
+                    if (parsedValue > MAX_VALUE) {
+                        return null;
+                    }
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+
                 return super.stringToValue(text);
             }
 
@@ -78,10 +92,10 @@ public class AdicionarLivro extends BasePage {
                 return super.valueToString(value);
             }
         };
-        formatter.setValueClass(Integer.class);
-        formatter.setCommitsOnValidEdit(true);
+
+        formatter.setValueClass(Long.class);
         formatter.setAllowsInvalid(true);
-        formatter.setMaximum(999);
+        formatter.setCommitsOnValidEdit(true);
 
         fieldTitulo = new JTextField();
         fieldTitulo.setBounds(55, 90, 200, 30);

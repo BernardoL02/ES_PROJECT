@@ -7,9 +7,12 @@ import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 
 public class AdicionarLivro extends BasePage {
     private JTextField fieldTitulo;
@@ -132,25 +135,66 @@ public class AdicionarLivro extends BasePage {
                 int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
 
                 if (response == JOptionPane.YES_OPTION) {
-                    try {
-                        Livro livro = new Livro(
-                                fieldTitulo.getText(),
-                                fieldISBN.getText(),
-                                fieldEdicao.getText(),
-                                fieldGenero.getText(),
-                                fieldSubGenero.getText(),
-                                fieldLocalizacao.getText(),
-                                fieldAutor.getText(),
-                                fieldEditora.getText(),
-                                Integer.parseInt(fieldAno.getText()),
-                                Integer.parseInt(fieldQuantidade.getText()),
-                                new Fornecedor(fieldEditoraFornecedor.getText(), fieldDistribuidora.getText())
-                        );
-                        GerirLivros.adicionarLivro(livro);
-                        new GerirLivros();
-                        dispose();
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "Por favor, insira valores válidos para Ano e Quantidade.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    // Verifica se alguma caixa de texto está vazia ou contém valor nulo
+                    if (fieldTitulo.getText().trim().isEmpty() ||
+                            fieldISBN.getText().trim().isEmpty() ||
+                            fieldEdicao.getText().trim().isEmpty() ||
+                            fieldGenero.getText().trim().isEmpty() ||
+                            fieldSubGenero.getText().trim().isEmpty() ||
+                            fieldLocalizacao.getText().trim().isEmpty() ||
+                            fieldAutor.getText().trim().isEmpty() ||
+                            fieldEditora.getText().trim().isEmpty() ||
+                            fieldAno.getText().trim().isEmpty() ||
+                            fieldQuantidade.getText().trim().isEmpty() ||
+                            fieldEditoraFornecedor.getText().trim().isEmpty() ||
+                            fieldDistribuidora.getText().trim().isEmpty()
+                    )
+                    {
+                        // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
+                        JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    } else {
+
+                        try {
+
+                            int ISBN = Integer.parseInt(fieldISBN.getText().trim());
+                            int diasLeitorValue = Integer.parseInt(fieldAno.getText().trim());
+                            int diasAcademicoValue = Integer.parseInt(fieldQuantidade.getText().trim());
+
+                            if (ISBN < 0 || diasLeitorValue < 0 || diasAcademicoValue < 0) {
+                                JOptionPane.showMessageDialog(null, "Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+
+                            // Verificar se os campos contêm apenas dígitos numéricos
+                            String textISBN = fieldISBN.getText().trim();
+                            String textAno = fieldAno.getText().trim();
+                            String textQuantidade = fieldQuantidade.getText().trim();
+
+                            if (!textISBN.matches("\\d+") || !textAno.matches("\\d+") || !textQuantidade.matches("\\d+")) {
+                                JOptionPane.showMessageDialog(null, "Os campos ISBN, Ano e Quantidade devem conter apenas números inteiros.", "Erro", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+
+                            Livro livro = new Livro(
+                                    fieldTitulo.getText(),
+                                    fieldISBN.getText(),
+                                    fieldEdicao.getText(),
+                                    fieldGenero.getText(),
+                                    fieldSubGenero.getText(),
+                                    fieldLocalizacao.getText(),
+                                    fieldAutor.getText(),
+                                    fieldEditora.getText(),
+                                    Integer.parseInt(fieldAno.getText()),
+                                    Integer.parseInt(fieldQuantidade.getText()),
+                                    new Fornecedor(fieldEditoraFornecedor.getText(), fieldDistribuidora.getText())
+                            );
+
+                            GerirLivros.adicionarLivro(livro);
+                            new GerirLivros();
+                            dispose();
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(null, "Por favor, insira valores válidos para Ano e Quantidade.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
             }

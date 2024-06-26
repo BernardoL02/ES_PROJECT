@@ -7,9 +7,11 @@ import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 public class EditarLivro extends BasePage {
     private Livro livro;
@@ -60,6 +62,16 @@ public class EditarLivro extends BasePage {
         backgroundPanel.setBackground(Color.WHITE); // Define o fundo branco para o painel
         backgroundPanel.setOpaque(true);
         backgroundPanel.setLayout(null); // Definindo layout absoluto para posicionamento personalizado
+
+        // Criação do NumberFormatter para números inteiros
+        NumberFormatter formatter = new NumberFormatter(new DecimalFormat("#"));
+        formatter.setValueClass(Integer.class);
+        formatter.setAllowsInvalid(true);
+        formatter.setCommitsOnValidEdit(true);
+
+        // Define o comportamento para texto vazio
+        formatter.setAllowsInvalid(true);
+        formatter.setCommitsOnValidEdit(false);
 
         // Adicionando caixas de texto ao painel de fundo
         fieldTitulo = new JTextField(livro.getTitulo());
@@ -132,23 +144,61 @@ public class EditarLivro extends BasePage {
 
                 // Verifica a resposta
                 if (response == JOptionPane.YES_OPTION) {
-                    // Atualiza os dados do livro
-                    livro.setTitulo(fieldTitulo.getText());
-                    livro.setIsbn(fieldISBN.getText());
-                    livro.setEdicao(fieldEdicao.getText());
-                    livro.setGenero(fieldGenero.getText());
-                    livro.setSubGenero(fieldSubGenero.getText());
-                    livro.setLocalizacao(fieldLocalizacao.getText());
-                    livro.setAutor(fieldAutor.getText());
-                    livro.setEditora(fieldEditora.getText());
-                    livro.setAno(Integer.parseInt(fieldAno.getText()));
-                    livro.setQuantidade(Integer.parseInt(fieldQuantidade.getText()));
 
-                    // Salvar os livros atualizados no arquivo
-                    GerirLivros.salvarLivros("livros.ser");
+                    // Verifica se alguma caixa de texto está vazia ou contém valor nulo
+                    if (fieldTitulo.getText().trim().isEmpty() ||
+                            fieldISBN.getText().trim().isEmpty() ||
+                            fieldEdicao.getText().trim().isEmpty() ||
+                            fieldGenero.getText().trim().isEmpty() ||
+                            fieldSubGenero.getText().trim().isEmpty() ||
+                            fieldLocalizacao.getText().trim().isEmpty() ||
+                            fieldAutor.getText().trim().isEmpty() ||
+                            fieldEditora.getText().trim().isEmpty() ||
+                            fieldAno.getText().trim().isEmpty() ||
+                            fieldQuantidade.getText().trim().isEmpty()
+                    ) {
+                        // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
+                        JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    } else {
 
-                    new GerirLivros();
-                    dispose();
+                        int ISBN = Integer.parseInt(fieldISBN.getText().trim());
+                        int diasLeitorValue = Integer.parseInt(fieldAno.getText().trim());
+                        int diasAcademicoValue = Integer.parseInt(fieldQuantidade.getText().trim());
+
+                        if (ISBN < 0 || diasLeitorValue < 0 || diasAcademicoValue < 0) {
+                            JOptionPane.showMessageDialog(null, "Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+
+                        // Verificar se os campos contêm apenas dígitos numéricos
+                        String textISBN = fieldISBN.getText().trim();
+                        String textAno = fieldAno.getText().trim();
+                        String textQuantidade = fieldQuantidade.getText().trim();
+
+                        if (!textISBN.matches("\\d+") || !textAno.matches("\\d+") || !textQuantidade.matches("\\d+")) {
+                            JOptionPane.showMessageDialog(null, "Os campos ISBN, Ano e Quantidade devem conter apenas números inteiros.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        // Atualiza os dados do livro
+                        livro.setTitulo(fieldTitulo.getText());
+                        livro.setIsbn(fieldISBN.getText());
+                        livro.setEdicao(fieldEdicao.getText());
+                        livro.setGenero(fieldGenero.getText());
+                        livro.setSubGenero(fieldSubGenero.getText());
+                        livro.setLocalizacao(fieldLocalizacao.getText());
+                        livro.setAutor(fieldAutor.getText());
+                        livro.setEditora(fieldEditora.getText());
+                        livro.setAno(Integer.parseInt(fieldAno.getText()));
+                        livro.setQuantidade(Integer.parseInt(fieldQuantidade.getText()));
+
+                        // Salvar os livros atualizados no arquivo
+                        GerirLivros.salvarLivros("livros.ser");
+
+                        new GerirLivros();
+                        dispose();
+                    }
                 }
             }
         });

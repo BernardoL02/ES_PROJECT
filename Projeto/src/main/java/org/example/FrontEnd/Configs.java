@@ -190,7 +190,7 @@ public class Configs extends BasePage {
                                 cotasLeitorValue < 0 || cotasAcademicoValue < 0 || cotasEntusiastaValue < 0 ||
                                 maxLivrosValue < 0 || danificacaoLivroValue < 0 || multaValue < 0) {
 
-                            JOptionPane.showMessageDialog(null, "Os valores não podem ser negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Não podem existir valores negativos.", "Erro", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
 

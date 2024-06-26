@@ -137,7 +137,7 @@ public class RequisitarLivro extends BasePage {
         columnModel.getColumn(5).setPreferredWidth(120);
         columnModel.getColumn(6).setPreferredWidth(180);
 
-        table.getTableHeader().setResizingAllowed(false);
+        table.getTableHeader().setResizingAllowed(true);
 
         columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
             private final JPanel panel = new JPanel(new GridBagLayout());
@@ -293,7 +293,7 @@ public class RequisitarLivro extends BasePage {
     private int contarReservasAtivas(Livro livro) {
         int count = 0;
         for (Requisitar requisitar : requisitars) {
-            if (requisitar.getLivro().getIsbn().equals(livro.getIsbn()) && requisitar.getDataDevolucaoPrevista().isAfter(LocalDate.now())) {
+            if (requisitar.getLivro().getIsbn().equals(livro.getIsbn()) && requisitar.getDataDevolucao() == null) {
                 count++;
             }
         }
@@ -304,4 +304,5 @@ public class RequisitarLivro extends BasePage {
         }
         return count;
     }
+
 }

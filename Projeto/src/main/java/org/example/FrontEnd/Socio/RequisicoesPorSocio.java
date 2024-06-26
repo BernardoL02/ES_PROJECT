@@ -5,6 +5,7 @@ import org.example.BackEnd.TipoDeSocio;
 import org.example.BackEnd.Requisitar;
 import org.example.FrontEnd.Livro.RequisitarLivro;
 import org.example.FrontEnd.Resources.BasePage;
+import org.example.BackEnd.Configuracoes;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
@@ -21,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class RequisicoesPorSocio extends BasePage {
@@ -29,6 +31,7 @@ public class RequisicoesPorSocio extends BasePage {
     private JTable memberTable;
     private JTable bookTable;
     private ArrayList<Socio> socios;
+    private Configuracoes configuracoes;
 
     public RequisicoesPorSocio(Socio socio) {
         super("Requisicoes Por Socio", "/HeaderRequisicoesPorSocio.png", new ActionListener() {
@@ -42,6 +45,7 @@ public class RequisicoesPorSocio extends BasePage {
         this.socio = socio;
         this.reservas = carregarReservas("requisitar.ser");
         this.socios = carregarSocios("socios.ser");
+        this.configuracoes = new Configuracoes();
 
         JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -106,7 +110,7 @@ public class RequisicoesPorSocio extends BasePage {
         mainPanel.add(memberInfoPanel);
 
         // Painel de botões
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); // Alinhamento à esquerda
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0)); // Alinhamento à esquerda
         buttonPanel.setBackground(Color.WHITE);
 
         RoundButton buttonCancelar = new RoundButton("Cancelar");
@@ -186,17 +190,20 @@ public class RequisicoesPorSocio extends BasePage {
         bookInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
         bookInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
         bookInfoPanel.add(bookInfoLabel, BorderLayout.NORTH);
+        bookInfoPanel.setBackground(Color.WHITE);
 
         String[] bookColumnNames = {"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolução", "Ação"};
         Object[][] bookData = criarReservasData();
         bookTable = createStyledTable(bookData, bookColumnNames);
-        bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
+        bookTable.setRowHeight(50); // Ajusta a altura da linha da tabela de livro
+        bookTable.setBackground(Color.WHITE);
 
         JScrollPane bookScrollPane = new JScrollPane(bookTable);
         bookScrollPane.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, 200)); // Altura fixa para o painel de informações do livro
         bookScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0x99D4FF))); // Borda com a cor desejada
         bookScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); // Margem em baixo
         bookInfoPanel.add(bookScrollPane, BorderLayout.CENTER);
+        bookInfoPanel.setBackground(Color.WHITE);
 
         // Adiciona o painel de informações do livro ao mainPanel
         mainPanel.add(bookInfoPanel);
@@ -247,11 +254,18 @@ public class RequisicoesPorSocio extends BasePage {
 
     // Método para criar os dados da tabela de reservas
     private Object[][] criarReservasData() {
-        Object[][] data = new Object[reservas.size()][7];
+        ArrayList<Requisitar> reservasDoSocio = new ArrayList<>();
+        for (Requisitar reserva : reservas) {
+            if (reserva.getSocio().getNif().equals(socio.getNif())) {
+                reservasDoSocio.add(reserva);
+            }
+        }
+
+        Object[][] data = new Object[reservasDoSocio.size()][7];
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        for (int i = 0; i < reservas.size(); i++) {
-            Requisitar reserva = reservas.get(i);
+        for (int i = 0; i < reservasDoSocio.size(); i++) {
+            Requisitar reserva = reservasDoSocio.get(i);
             data[i][0] = reserva.getLivro().getIsbn();
             data[i][1] = reserva.getLivro().getTitulo();
             data[i][2] = reserva.getLivro().getEdicao();
@@ -283,7 +297,7 @@ public class RequisicoesPorSocio extends BasePage {
                 return component;
             }
         };
-        table.setRowHeight(30);
+        table.setRowHeight(40);
         table.getTableHeader().setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
         table.getTableHeader().setBackground(new Color(0x6EC2FF));
         table.getTableHeader().setForeground(Color.BLACK);
@@ -309,7 +323,7 @@ public class RequisicoesPorSocio extends BasePage {
 
         columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
             private final JPanel panel = new JPanel(new GridBagLayout());
-            private final JButton actionButton = new RoundButton("Devolver");
+            private final JButton actionButton = new RoundButton("");
 
             {
                 actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
@@ -317,15 +331,28 @@ public class RequisicoesPorSocio extends BasePage {
                 actionButton.setBorder(null);
                 actionButton.setContentAreaFilled(true);
                 actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                actionButton.setBackground(Color.BLACK);
-                actionButton.setForeground(Color.WHITE);
 
                 actionButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         int row = bookTable.getEditingRow();
                         String isbn = (String) bookTable.getValueAt(row, 0);
-                        devolverLivro(isbn);
+
+                        // Encontrar a reserva correspondente
+                        Requisitar reserva = encontrarReserva(isbn);
+                        if (reserva != null) {
+                            long diasAtraso = ChronoUnit.DAYS.between(reserva.getDataDevolucaoPrevista(), LocalDate.now());
+                            double multa = 0;
+                            if (diasAtraso > 0) {
+                                multa = diasAtraso * Double.parseDouble(configuracoes.getProperty("multa"));
+                            }
+
+                            int response = CustomPopUP.showCustomConfirmDialog("Valor a pagar: " + multa, "Valor a Pagar", "Nao Pago", "Pago");
+
+                            if (response == JOptionPane.YES_OPTION) {
+                                devolverLivro(isbn);
+                            }
+                        }
                     }
                 });
 
@@ -334,6 +361,16 @@ public class RequisicoesPorSocio extends BasePage {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                String sinal = table.getValueAt(row, 5).toString();
+                if (sinal.equals("-")) {
+                    actionButton.setText("Devolver");
+                    actionButton.setBackground(Color.BLACK);
+                    actionButton.setForeground(Color.WHITE);
+                } else {
+                    actionButton.setText(""); // Botão vazio
+                    actionButton.setBackground(table.getBackground());
+                    actionButton.setForeground(table.getForeground());
+                }
                 panel.setOpaque(true);
                 if (isSelected) {
                     panel.setBackground(table.getSelectionBackground());
@@ -346,7 +383,7 @@ public class RequisicoesPorSocio extends BasePage {
 
         columnModel.getColumn(6).setCellEditor(new TableCellEditor() {
             private final JPanel panel = new JPanel(new GridBagLayout());
-            private final JButton actionButton = new RoundButton("Devolver");
+            private final JButton actionButton = new RoundButton("");
 
             {
                 actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
@@ -354,15 +391,28 @@ public class RequisicoesPorSocio extends BasePage {
                 actionButton.setBorder(null);
                 actionButton.setContentAreaFilled(true);
                 actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                actionButton.setBackground(Color.BLACK);
-                actionButton.setForeground(Color.WHITE);
 
                 actionButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         int row = bookTable.getEditingRow();
                         String isbn = (String) bookTable.getValueAt(row, 0);
-                        devolverLivro(isbn);
+
+                        // Encontrar a reserva correspondente
+                        Requisitar reserva = encontrarReserva(isbn);
+                        if (reserva != null) {
+                            long diasAtraso = ChronoUnit.DAYS.between(reserva.getDataDevolucaoPrevista(), LocalDate.now());
+                            double multa = 0;
+                            if (diasAtraso > 0) {
+                                multa = diasAtraso * Double.parseDouble(configuracoes.getProperty("multa"));
+                            }
+
+                            int response = CustomPopUP.showCustomConfirmDialog("Valor a pagar: " + multa, "Valor a Pagar", "Nao Pago", "Pago");
+
+                            if (response == JOptionPane.YES_OPTION) {
+                                devolverLivro(isbn);
+                            }
+                        }
                     }
                 });
 
@@ -371,6 +421,16 @@ public class RequisicoesPorSocio extends BasePage {
 
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                String sinal = table.getValueAt(row, 5).toString();
+                if (sinal.equals("-")) {
+                    actionButton.setText("Devolver");
+                    actionButton.setBackground(Color.BLACK);
+                    actionButton.setForeground(Color.WHITE);
+                } else {
+                    actionButton.setText(""); // Botão vazio
+                    actionButton.setBackground(table.getBackground());
+                    actionButton.setForeground(table.getForeground());
+                }
                 panel.setOpaque(true);
                 if (isSelected) {
                     panel.setBackground(table.getSelectionBackground());
@@ -412,6 +472,7 @@ public class RequisicoesPorSocio extends BasePage {
             public void removeCellEditorListener(javax.swing.event.CellEditorListener l) {
             }
         });
+
 
         return table;
     }
@@ -464,11 +525,13 @@ public class RequisicoesPorSocio extends BasePage {
 
     // Método para devolver o livro
     public void devolverLivro(String isbn) {
+        LocalDate dataDevolucao = LocalDate.now(); // Data atual de devolução
+
         for (Requisitar reserva : reservas) {
-            if (reserva.getLivro().getIsbn().equals(isbn) && reserva.getSocio().getNif().equals(socio.getNif())) {
-                reservas.remove(reserva);
-                salvarReservas("requisitar.ser", reservas);
-                atualizarTabelaLivros();
+            if (reserva.getLivro().getIsbn().equals(isbn) && reserva.getSocio().getNif().equals(socio.getNif()) && reserva.getDataDevolucao() == null) {
+                reserva.setDataDevolucao(dataDevolucao); // Define a data de devolução na reserva
+                salvarReservas("requisitar.ser", reservas); // Salva as reservas atualizadas
+                atualizarTabelaLivros(); // Atualiza a tabela de livros na interface
                 break;
             }
         }
@@ -483,10 +546,19 @@ public class RequisicoesPorSocio extends BasePage {
         }
     }
 
+    // Método para encontrar a reserva pelo ISBN
+    private Requisitar encontrarReserva(String isbn) {
+        for (Requisitar reserva : reservas) {
+            if (reserva.getLivro().getIsbn().equals(isbn) && reserva.getSocio().getNif().equals(socio.getNif()) && reserva.getDataDevolucao() == null) {
+                return reserva;
+            }
+        }
+        return null;
+    }
+
     // Método para atualizar a tabela de livros
     private void atualizarTabelaLivros() {
-        Object[][] bookData = criarReservasData();
-        DefaultTableModel model = (DefaultTableModel) bookTable.getModel();
-        model.setDataVector(bookData, new String[]{"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolução", "Ação"});
+        new RequisicoesPorSocio(socio);
+        dispose();
     }
 }

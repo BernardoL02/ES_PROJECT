@@ -9,7 +9,6 @@ import org.example.FrontEnd.BiblioLiz;
 public class Main {
     public static void main(String[] args) {
 
-
         BiblioLiz.main(args);
     }
 }

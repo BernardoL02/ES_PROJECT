@@ -11,8 +11,12 @@ import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 public class EditarLivro extends BasePage {
     private Livro livro;
@@ -156,6 +160,7 @@ public class EditarLivro extends BasePage {
         buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 // Exibe o diálogo de confirmação personalizado
                 int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
 
@@ -177,6 +182,12 @@ public class EditarLivro extends BasePage {
                         // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
                         JOptionPane.showMessageDialog(null, "Campos obrigatórios por preencher.", "Erro", JOptionPane.ERROR_MESSAGE);
                     } else {
+
+                        String newISBN = fieldISBN.getText().trim();
+                        if (isbnExists(newISBN)) {
+                            JOptionPane.showMessageDialog(null, "Já existe um livro com este ISBN.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
 
                         int ISBN = Integer.parseInt(fieldISBN.getText().trim());
                         int diasLeitorValue = Integer.parseInt(fieldAno.getText().trim());
@@ -229,5 +240,25 @@ public class EditarLivro extends BasePage {
 
         // Torna o frame visível
         setVisible(true);
+    }
+
+    private boolean isbnExists(String isbn) {
+        ArrayList<Livro> livros = carregarLivros("livros.ser");
+        for (Livro livro : livros) {
+            if (livro.getIsbn().equals(isbn)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<Livro> carregarLivros(String nomeArquivo) {
+        ArrayList<Livro> livros = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            livros = (ArrayList<Livro>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return livros;
     }
 }

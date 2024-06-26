@@ -8,6 +8,8 @@ import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,7 @@ public class GerirLivros extends BasePage {
     private static ArrayList<Livro> livros = new ArrayList<>();
     private JTable table;
     private LivroTableModel tableModel;
+    private JTextField searchText;
 
     public GerirLivros() {
         super("Gerir Livros", "/HeaderGerirLivros.png", new ActionListener() {
@@ -54,10 +57,31 @@ public class GerirLivros extends BasePage {
         searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         searchPanel.setBackground(Color.WHITE);
 
-        JTextField searchText = new JTextField();
+        searchText = new JTextField();
         searchText.setOpaque(false);
         searchText.setBorder(BorderFactory.createEmptyBorder(5, 55, 5, 5));
         searchPanel.add(searchText, BorderLayout.CENTER);
+
+        // Add DocumentListener to the searchText field
+        searchText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchBooks();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchBooks();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchBooks();
+            }
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.setBackground(new Color(0xFFFFFF));
 
         RoundButton addButton = new RoundButton("Adicionar Livro");
         addButton.setBackground(new Color(0x99D4FF));
@@ -73,8 +97,6 @@ public class GerirLivros extends BasePage {
             }
         });
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        buttonPanel.setBackground(new Color(0xFFFFFF));
         buttonPanel.add(addButton);
 
         topPanel.add(searchPanel, BorderLayout.CENTER);
@@ -167,8 +189,6 @@ public class GerirLivros extends BasePage {
                 panel.add(reserveButton);
             }
 
-
-
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 panel.setOpaque(true);
@@ -180,8 +200,6 @@ public class GerirLivros extends BasePage {
                 return panel;
             }
         });
-
-
 
         columnModel.getColumn(7).setCellEditor(new TableCellEditor() {
             private final JPanel panel = new JPanel(new GridBagLayout());
@@ -341,6 +359,32 @@ public class GerirLivros extends BasePage {
             System.err.println("Erro ao salvar livros: " + e.getMessage());
         }
     }
+
+    private void searchBooks() {
+        String query = searchText.getText().trim().toLowerCase();
+        if (query.isEmpty()) {
+            tableModel.setLivros(livros);
+        } else {
+            ArrayList<Livro> filteredLivros = new ArrayList<>();
+            for (Livro livro : livros) {
+                if (livro.getIsbn().toLowerCase().contains(query) || livro.getTitulo().toLowerCase().contains(query)) {
+                    filteredLivros.add(livro);
+                }
+            }
+            if (filteredLivros.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nome Introduzido Invalido", "Erro", JOptionPane.ERROR_MESSAGE);
+                tableModel.setLivros(livros); // Reset to show all books
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        searchText.setText("");
+                    }
+                });
+            } else {
+                tableModel.setLivros(filteredLivros);
+            }
+        }
+    }
 }
 
 class LivroTableModel extends AbstractTableModel {
@@ -395,5 +439,10 @@ class LivroTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 7; // Apenas a coluna de ações é editável
+    }
+
+    public void setLivros(ArrayList<Livro> livros) {
+        this.livros = livros;
+        fireTableDataChanged();
     }
 }

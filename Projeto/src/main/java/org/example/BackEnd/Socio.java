@@ -1,23 +1,26 @@
 package org.example.BackEnd;
 
-public class Socio {
+import java.io.Serializable;
+
+public class Socio implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String nome;
     private String nif;
-    private String morada;
+    private String endereco;
     private String telefone;
     private String email;
     private TipoDeSocio tipoDeSocio;
-    private boolean pago;
+    private Cota cota;
 
-    // Construtor
-    public Socio(String nome, String nif, String morada, String telefone, String email, TipoDeSocio tipoDeSocio) {
+    public Socio(String nome, String nif, String endereco, String telefone, String email, TipoDeSocio tipoDeSocio, Cota cota) {
         this.nome = nome;
         this.nif = nif;
-        this.morada = morada;
+        this.endereco = endereco;
         this.telefone = telefone;
         this.email = email;
         this.tipoDeSocio = tipoDeSocio;
-        this.pago = true;
+        this.cota = cota;
     }
 
     // Getters e Setters
@@ -29,14 +32,6 @@ public class Socio {
         this.nome = nome;
     }
 
-    public boolean isPago() {
-        return pago;
-    }
-
-    public void setPago(boolean pago) {
-        this.pago = pago;
-    }
-
     public String getNif() {
         return nif;
     }
@@ -45,12 +40,12 @@ public class Socio {
         this.nif = nif;
     }
 
-    public String getMorada() {
-        return morada;
+    public String getEndereco() {
+        return endereco;
     }
 
-    public void setMorada(String morada) {
-        this.morada = morada;
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public String getTelefone() {
@@ -77,15 +72,24 @@ public class Socio {
         this.tipoDeSocio = tipoDeSocio;
     }
 
+    public Cota getCota() {
+        return cota;
+    }
+
+    public void setCota(Cota cota) {
+        this.cota = cota;
+    }
+
     @Override
     public String toString() {
         return "Socio{" +
                 "nome='" + nome + '\'' +
                 ", nif='" + nif + '\'' +
-                ", morada='" + morada + '\'' +
+                ", endereco='" + endereco + '\'' +
                 ", telefone='" + telefone + '\'' +
                 ", email='" + email + '\'' +
                 ", tipoDeSocio=" + tipoDeSocio +
+                ", cota=" + cota +
                 '}';
     }
 }

@@ -53,4 +53,19 @@ public class Configuracoes {
     public void setProperty(String key, String value) {
         properties.setProperty(key, value);
     }
+
+    public double getValorCota(TipoDeSocio tipoDeSocio) {
+        String key = "cotas" + tipoDeSocio.name();
+        String value = properties.getProperty(key);
+        if (value != null) {
+            try {
+                return Double.parseDouble(value);
+            } catch (NumberFormatException e) {
+                System.err.println("Valor inválido para a cota do tipo de sócio " + tipoDeSocio + ": " + value);
+            }
+        } else {
+            System.err.println("Chave não encontrada no arquivo de configuração: " + key);
+        }
+        return 0.0;
+    }
 }

@@ -87,7 +87,7 @@ public class BiblioLiz extends JFrame {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        new GerirSocio(getSocios());
+                        new GerirSocio();
                         dispose(); // Fecha a janela principal
                     }
                 });

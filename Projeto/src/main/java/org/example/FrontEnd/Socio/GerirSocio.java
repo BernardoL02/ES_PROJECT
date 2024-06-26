@@ -1,8 +1,6 @@
 package org.example.FrontEnd.Socio;
 
 import org.example.BackEnd.Socio;
-import org.example.FrontEnd.Livro.AdicionarLivro;
-import org.example.FrontEnd.Livro.GerirLivros;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -13,14 +11,16 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.ArrayList;
 
 public class GerirSocio extends BasePage {
+    private static ArrayList<Socio> socios = new ArrayList<>();
+    private JTable table;
+    private SocioTableModel tableModel;
 
-    private ArrayList<Socio> socios;
-
-    public GerirSocio(ArrayList<Socio> socios) {
-        super("Gerir Sócio", "/HeaderGerirSocio.png", new ActionListener() {
+    public GerirSocio() {
+        super("Gerir Sócios", "/HeaderGerirSocio.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new BiblioLiz();
@@ -28,13 +28,9 @@ public class GerirSocio extends BasePage {
             }
         }, true);
 
-        this.socios = socios;
-
-        // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Painel para o conteúdo principal
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -62,7 +58,6 @@ public class GerirSocio extends BasePage {
         searchText.setBorder(BorderFactory.createEmptyBorder(5, 55, 5, 5));
         searchPanel.add(searchText, BorderLayout.CENTER);
 
-        // Adicionar botão "Adicionar"
         RoundButton addButton = new RoundButton("Adicionar Sócio");
         addButton.setBackground(new Color(0x99D4FF));
         addButton.setForeground(Color.BLACK);
@@ -77,23 +72,21 @@ public class GerirSocio extends BasePage {
             }
         });
 
-        // Painel para o botão "Adicionar"
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        buttonPanel.setBackground(Color.WHITE); // Cor do fundo do painel do botão
-        topPanel.add(searchPanel, BorderLayout.CENTER);
-        topPanel.add(buttonPanel, BorderLayout.EAST);
+        buttonPanel.setBackground(new Color(0xFFFFFF));
         buttonPanel.add(addButton);
 
-        mainPanel.add(topPanel, BorderLayout.NORTH); // Adiciona o topPanel ao mainPanel
+        topPanel.add(searchPanel, BorderLayout.CENTER);
+        topPanel.add(buttonPanel, BorderLayout.EAST);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = {"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago", "Ações"};
-        Object[][] data = {
-                {"Bernardo", "bernardo@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Pago", " "},
-                {"AAAA", "aaaa@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Pago", " "}
-        };
 
-        // Criando a tabela com o modelo
-        JTable table = new JTable(data, columnNames) {
+        // Carregar sócios do arquivo
+        carregarSocios("socios.ser");
+
+        tableModel = new SocioTableModel(socios, columnNames);
+        table = new JTable(tableModel) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);
@@ -145,7 +138,7 @@ public class GerirSocio extends BasePage {
             private final JPanel panel = new JPanel(new GridBagLayout());
             private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
             private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");  // Use RoundButton here
+            private final JButton reserveButton = new RoundButton("Reservas");
 
             {
                 editButton.setBorder(null);
@@ -188,7 +181,7 @@ public class GerirSocio extends BasePage {
             private final JPanel panel = new JPanel(new GridBagLayout());
             private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
             private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");  // Use RoundButton here
+            private final JButton reserveButton = new RoundButton("Reservas");
 
             {
                 editButton.setBorder(null);
@@ -213,8 +206,12 @@ public class GerirSocio extends BasePage {
                 editButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        new RequisicoesPorSocio();
-                        dispose();
+                        int selectedRow = table.getSelectedRow();
+                        if (selectedRow != -1) {
+                            Socio socio = socios.get(selectedRow);
+                            new RequisicoesPorSocio();
+                            dispose();
+                        }
                     }
                 });
 
@@ -223,13 +220,14 @@ public class GerirSocio extends BasePage {
                     public void actionPerformed(ActionEvent e) {
                         int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que deseja eliminar o sócio?", "Confirmação", "Cancelar", "Confirmar");
 
-                        // Verifica a resposta
                         if (response == JOptionPane.YES_OPTION) {
-                            //Guardar os dados
-                            new BiblioLiz();
-                            dispose();
+                            int selectedRow = table.getSelectedRow();
+                            if (selectedRow != -1) {
+                                socios.remove(selectedRow);
+                                tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
+                                salvarSocios("socios.ser");
+                            }
                         }
-
                     }
                 });
 
@@ -299,5 +297,99 @@ public class GerirSocio extends BasePage {
         add(wrapperPanel, BorderLayout.CENTER);
 
         setVisible(true);
+    }
+
+    private void carregarSocios(String nomeArquivo) {
+        File file = new File(nomeArquivo);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                System.out.println("Arquivo de sócios criado.");
+            } catch (IOException e) {
+                System.err.println("Erro ao criar o arquivo de sócios: " + e.getMessage());
+            }
+        }
+
+        if (file.length() == 0) {
+            socios = new ArrayList<>();
+        } else {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+                socios = (ArrayList<Socio>) ois.readObject();
+                System.out.println("Sócios carregados com sucesso.");
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Erro ao carregar sócios: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void adicionarSocio(Socio socio) {
+        socios.add(socio);
+        salvarSocios("socios.ser");
+    }
+
+    public static void salvarSocios(String nomeArquivo) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
+            oos.writeObject(socios);
+            System.out.println("Sócios salvos com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar sócios: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(GerirSocio::new);
+    }
+}
+
+class SocioTableModel extends AbstractTableModel {
+    private ArrayList<Socio> socios;
+    private String[] columnNames;
+
+    public SocioTableModel(ArrayList<Socio> socios, String[] columnNames) {
+        this.socios = socios;
+        this.columnNames = columnNames;
+    }
+
+    @Override
+    public int getRowCount() {
+        return socios.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
+
+    @Override
+    public String getColumnName(int columnIndex) {
+        return columnNames[columnIndex];
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Socio socio = socios.get(rowIndex);
+        switch (columnIndex) {
+            case 0:
+                return socio.getNome();
+            case 1:
+                return socio.getEmail();
+            case 2:
+                return socio.getTelefone();
+            case 3:
+                return socio.getEndereco();
+            case 4:
+                return socio.getTipoDeSocio();
+            case 5:
+                return socio.getCota().isPago() ? "Sim" : "Não";
+            case 6:
+                return "Ações";
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex == 6; // Apenas a coluna de ações é editável
     }
 }

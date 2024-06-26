@@ -48,7 +48,6 @@ public class AdicionarSocio extends BasePage {
                 int imgWidth = getWidth() - 2 * margin_W;
                 int imgHeight = getHeight() - 2 * margin_H;
                 g.drawImage(image, margin_W, margin_H, imgWidth, imgHeight, this);
-
             }
         };
 
@@ -96,30 +95,32 @@ public class AdicionarSocio extends BasePage {
         buttonGuardar.setBackground(new Color(0x99D4FF));
         buttonGuardar.setForeground(Color.BLACK);
         buttonGuardar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonGuardar.setBounds(750, 560, 160, 40);
+        buttonGuardar.setBounds(300, 530, 160, 40);
         add(buttonGuardar);
 
         buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do sócio?", "Confirmação", "Cancelar", "Confirmar");
+                if (validarCampos()) {
+                    int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do sócio?", "Confirmação", "Cancelar", "Confirmar");
 
-                if (response == JOptionPane.YES_OPTION) {
-                    TipoDeSocio tipoDeSocio = (TipoDeSocio) tipoDeSocioComboBox.getSelectedItem();
-                    double valorCota = configuracoes.getValorCota(tipoDeSocio);
-                    Cota cota = new Cota(valorCota, pagoCheckBox.isSelected());
-                    Socio socio = new Socio(
-                            fieldNome.getText(),
-                            fieldNif.getText(),
-                            fieldEndereco.getText(),
-                            fieldTelefone.getText(),
-                            fieldEmail.getText(),
-                            tipoDeSocio,
-                            cota
-                    );
-                    GerirSocio.adicionarSocio(socio);
-                    new GerirSocio();
-                    dispose();
+                    if (response == JOptionPane.YES_OPTION) {
+                        TipoDeSocio tipoDeSocio = (TipoDeSocio) tipoDeSocioComboBox.getSelectedItem();
+                        double valorCota = configuracoes.getValorCota(tipoDeSocio);
+                        Cota cota = new Cota(valorCota, pagoCheckBox.isSelected());
+                        Socio socio = new Socio(
+                                fieldNome.getText(),
+                                fieldNif.getText(),
+                                fieldEndereco.getText(),
+                                fieldTelefone.getText(),
+                                fieldEmail.getText(),
+                                tipoDeSocio,
+                                cota
+                        );
+                        GerirSocio.adicionarSocio(socio);
+                        new GerirSocio();
+                        dispose();
+                    }
                 }
             }
         });
@@ -128,7 +129,7 @@ public class AdicionarSocio extends BasePage {
         buttonCancelar.setBackground(new Color(0xBABABA));
         buttonCancelar.setForeground(Color.BLACK);
         buttonCancelar.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        buttonCancelar.setBounds(560, 560, 160, 40);
+        buttonCancelar.setBounds(130, 530, 150, 40);
         add(buttonCancelar);
 
         buttonCancelar.addActionListener(new ActionListener() {
@@ -141,5 +142,29 @@ public class AdicionarSocio extends BasePage {
 
         add(wrapperPanel, BorderLayout.CENTER);
         setVisible(true);
+    }
+
+    private boolean validarCampos() {
+        if (fieldNome.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "O nome é obrigatório.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!fieldNif.getText().matches("\\d{9}")) {
+            JOptionPane.showMessageDialog(this, "O NIF deve conter 9 dígitos.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (fieldEndereco.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "O endereço é obrigatório.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!fieldTelefone.getText().matches("\\d{9}")) {
+            JOptionPane.showMessageDialog(this, "O telefone deve conter 9 dígitos.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!fieldEmail.getText().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            JOptionPane.showMessageDialog(this, "O e-mail é inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 }

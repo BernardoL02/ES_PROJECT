@@ -273,7 +273,6 @@ public class PaginaEstatistica extends BasePage {
         for (int i = 0; i < livros.size(); i++) {
             Livro livro = livros.get(i);
             model.addRow(new Object[]{"#" + (i + 1), livro.getTitulo(), livro.getGenero(), livro.getAutor(), livro.getAno()});
-
         }
 
         table.setModel(model);

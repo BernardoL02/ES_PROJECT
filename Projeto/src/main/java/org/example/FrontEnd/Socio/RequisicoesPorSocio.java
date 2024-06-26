@@ -37,7 +37,7 @@ public class RequisicoesPorSocio extends BasePage {
         super("Requisicoes Por Socio", "/HeaderRequisicoesPorSocio.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
+                new GerirSocio();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);

@@ -4,6 +4,7 @@ import org.example.BackEnd.*;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.RoundButton;
+import org.example.FrontEnd.Socio.RequisicoesPorSocio;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -34,7 +35,7 @@ public class RequisitarLivro extends BasePage {
         super("Requisitar Livro", "/HeaderRequisitarLivro.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
+                new RequisicoesPorSocio(socio);
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);

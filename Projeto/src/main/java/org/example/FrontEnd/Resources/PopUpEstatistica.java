@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 public class PopUpEstatistica {
     public static int showCustomConfirmDialog() {
         JFrame parent = new JFrame();
-        JDialog dialog = new JDialog(parent, "FiltroEstatistica", true);
+        JDialog dialog = new JDialog(parent, "Ordenar Estatistica", true);
         dialog.setSize(500, 150);
         dialog.setLayout(new BorderLayout());
         dialog.getContentPane().setBackground(Color.WHITE);

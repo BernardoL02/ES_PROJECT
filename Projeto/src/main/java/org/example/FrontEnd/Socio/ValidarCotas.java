@@ -207,7 +207,6 @@ public class ValidarCotas extends BasePage {
             }
         }
     }
-
     private List<Socio> carregarSocios(String nomeArquivo) {
         List<Socio> socios = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {

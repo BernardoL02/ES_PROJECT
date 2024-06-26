@@ -234,7 +234,6 @@ public class GerirSocio extends BasePage {
                     public void actionPerformed(ActionEvent e) {
                         int selectedRow = table.getSelectedRow();
                         if (selectedRow != -1) {
-                            // Verifica se a coluna "Pago" na linha selecionada é "Não"
                             String pagoStatus = (String) table.getValueAt(selectedRow, 5); // substitua columnIndexPago pelo índice da coluna "Pago"
                             if ("Não".equals(pagoStatus)) {
                                 JOptionPane.showMessageDialog(null, "O utilizador tem cotas por pagar.");

@@ -68,7 +68,7 @@ public class PaginaEstatistica extends BasePage {
         buttonPanel.add(buttonFiltrar); // Adiciona o botão ao painel de botões
         mainPanel.add(buttonPanel, BorderLayout.NORTH); // Adiciona o painel de botões acima da tabela
 
-        // Neste exemplo, topLivros já contém os dados ordenados
+
         String[] columnNames = {"Ranking", "Título", "Género", "Autor", "Ano"};
         Object[][] data = new Object[topLivros.size()][5]; // Array com tamanho de topLivros
 

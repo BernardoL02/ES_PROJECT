@@ -1,5 +1,8 @@
 package org.example.FrontEnd.Socio;
 
+import org.example.BackEnd.Socio;
+import org.example.BackEnd.TipoDeSocio;
+import org.example.BackEnd.Requisitar;
 import org.example.FrontEnd.Livro.RequisitarLivro;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
@@ -7,21 +10,36 @@ import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class RequisicoesPorSocio extends BasePage {
+    private Socio socio;
+    private ArrayList<Requisitar> reservas;
+    private JTable memberTable;
+    private JTable bookTable;
 
-    public RequisicoesPorSocio() {
-        super("Adicionar Socio", "/HeaderRequisicoesPorSocio.png", new ActionListener() {
+    public RequisicoesPorSocio(Socio socio) {
+        super("Requisicoes Por Socio", "/HeaderRequisicoesPorSocio.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new BiblioLiz();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
+
+        this.socio = socio;
+        this.reservas = carregarReservas("requisitar.ser");
 
         JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -31,6 +49,7 @@ public class RequisicoesPorSocio extends BasePage {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Alinha o botão à esquerda
         topPanel.setBackground(Color.WHITE);
 
@@ -42,7 +61,7 @@ public class RequisicoesPorSocio extends BasePage {
         requisitarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RequisitarLivro();
+                new RequisitarLivro(socio);
                 dispose(); // Fecha a janela principal
             }
         });
@@ -60,11 +79,11 @@ public class RequisicoesPorSocio extends BasePage {
         memberInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
         memberInfoPanel.add(memberInfoLabel, BorderLayout.NORTH);
 
-        String[] memberColumnNames = {"Nr", "Nome", "Morada", "Telefone", "Email", "Pago", "Tipo de Sócio"};
+        String[] memberColumnNames = {"Nif", "Nome", "Morada", "Telefone", "Email", "Pago", "Tipo de Sócio"};
         Object[][] memberData = {
-                {"1", "Bernardo Lopes", "Rua Principal", "999999999", "bernardo@gmail.com", "Sim", "Entusiasta"}
+                {socio.getNif(), socio.getNome(), socio.getEndereco(), socio.getTelefone(), socio.getEmail(), socio.getCota().isPago() ? "Sim" : "Não", socio.getTipoDeSocio().toString()}
         };
-        JTable memberTable = createTable(memberData, memberColumnNames);
+        memberTable = createTable(memberData, memberColumnNames);
         memberTable.setRowHeight(30); // Ajusta a altura da linha da tabela de sócios
         memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
         JScrollPane memberScrollPane = new JScrollPane(memberTable);
@@ -90,7 +109,7 @@ public class RequisicoesPorSocio extends BasePage {
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RequisicoesPorSocio();
+                new GerirSocio();
                 dispose(); // Fecha a janela principal
             }
         });
@@ -108,42 +127,60 @@ public class RequisicoesPorSocio extends BasePage {
 
                 // Verifica a resposta
                 if (response == JOptionPane.YES_OPTION) {
-                    // Guardar os dados
-                    new RequisicoesPorSocio();
+                    // Força a parada da edição da célula ativa
+                    if (memberTable.isEditing()) {
+                        memberTable.getCellEditor().stopCellEditing();
+                    }
+
+                    // Coleta os dados da tabela
+                    String nome = (String) memberTable.getValueAt(0, 1);
+                    String endereco = (String) memberTable.getValueAt(0, 2);
+                    String telefone = (String) memberTable.getValueAt(0, 3);
+                    String email = (String) memberTable.getValueAt(0, 4);
+                    boolean pago = "Sim".equals(memberTable.getValueAt(0, 5));
+                    TipoDeSocio tipoDeSocio = TipoDeSocio.valueOf((String) memberTable.getValueAt(0, 6));
+
+                    // Atualiza o objeto Socio
+                    socio.setNome(nome);
+                    socio.setEndereco(endereco);
+                    socio.setTelefone(telefone);
+                    socio.setEmail(email);
+                    socio.getCota().setPago(pago);
+                    socio.setTipoDeSocio(tipoDeSocio);
+
+                    // Salva o objeto Socio atualizado
+                    GerirSocio.atualizarSocio(socio);
+
+                    // Atualiza a tabela
+                    new GerirSocio();
                     dispose();
                 }
             }
         });
 
-        // Adiciona o painel de informações do sócio ao mainPanel
-        mainPanel.add(memberInfoPanel);
-
-        // Adiciona um espaçamento entre a tabela e os botões
-
-        // Adiciona o painel de botões ao mainPanel
+        buttonPanel.add(buttonGuardar);
         mainPanel.add(buttonPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 100)));
+
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
         // Painel de informação do livro
         JPanel bookInfoPanel = new JPanel(new BorderLayout());
         bookInfoPanel.setBackground(Color.WHITE);
         bookInfoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 0)); // Remover a borda preta
 
-        JLabel bookInfoLabel = new JLabel("Livro a Requisitar", SwingConstants.CENTER);
+        JLabel bookInfoLabel = new JLabel("Livros Requisitados", SwingConstants.CENTER);
         bookInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        bookInfoLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Espaçamento
+        bookInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
         bookInfoPanel.add(bookInfoLabel, BorderLayout.NORTH);
 
-        String[] bookColumnNames = {"Código", "ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolução", "Data Limite", "Ação"};
-        Object[][] bookData = {
-                {"10", "78853330227", "A Fórmula de Deus", "2º Edição", "Romance", "05/05/2024", " ", "20/05/2024", ""},
-                {"11", "788324234", "O Imortal", "2º Edição", "Romance", "05/05/2024", "12/05/2024", "20/05/2024", ""}
-        };
-        JTable bookTable = createTable(bookData, bookColumnNames);
+        String[] bookColumnNames = {"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolução", "Ação"};
+        Object[][] bookData = criarReservasData();
+        bookTable = createTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
         bookTable.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de livro
 
-        bookTable.getColumnModel().getColumn(8).setCellRenderer(new ButtonRenderer());
-        bookTable.getColumnModel().getColumn(8).setCellEditor(new ButtonEditor());
+        bookTable.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer());
+        bookTable.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor());
 
         JScrollPane bookScrollPane = new JScrollPane(bookTable);
         bookScrollPane.setPreferredSize(bookTable.getPreferredSize());
@@ -162,97 +199,47 @@ public class RequisicoesPorSocio extends BasePage {
         setVisible(true);
     }
 
-    private class ButtonRenderer extends JButton implements TableCellRenderer {
-        public ButtonRenderer() {
-            setOpaque(true); // Garante que o botão seja opaco
-            setBackground(Color.BLACK); // Define a cor de fundo do botão como preto
-            setForeground(Color.WHITE); // Define a cor do texto do botão como branco
-            setFont(new Font("Inter", Font.BOLD, 14));
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText("Devolver"); // Define o texto do botão
-            return this;
-        }
-    }
-
-    private class ButtonEditor extends DefaultCellEditor {
-        private final JButton button;
-        private boolean isPushed;
-
-        public ButtonEditor() {
-            super(new JCheckBox());
-            button = new JButton("Devolver");
-            button.setOpaque(true);
-            button.setBackground(Color.BLACK);
-            button.setForeground(Color.WHITE);
-            button.setFont(new Font("Inter", Font.BOLD, 14));
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    fireEditingStopped();
-                }
-            });
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            if (isSelected) {
-                button.setBackground(table.getSelectionBackground());
-            } else {
-                button.setBackground(table.getBackground());
+    private Object[][] criarReservasData() {
+        ArrayList<Object[]> data = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        for (Requisitar reserva : reservas) {
+            if (reserva.getSocio().getNif().equals(socio.getNif())) {
+                data.add(new Object[]{
+                        reserva.getLivro().getIsbn(),
+                        reserva.getLivro().getTitulo(),
+                        reserva.getLivro().getEdicao(),
+                        reserva.getLivro().getGenero(),
+                        reserva.getDataRequisicao().format(formatter),
+                        reserva.getDataDevolucao() != null ? reserva.getDataDevolucao().format(formatter) : "",
+                        ""
+                });
             }
-            isPushed = true;
-            return button;
         }
+        return data.toArray(new Object[0][0]);
+    }
 
-        @Override
-        public Object getCellEditorValue() {
-            if (isPushed) {
-                // Perform action when button is clicked
-                JOptionPane.showMessageDialog(button, "Livro devolvido!");
+    private void devolverLivro(int row) {
+        String isbnLivro = (String) bookTable.getValueAt(row, 0);
+        for (Requisitar reserva : reservas) {
+            if (reserva.getLivro().getIsbn().equals(isbnLivro) && reserva.getSocio().getNif().equals(socio.getNif())) {
+                reserva.setDataDevolucao(LocalDate.now());
+                JOptionPane.showMessageDialog(this, "Livro devolvido com sucesso!");
+                break;
             }
-            isPushed = false;
-            return new String("Devolver");
         }
-
-        @Override
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
-
-        @Override
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
-        }
-    }
-
-    private JLabel createLabel(String text) {
-        JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
-        label.setOpaque(true);
-        label.setBackground(Color.WHITE);
-        return label;
-    }
-
-    private JLabel createInfoLabel(String text) {
-        JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setFont(new Font("Inter", Font.PLAIN, 16));
-        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        label.setBackground(Color.WHITE);
-        label.setOpaque(true);
-        return label;
+        // Update the table data
+        Object[][] updatedData = criarReservasData();
+        ((DefaultTableModel) bookTable.getModel()).setDataVector(updatedData, new String[]{"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolucao", "Ação"});
     }
 
     private JTable createTable(Object[][] data, String[] columnNames) {
-        JTable table = new JTable(data, columnNames) {
+        JTable table = new JTable(new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Torna todos os campos editáveis, exceto a coluna "Ação"
-                return true;
+                return column != 6;
             }
+        }) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);
@@ -292,4 +279,82 @@ public class RequisicoesPorSocio extends BasePage {
         return table;
     }
 
+    private ArrayList<Requisitar> carregarReservas(String nomeArquivo) {
+        ArrayList<Requisitar> requisitars = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            requisitars = (ArrayList<Requisitar>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            // If the file does not exist, create it
+            salvarReservas(requisitars, nomeArquivo);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return requisitars;
+    }
+
+    private void salvarReservas(ArrayList<Requisitar> requisitars, String nomeArquivo) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
+            oos.writeObject(requisitars);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class ButtonRenderer extends JButton implements TableCellRenderer {
+        public ButtonRenderer() {
+            setOpaque(true); // Garante que o botão seja opaco
+            setBackground(Color.BLACK); // Define a cor de fundo do botão como preto
+            setForeground(Color.WHITE); // Define a cor do texto do botão como branco
+            setFont(new Font("Inter", Font.BOLD, 14));
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setText("Devolver"); // Define o texto do botão
+            return this;
+        }
+    }
+
+    private class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
+        private final JPanel panel = new JPanel(new GridBagLayout());
+        private final JButton actionButton = new RoundButton("Devolver");
+
+        public ButtonEditor() {
+            actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
+            actionButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 14)); // Ajusta o tamanho da fonte
+            actionButton.setBorder(null);
+            actionButton.setContentAreaFilled(true);
+            actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            actionButton.setBackground(Color.BLACK);
+            actionButton.setForeground(Color.WHITE);
+
+            actionButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int row = bookTable.getEditingRow();
+                    // Perform action when button is clicked
+                    devolverLivro(row);
+                    fireEditingStopped();
+                }
+            });
+
+            panel.add(actionButton);
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            panel.setOpaque(true);
+            if (isSelected) {
+                panel.setBackground(table.getSelectionBackground());
+            } else {
+                panel.setBackground(table.getBackground());
+            }
+            return panel;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return "";
+        }
+    }
 }

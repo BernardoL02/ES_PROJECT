@@ -1,5 +1,9 @@
 package org.example.FrontEnd.Livro;
 
+import org.example.BackEnd.Livro;
+import org.example.BackEnd.Reserva;
+import org.example.BackEnd.Socio;
+import org.example.BackEnd.GerirRequisitar;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -13,17 +17,23 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
 public class ConfirmaReserva extends BasePage {
+    private Socio socio;
+    private Livro livro;
 
-    public ConfirmaReserva() {
-        super("Confirmar Requisição", "/HeaderConfirmarReserva.png", new ActionListener() {
+    public ConfirmaReserva(Socio socio, Livro livro) {
+        super("Confirmar Reserva", "/HeaderConfirmarReserva.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new BiblioLiz();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
+
+        this.socio = socio;
+        this.livro = livro;
 
         JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -38,9 +48,9 @@ public class ConfirmaReserva extends BasePage {
         JPanel bookInfoPanel = createRoundedPanel(new BorderLayout());
         bookInfoPanel.setBackground(Color.WHITE);
 
-        String[] bookColumnNames = {"ISBN", "Título", "Localização", "Código Único"};
+        String[] bookColumnNames = {"ISBN", "Título", "Localização", "Quantidade"};
         Object[][] bookData = {
-                {"78853330227", "A Fórmula de Deus", "2 - 10 - 1B", "10"}
+                {livro.getIsbn(), livro.getTitulo(), livro.getLocalizacao(), livro.getQuantidade()}
         };
         JTable bookTable = createTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30);
@@ -52,7 +62,7 @@ public class ConfirmaReserva extends BasePage {
 
         bookInfoPanel.add(bookScrollPane, BorderLayout.CENTER);
 
-        JLabel bookInfoLabel = new JLabel("Livro a Requisitar", SwingConstants.CENTER);
+        JLabel bookInfoLabel = new JLabel("Livro a Reservar", SwingConstants.CENTER);
         bookInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
         bookInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         bookInfoPanel.add(bookInfoLabel, BorderLayout.NORTH);
@@ -61,9 +71,9 @@ public class ConfirmaReserva extends BasePage {
         JPanel memberInfoPanel = createRoundedPanel(new BorderLayout());
         memberInfoPanel.setBackground(Color.WHITE);
 
-        String[] memberColumnNames = {"Nr", "Nome", "Nif", "Telefone", "Pago", "Tipo de Sócio"};
+        String[] memberColumnNames = {"Nif", "Nome", "Telefone", "Pago", "Tipo de Sócio"};
         Object[][] memberData = {
-                {"1", "Bernardo Lopes", "252490132", "999999999", "Sim", "Entusiasta"}
+                {socio.getNif(), socio.getNome(), socio.getTelefone(), socio.getCota().isPago() ? "Sim" : "Não", socio.getTipoDeSocio().toString()}
         };
         JTable memberTable = createTable(memberData, memberColumnNames);
         memberTable.setRowHeight(30);
@@ -81,6 +91,7 @@ public class ConfirmaReserva extends BasePage {
         memberInfoPanel.add(memberInfoLabel, BorderLayout.NORTH);
 
         // Painel de "Número de Reservas"
+        int numeroReservas = GerirRequisitar.contarReservasPorSocio(socio);
         JPanel numberOfReservationsPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -91,20 +102,18 @@ public class ConfirmaReserva extends BasePage {
             }
         };
 
-        numberOfReservationsPanel.setPreferredSize(new Dimension(300, 50)); // Define o tamanho do painel
+        numberOfReservationsPanel.setPreferredSize(new Dimension(300, 50));
         numberOfReservationsPanel.setBackground(Color.WHITE);
 
-        JLabel numberOfReservationsLabel = new JLabel("Número de Reservas: 1");
+        JLabel numberOfReservationsLabel = new JLabel("Número de Reservas: " + numeroReservas);
         numberOfReservationsLabel.setFont(new Font("Inter", Font.BOLD, 18));
         numberOfReservationsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         numberOfReservationsPanel.add(numberOfReservationsLabel, BorderLayout.CENTER);
 
-        // Ajuste a posição do painel de reservas
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(Color.WHITE);
         rightPanel.add(numberOfReservationsPanel, BorderLayout.NORTH);
         rightPanel.setBounds(70, 500, 300, 50);
-
 
         // Painel de botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
@@ -119,7 +128,7 @@ public class ConfirmaReserva extends BasePage {
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RequisicoesPorSocio();
+                new RequisicoesPorSocio(socio);
                 dispose();
             }
         });
@@ -132,9 +141,11 @@ public class ConfirmaReserva extends BasePage {
         buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar as alterações?", "Confirmação", "Cancelar", "Confirmar");
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar a reserva?", "Confirmação", "Cancelar", "Confirmar");
                 if (response == JOptionPane.YES_OPTION) {
-                    new RequisicoesPorSocio();
+                    Reserva reserva = new Reserva(socio, livro, LocalDate.now());
+                    GerirRequisitar.adicionarReserva(reserva);
+                    new RequisicoesPorSocio(socio);
                     dispose();
                 }
             }
@@ -245,9 +256,5 @@ public class ConfirmaReserva extends BasePage {
         table.setPreferredScrollableViewportSize(table.getPreferredSize());
 
         return table;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(ConfirmaReserva::new);
     }
 }

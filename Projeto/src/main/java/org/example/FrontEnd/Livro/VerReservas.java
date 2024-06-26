@@ -1,5 +1,8 @@
 package org.example.FrontEnd.Livro;
 
+import org.example.BackEnd.GerirRequisitar;
+import org.example.BackEnd.Livro;
+import org.example.BackEnd.Reserva;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -8,17 +11,22 @@ import org.example.FrontEnd.Resources.RoundButton;
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.EventObject;
 
 public class VerReservas extends BasePage {
+    private Livro livro;
+    private ArrayList<Reserva> reservas;
+    private DefaultTableModel reservasTableModel;
 
-    public VerReservas() {
+    public VerReservas(Livro livro) {
         super("Ver Reservas", "/HeaderVerReservas.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -26,6 +34,10 @@ public class VerReservas extends BasePage {
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
+
+        this.livro = livro;
+        this.reservas = GerirRequisitar.carregarReservas(); // Carregar todas as reservas
+        reservas = filtrarReservasPorLivro(livro);
 
         JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -44,7 +56,7 @@ public class VerReservas extends BasePage {
 
         String[] bookColumnNames = {"ISBN", "Título"};
         Object[][] bookData = {
-                {"78853330227", "A Fórmula de Deus"},
+                {livro.getIsbn(), livro.getTitulo()},
         };
         JTable bookTable = createTable(bookData, bookColumnNames, false); // false to prevent cell editing
         bookTable.setRowHeight(40); // Ajusta a altura da linha da tabela de livro
@@ -70,14 +82,19 @@ public class VerReservas extends BasePage {
         memberInfoPanel.setBackground(Color.WHITE);
         memberInfoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 0)); // Remover a borda preta
 
-        String[] columnNames = {"Nr", "NIF", "Nome", "Morada", "Telefone", "Email", "Ações"};
-        Object[][] data = {
-                {"1", "853330227", "Bernardo Lopes", "Rua Lopes, 2400-200, Leiria", "919912999", "2222048@my.ipleiria.pt", ""},
-                {"2", "853330228", "Maria Silva", "Rua Silva, 2400-201, Leiria", "919912998", "2222049@my.ipleiria.pt", ""},
-                {"3", "853330229", "João Pereira", "Rua Pereira, 2400-202, Leiria", "919912997", "2222050@my.ipleiria.pt", ""},
-        };
+        String[] columnNames = {"NIF", "Nome", "Data de Reserva", "Ações"};
+        Object[][] data = new Object[reservas.size()][columnNames.length];
 
-        JTable tabelaReservas = createTable(data, columnNames, true); // true to allow cell editing in the last column
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva reserva = reservas.get(i);
+            data[i][0] = reserva.getSocio().getNif();
+            data[i][1] = reserva.getSocio().getNome();
+            data[i][2] = reserva.getDataReserva().toString();
+            data[i][3] = ""; // Placeholder for actions
+        }
+
+        reservasTableModel = new DefaultTableModel(data, columnNames);
+        JTable tabelaReservas = createTable(reservasTableModel, columnNames, true); // true to allow cell editing in the last column
         tabelaReservas.setRowHeight(60); // Ajusta a altura da linha da tabela de sócios
 
         // Add JScrollPane with better scroll functionality
@@ -111,6 +128,16 @@ public class VerReservas extends BasePage {
         setVisible(true);
     }
 
+    private ArrayList<Reserva> filtrarReservasPorLivro(Livro livro) {
+        ArrayList<Reserva> reservasFiltradas = new ArrayList<>();
+        for (Reserva reserva : reservas) {
+            if (reserva.getLivro().getIsbn().equals(livro.getIsbn())) {
+                reservasFiltradas.add(reserva);
+            }
+        }
+        return reservasFiltradas;
+    }
+
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
@@ -129,7 +156,12 @@ public class VerReservas extends BasePage {
     }
 
     private JTable createTable(Object[][] data, String[] columnNames, boolean isActionColumnEditable) {
-        JTable table = new JTable(data, columnNames) {
+        DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
+        return createTable(tableModel, columnNames, isActionColumnEditable);
+    }
+
+    private JTable createTable(DefaultTableModel tableModel, String[] columnNames, boolean isActionColumnEditable) {
+        JTable table = new JTable(tableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 if (isActionColumnEditable) {
@@ -229,8 +261,12 @@ public class VerReservas extends BasePage {
 
                             // Verifica a resposta
                             if (response == JOptionPane.YES_OPTION) {
-                                // Remover a reserva
-
+                                int selectedRow = table.getSelectedRow();
+                                if (selectedRow != -1) {
+                                    reservas.remove(selectedRow);
+                                    reservasTableModel.removeRow(selectedRow);
+                                    GerirRequisitar.salvarReservas(reservas);
+                                }
                             }
                         }
                     });
@@ -287,7 +323,4 @@ public class VerReservas extends BasePage {
         return table;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(VerReservas::new);
-    }
 }

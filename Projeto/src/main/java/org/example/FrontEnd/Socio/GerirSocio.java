@@ -28,6 +28,8 @@ public class GerirSocio extends BasePage {
             }
         }, true);
 
+        carregarSocios("socios.ser");
+
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
 
@@ -82,9 +84,6 @@ public class GerirSocio extends BasePage {
 
         String[] columnNames = {"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago", "Ações"};
 
-        // Carregar sócios do arquivo
-        carregarSocios("socios.ser");
-
         tableModel = new SocioTableModel(socios, columnNames);
         table = new JTable(tableModel) {
             @Override
@@ -138,7 +137,6 @@ public class GerirSocio extends BasePage {
             private final JPanel panel = new JPanel(new GridBagLayout());
             private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
             private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");
 
             {
                 editButton.setBorder(null);
@@ -156,13 +154,9 @@ public class GerirSocio extends BasePage {
                 Image deleteImg = deleteIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
                 deleteButton.setIcon(new ImageIcon(deleteImg));
 
-                reserveButton.setBackground(Color.BLACK);
-                reserveButton.setForeground(Color.WHITE);
-                reserveButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
                 panel.add(editButton);
                 panel.add(deleteButton);
-                panel.add(reserveButton);
             }
 
             @Override
@@ -181,7 +175,6 @@ public class GerirSocio extends BasePage {
             private final JPanel panel = new JPanel(new GridBagLayout());
             private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
             private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");
 
             {
                 editButton.setBorder(null);
@@ -199,9 +192,7 @@ public class GerirSocio extends BasePage {
                 Image deleteImg = deleteIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
                 deleteButton.setIcon(new ImageIcon(deleteImg));
 
-                reserveButton.setBackground(Color.BLACK);
-                reserveButton.setForeground(Color.WHITE);
-                reserveButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
 
                 editButton.addActionListener(new ActionListener() {
                     @Override
@@ -209,8 +200,8 @@ public class GerirSocio extends BasePage {
                         int selectedRow = table.getSelectedRow();
                         if (selectedRow != -1) {
                             Socio socio = socios.get(selectedRow);
-                            new RequisicoesPorSocio();
-                            dispose();
+                            new RequisicoesPorSocio(socio);
+                            dispose(); // Fecha a janela principal
                         }
                     }
                 });
@@ -218,29 +209,17 @@ public class GerirSocio extends BasePage {
                 deleteButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que deseja eliminar o sócio?", "Confirmação", "Cancelar", "Confirmar");
-
-                        if (response == JOptionPane.YES_OPTION) {
-                            int selectedRow = table.getSelectedRow();
-                            if (selectedRow != -1) {
-                                socios.remove(selectedRow);
-                                tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
-                                salvarSocios("socios.ser");
-                            }
+                        int selectedRow = table.getSelectedRow();
+                        if (selectedRow != -1) {
+                            socios.remove(selectedRow);
+                            tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
+                            salvarSocios("socios.ser"); // Salva os sócios após a exclusão
                         }
-                    }
-                });
-
-                reserveButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Ver Reservas");
                     }
                 });
 
                 panel.add(editButton);
                 panel.add(deleteButton);
-                panel.add(reserveButton);
             }
 
             @Override
@@ -299,6 +278,22 @@ public class GerirSocio extends BasePage {
         setVisible(true);
     }
 
+    public static void adicionarSocio(Socio socio) {
+        socios.add(socio);
+        salvarSocios("socios.ser");
+    }
+
+        public static void atualizarSocio(Socio socio) {
+            for (int i = 0; i < socios.size(); i++) {
+                if (socios.get(i).getNif().equals(socio.getNif())) {
+                    socios.set(i, socio);
+                    salvarSocios("socios.ser");
+                    return;
+                }
+            }
+        }
+
+
     private void carregarSocios(String nomeArquivo) {
         File file = new File(nomeArquivo);
         if (!file.exists()) {
@@ -322,11 +317,6 @@ public class GerirSocio extends BasePage {
         }
     }
 
-    public static void adicionarSocio(Socio socio) {
-        socios.add(socio);
-        salvarSocios("socios.ser");
-    }
-
     public static void salvarSocios(String nomeArquivo) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
             oos.writeObject(socios);
@@ -334,10 +324,6 @@ public class GerirSocio extends BasePage {
         } catch (IOException e) {
             System.err.println("Erro ao salvar sócios: " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GerirSocio::new);
     }
 }
 
@@ -378,7 +364,7 @@ class SocioTableModel extends AbstractTableModel {
             case 3:
                 return socio.getEndereco();
             case 4:
-                return socio.getTipoDeSocio();
+                return socio.getTipoDeSocio().name();
             case 5:
                 return socio.getCota().isPago() ? "Sim" : "Não";
             case 6:

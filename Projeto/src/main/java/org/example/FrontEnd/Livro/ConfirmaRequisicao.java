@@ -1,5 +1,9 @@
 package org.example.FrontEnd.Livro;
 
+import org.example.BackEnd.Livro;
+import org.example.BackEnd.Requisitar;
+import org.example.BackEnd.Socio;
+import org.example.BackEnd.GerirRequisitar;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -13,10 +17,14 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class ConfirmaRequisicao extends BasePage {
+    private Socio socio;
+    private Livro livro;
 
-    public ConfirmaRequisicao() {
+    public ConfirmaRequisicao(Socio socio, Livro livro) {
         super("Confirmar Requisição", "/HeaderConfirmaRequisicao.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -24,6 +32,9 @@ public class ConfirmaRequisicao extends BasePage {
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
+
+        this.socio = socio;
+        this.livro = livro;
 
         JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -38,9 +49,9 @@ public class ConfirmaRequisicao extends BasePage {
         JPanel bookInfoPanel = createRoundedPanel(new BorderLayout());
         bookInfoPanel.setBackground(Color.WHITE);
 
-        String[] bookColumnNames = {"ISBN", "Título", "Localização", "Código Único"};
+        String[] bookColumnNames = {"ISBN", "Título", "Localização", "Quantidade"};
         Object[][] bookData = {
-                {"78853330227", "A Fórmula de Deus", "2 - 10 - 1B", "10"}
+                {livro.getIsbn(), livro.getTitulo(), livro.getLocalizacao(), livro.getQuantidade()}
         };
         JTable bookTable = createTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
@@ -62,9 +73,9 @@ public class ConfirmaRequisicao extends BasePage {
         memberInfoPanel.setBackground(Color.WHITE);
         memberInfoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20)); // Adiciona espaçamento à direita
 
-        String[] memberColumnNames = {"Nr", "Nome", "Nif", "Telefone", "Pago", "Tipo de Sócio"};
+        String[] memberColumnNames = {"Nif", "Nome", "Telefone", "Pago", "Tipo de Sócio"};
         Object[][] memberData = {
-                {"1", "Bernardo Lopes", "252490132", "999999999", "Sim", "Entusiasta"}
+                {socio.getNif(), socio.getNome(), socio.getTelefone(), socio.getCota().isPago() ? "Sim" : "Não", socio.getTipoDeSocio().toString()}
         };
         JTable memberTable = createTable(memberData, memberColumnNames);
         memberTable.setRowHeight(30); // Ajusta a altura da linha da tabela de sócios
@@ -95,12 +106,12 @@ public class ConfirmaRequisicao extends BasePage {
         datesPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20)); // Adiciona margens ao painel
 
         // Add data labels on top of the dates panel
-        JLabel date1Label = new JLabel("09 - 05 - 2024");
+        JLabel date1Label = new JLabel(LocalDate.now().toString());
         date1Label.setFont(new Font("Inter", Font.BOLD, 18));
         date1Label.setBounds(53, 30, 180, 30);
         datesPanel.add(date1Label);
 
-        JLabel date2Label = new JLabel("09 - 06 - 2024");
+        JLabel date2Label = new JLabel(LocalDate.now().plusDays(30).toString());
         date2Label.setFont(new Font("Inter", Font.BOLD, 18));
         date2Label.setBounds(53, 95, 180, 30);
         datesPanel.add(date2Label);
@@ -123,7 +134,7 @@ public class ConfirmaRequisicao extends BasePage {
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RequisicoesPorSocio();
+                new RequisicoesPorSocio(socio);
                 dispose(); // Fecha a janela principal
             }
         });
@@ -142,7 +153,12 @@ public class ConfirmaRequisicao extends BasePage {
                 // Verifica a resposta
                 if (response == JOptionPane.YES_OPTION) {
                     // Guardar os dados
-                    new RequisicoesPorSocio();
+                    LocalDate dataRequisicao = LocalDate.now();
+                    LocalDate dataDevolucaoPrevista = dataRequisicao.plusDays(30);
+                    Requisitar requisitar = new Requisitar(socio, livro, dataRequisicao, dataDevolucaoPrevista);
+                    GerirRequisitar.adicionarRequisicao(requisitar);
+
+                    new RequisicoesPorSocio(socio);
                     dispose();
                 }
             }
@@ -253,9 +269,5 @@ public class ConfirmaRequisicao extends BasePage {
         table.setPreferredScrollableViewportSize(table.getPreferredSize());
 
         return table;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(ConfirmaRequisicao::new);
     }
 }

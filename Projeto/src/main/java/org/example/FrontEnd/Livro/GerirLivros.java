@@ -214,7 +214,7 @@ public class GerirLivros extends BasePage {
                     public void actionPerformed(ActionEvent e) {
                         Livro livro = livros.get(table.getSelectedRow());
                         new EditarLivro(livro);
-                        dispose(); 
+                        dispose();
                     }
                 });
 
@@ -237,7 +237,9 @@ public class GerirLivros extends BasePage {
                 reserveButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        new VerReservas();
+                        int selectedRow = table.getSelectedRow();
+                        Livro livro = livros.get(selectedRow);
+                        new VerReservas(livro);
                         dispose(); // Fecha a janela principal
                     }
                 });
@@ -338,10 +340,6 @@ public class GerirLivros extends BasePage {
         } catch (IOException e) {
             System.err.println("Erro ao salvar livros: " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GerirLivros::new);
     }
 }
 

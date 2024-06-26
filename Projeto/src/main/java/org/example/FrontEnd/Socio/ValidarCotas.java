@@ -1,5 +1,7 @@
 package org.example.FrontEnd.Socio;
 
+import org.example.BackEnd.Socio;
+import org.example.BackEnd.Cota;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
 
@@ -10,8 +12,12 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.ArrayList;
 
 public class ValidarCotas extends BasePage {
+    private ArrayList<Socio> socios;
+
     public ValidarCotas() {
         super("Validar Cotas", "/HeaderValidarCotas.png", new ActionListener() {
             @Override
@@ -20,6 +26,17 @@ public class ValidarCotas extends BasePage {
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
+
+        // Load socio data from file
+        socios = carregarSocios("socios.ser");
+
+        // Filter socios with unpaid dues
+        ArrayList<Socio> sociosNaoPagos = new ArrayList<>();
+        for (Socio socio : socios) {
+            if (!socio.getCota().isPago()) {
+                sociosNaoPagos.add(socio);
+            }
+        }
 
         // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
@@ -62,16 +79,17 @@ public class ValidarCotas extends BasePage {
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = {"Nome", "Email", "Telefone", "Morada", "Tipo de Sócio", "Pago"};
-        Object[][] data = {
-                {"Bernardo", "bernardo@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Não"},
-                {"AAAA", "aaaa@example.com", "123456789", "Rua A, 123 - Bairro B", "Entusiasta", "Não"}
-        };
-        int countNaoPago = 0;
-        for (Object[] row : data) {
-            if ("Não".equals(row[5])) {
-                countNaoPago++;
-            }
+        Object[][] data = new Object[sociosNaoPagos.size()][columnNames.length];
+        for (int i = 0; i < sociosNaoPagos.size(); i++) {
+            Socio socio = sociosNaoPagos.get(i);
+            data[i][0] = socio.getNome();
+            data[i][1] = socio.getEmail();
+            data[i][2] = socio.getTelefone();
+            data[i][3] = socio.getEndereco();
+            data[i][4] = socio.getTipoDeSocio().toString();
+            data[i][5] = socio.getCota().isPago() ? "Sim" : "Não";
         }
+
         JTable table = new JTable(data, columnNames) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -122,9 +140,8 @@ public class ValidarCotas extends BasePage {
         JLabel numeroSocios = new JLabel(new ImageIcon(getClass().getResource("/NumSocios.png")));
         numeroSocios.setBackground(Color.WHITE);
 
-
         // Label para exibir a contagem
-        JLabel countLabel = new JLabel("" + countNaoPago);
+        JLabel countLabel = new JLabel("" + sociosNaoPagos.size());
         countLabel.setFont(new Font("Inter", Font.BOLD, 38));
         countLabel.setForeground(Color.BLACK);
         countLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Move 30px para a direita
@@ -151,5 +168,19 @@ public class ValidarCotas extends BasePage {
 
         // Torna o frame visível
         setVisible(true);
+    }
+
+    private ArrayList<Socio> carregarSocios(String nomeArquivo) {
+        ArrayList<Socio> socios = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            socios = (ArrayList<Socio>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return socios;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(ValidarCotas::new);
     }
 }

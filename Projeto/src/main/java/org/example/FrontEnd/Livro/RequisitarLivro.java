@@ -1,7 +1,8 @@
 package org.example.FrontEnd.Livro;
 
-import org.example.FrontEnd.Resources.BasePage;
+import org.example.BackEnd.*;
 import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
@@ -12,9 +13,17 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class RequisitarLivro extends BasePage {
-    public RequisitarLivro() {
+    private Socio socio;
+    private ArrayList<Livro> livros;
+    private ArrayList<Requisitar> requisitars;
+    private ArrayList<Reserva> reservas;
+
+    public RequisitarLivro(Socio socio) {
         super("Requisitar Livro", "/HeaderRequisitarLivro.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -22,6 +31,11 @@ public class RequisitarLivro extends BasePage {
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
+
+        this.socio = socio;
+        this.livros = carregarLivros("livros.ser");
+        this.requisitars = GerirRequisitar.carregarRequisicoes();
+        this.reservas = GerirRequisitar.carregarReservas();
 
         JPanel wrapperPanel = new JPanel(new BorderLayout());
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -62,10 +76,21 @@ public class RequisitarLivro extends BasePage {
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = {"ISBN", "Título", "Edição", "Gênero", "Localização", "Quantidade", "Ações"};
-        Object[][] data = {
-                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "0/5", ""}
-        };
+        Object[][] data = new Object[livros.size()][columnNames.length];
+
+        for (int i = 0; i < livros.size(); i++) {
+            Livro livro = livros.get(i);
+            int reservasAtivas = contarReservasAtivas(livro);
+            int quantidadeDisponivel = livro.getQuantidade() - reservasAtivas;
+
+            data[i][0] = livro.getIsbn();
+            data[i][1] = livro.getTitulo();
+            data[i][2] = livro.getEdicao();
+            data[i][3] = livro.getGenero();
+            data[i][4] = livro.getLocalizacao();
+            data[i][5] = quantidadeDisponivel + "/" + livro.getQuantidade();
+            data[i][6] = ""; // Placeholder for actions
+        }
 
         JTable table = new JTable(data, columnNames) {
             @Override
@@ -168,11 +193,16 @@ public class RequisitarLivro extends BasePage {
                     public void actionPerformed(ActionEvent e) {
                         int row = table.getEditingRow();
                         int quantidade = Integer.parseInt(table.getValueAt(row, 5).toString().split("/")[0]);
+
+                        // Coletar dados do livro selecionado
+                        Livro livro = livros.get(row);
+
                         if (quantidade > 0) {
-                            JOptionPane.showMessageDialog(null, "Livro requisitado!");
+                            new ConfirmaRequisicao(socio, livro);
                         } else {
-                            JOptionPane.showMessageDialog(null, "Livro reservado!");
+                            new ConfirmaReserva(socio, livro);
                         }
+                        dispose(); // Fecha a janela principal
                     }
                 });
 
@@ -247,7 +277,28 @@ public class RequisitarLivro extends BasePage {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(RequisitarLivro::new);
+    private ArrayList<Livro> carregarLivros(String nomeArquivo) {
+        ArrayList<Livro> livros = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            livros = (ArrayList<Livro>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return livros;
+    }
+
+    private int contarReservasAtivas(Livro livro) {
+        int count = 0;
+        for (Requisitar requisitar : requisitars) {
+            if (requisitar.getLivro().getIsbn().equals(livro.getIsbn()) && requisitar.getDataDevolucaoPrevista().isAfter(LocalDate.now())) {
+                count++;
+            }
+        }
+        for (Reserva reserva : reservas) {
+            if (reserva.getLivro().getIsbn().equals(livro.getIsbn())) {
+                count++;
+            }
+        }
+        return count;
     }
 }

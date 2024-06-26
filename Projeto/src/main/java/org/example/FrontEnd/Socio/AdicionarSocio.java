@@ -142,8 +142,4 @@ public class AdicionarSocio extends BasePage {
         add(wrapperPanel, BorderLayout.CENTER);
         setVisible(true);
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdicionarSocio::new);
-    }
 }

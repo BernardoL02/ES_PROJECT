@@ -224,8 +224,4 @@ public class EditarLivro extends BasePage {
         // Torna o frame visível
         setVisible(true);
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new EditarLivro(null));
-    }
 }

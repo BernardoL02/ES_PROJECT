@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//José Delgado 2222049
 public class ConfiguracoesTest {
 
     private Configuracoes configuracoes;

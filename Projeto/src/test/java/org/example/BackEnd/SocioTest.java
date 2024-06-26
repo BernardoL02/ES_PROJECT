@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//Bernado José Lopes 2222048
 public class SocioTest {
 
     private Socio socio;

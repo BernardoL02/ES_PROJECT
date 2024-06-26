@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//Bernado José Lopes 2222048
 public class ConfirmaReservaTest {
 
     private Socio socio;

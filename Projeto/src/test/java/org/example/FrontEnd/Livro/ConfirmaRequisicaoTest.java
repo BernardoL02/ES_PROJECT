@@ -12,6 +12,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//Miguel Crespo 2222046
 public class ConfirmaRequisicaoTest {
 
     private Socio socio;

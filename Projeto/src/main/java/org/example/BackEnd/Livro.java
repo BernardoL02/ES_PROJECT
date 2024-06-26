@@ -29,7 +29,7 @@ public class Livro implements Serializable {
         this.editora = editora;
         this.ano = ano;
         this.quantidade = quantidade;
-        this.fornecedor = fornecedor;  // Inicializando o novo atributo
+        this.fornecedor = fornecedor;
     }
 
     // Getters e Setters

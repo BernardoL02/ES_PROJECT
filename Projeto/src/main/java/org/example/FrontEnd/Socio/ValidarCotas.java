@@ -91,6 +91,11 @@ public class ValidarCotas extends BasePage {
         }
 
         JTable table = new JTable(data, columnNames) {
+            public boolean isCellEditable(int row, int column) {
+                // Retorna false para todas as células, tornando a tabela não editável
+                return false;
+            }
+
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);

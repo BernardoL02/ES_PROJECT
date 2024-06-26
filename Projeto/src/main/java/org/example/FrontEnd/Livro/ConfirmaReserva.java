@@ -27,7 +27,7 @@ public class ConfirmaReserva extends BasePage {
         super("Confirmar Reserva", "/HeaderConfirmarReserva.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BiblioLiz();
+                new RequisicoesPorSocio(socio);
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
         }, false);
@@ -91,7 +91,7 @@ public class ConfirmaReserva extends BasePage {
         memberInfoPanel.add(memberInfoLabel, BorderLayout.NORTH);
 
         // Painel de "Número de Reservas"
-        int numeroReservas = GerirRequisitar.contarReservasPorSocio(socio);
+        int numeroReservas = GerirRequisitar.contarReservasPorLivro(livro);
         JPanel numberOfReservationsPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -128,8 +128,13 @@ public class ConfirmaReserva extends BasePage {
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RequisicoesPorSocio(socio);
-                dispose();
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende cancelar?", "Confirmação", "Nao", "Sim");
+                // Verifica a resposta
+                if (response == JOptionPane.YES_OPTION) {
+                    new RequisicoesPorSocio(socio);
+                    dispose();
+                }
+
             }
         });
 

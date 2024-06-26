@@ -136,8 +136,14 @@ public class ConfirmaRequisicao extends BasePage {
         buttonCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RequisicoesPorSocio(socio);
-                dispose(); // Fecha a janela principal
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende cancelar?", "Confirmação", "Nao", "Sim");
+
+                // Verifica a resposta
+                if (response == JOptionPane.YES_OPTION) {
+                    new RequisitarLivro(socio);
+                    dispose(); // Fecha a janela principal
+                }
+
             }
         });
 
@@ -160,7 +166,7 @@ public class ConfirmaRequisicao extends BasePage {
                     Requisitar requisitar = new Requisitar(socio, livro, dataRequisicao, dataDevolucaoPrevista);
                     GerirRequisitar.adicionarRequisicao(requisitar);
 
-                    new RequisicoesPorSocio(socio);
+                    new RequisitarLivro(socio);
                     dispose();
                 }
             }

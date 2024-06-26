@@ -35,11 +35,11 @@ public class GerirRequisitar {
         salvarReservas(reservas);
     }
 
-    public static int contarReservasPorSocio(Socio socio) {
+    public static int contarReservasPorLivro(Livro livro) {
         ArrayList<Reserva> reservas = carregarReservas();
         int count = 0;
         for (Reserva reserva : reservas) {
-            if (reserva.getSocio().getNif().equals(socio.getNif())) {
+            if (reserva.getLivro().getIsbn().equals(livro.getIsbn())) {
                 count++;
             }
         }

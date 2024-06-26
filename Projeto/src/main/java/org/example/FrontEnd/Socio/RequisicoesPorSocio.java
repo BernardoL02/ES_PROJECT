@@ -28,6 +28,7 @@ public class RequisicoesPorSocio extends BasePage {
     private ArrayList<Requisitar> reservas;
     private JTable memberTable;
     private JTable bookTable;
+    private ArrayList<Socio> socios;
 
     public RequisicoesPorSocio(Socio socio) {
         super("Requisicoes Por Socio", "/HeaderRequisicoesPorSocio.png", new ActionListener() {
@@ -40,6 +41,7 @@ public class RequisicoesPorSocio extends BasePage {
 
         this.socio = socio;
         this.reservas = carregarReservas("requisitar.ser");
+        this.socios = carregarSocios("socios.ser");
 
         JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -48,7 +50,7 @@ public class RequisicoesPorSocio extends BasePage {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Alinha o botão à esquerda
         topPanel.setBackground(Color.WHITE);
@@ -82,7 +84,7 @@ public class RequisicoesPorSocio extends BasePage {
         Object[][] memberData = {
                 {socio.getNif(), socio.getNome(), socio.getEndereco(), socio.getTelefone(), socio.getEmail(), socio.getCota().isPago() ? "Sim" : "Não", socio.getTipoDeSocio().toString()}
         };
-        memberTable = createTable(memberData, memberColumnNames);
+        memberTable = createEditableStyledTable(memberData, memberColumnNames);
         memberTable.setRowHeight(30); // Ajusta a altura da linha da tabela de sócios
         memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
 
@@ -91,7 +93,7 @@ public class RequisicoesPorSocio extends BasePage {
         memberTable.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(pagoComboBox));
 
         // Define o editor de célula para a coluna "Tipo de Sócio"
-        JComboBox<String> tipoDeSocioComboBox = new JComboBox<>(new String[]{"Entusiasta", "Académico", "Leitor"});
+        JComboBox<String> tipoDeSocioComboBox = new JComboBox<>(new String[]{"Entusiasta", "Academico", "Leitor"});
         memberTable.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(tipoDeSocioComboBox));
 
         JScrollPane memberScrollPane = new JScrollPane(memberTable);
@@ -104,7 +106,7 @@ public class RequisicoesPorSocio extends BasePage {
         mainPanel.add(memberInfoPanel);
 
         // Painel de botões
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10)); // Alinhamento ao centro
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); // Alinhamento à esquerda
         buttonPanel.setBackground(Color.WHITE);
 
         RoundButton buttonCancelar = new RoundButton("Cancelar");
@@ -140,6 +142,7 @@ public class RequisicoesPorSocio extends BasePage {
                     }
 
                     // Coleta os dados da tabela
+                    String nif = (String) memberTable.getValueAt(0, 0);
                     String nome = (String) memberTable.getValueAt(0, 1);
                     String endereco = (String) memberTable.getValueAt(0, 2);
                     String telefone = (String) memberTable.getValueAt(0, 3);
@@ -147,7 +150,14 @@ public class RequisicoesPorSocio extends BasePage {
                     boolean pago = "Sim".equals(memberTable.getValueAt(0, 5));
                     TipoDeSocio tipoDeSocio = TipoDeSocio.valueOf((String) memberTable.getValueAt(0, 6));
 
+                    // Valida se o NIF já existe
+                    if (nifJaExiste(nif) && !nif.equals(socio.getNif())) {
+                        JOptionPane.showMessageDialog(null, "Já existe um sócio com esse NIF.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
                     // Atualiza o objeto Socio
+                    socio.setNif(nif);
                     socio.setNome(nome);
                     socio.setEndereco(endereco);
                     socio.setTelefone(telefone);
@@ -165,13 +175,12 @@ public class RequisicoesPorSocio extends BasePage {
             }
         });
 
-        buttonPanel.add(buttonGuardar);
-        mainPanel.add(buttonPanel);
+        mainPanel.add(buttonPanel); // Adiciona o painel de botões logo após a tabela de sócios
 
         // Painel de informação do livro
         JPanel bookInfoPanel = new JPanel(new BorderLayout());
         bookInfoPanel.setBackground(Color.WHITE);
-        bookInfoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 0)); // Borda com a cor desejada
+        bookInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); // Margem em cima
 
         JLabel bookInfoLabel = new JLabel("Livros Requisitados", SwingConstants.CENTER);
         bookInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
@@ -180,29 +189,13 @@ public class RequisicoesPorSocio extends BasePage {
 
         String[] bookColumnNames = {"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolução", "Ação"};
         Object[][] bookData = criarReservasData();
-        bookTable = createTable(bookData, bookColumnNames);
+        bookTable = createStyledTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
-
-
-
-        // Ajuste para centralizar o texto nas células da tabela de livros
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        bookTable.setDefaultRenderer(Object.class, centerRenderer);
-
-        // Ajusta o tamanho das colunas da tabela de livros
-        TableColumnModel columnModel = bookTable.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(100); // ISBN
-        columnModel.getColumn(1).setPreferredWidth(250); // Título
-        columnModel.getColumn(2).setPreferredWidth(80); // Edição
-        columnModel.getColumn(3).setPreferredWidth(150); // Género
-        columnModel.getColumn(4).setPreferredWidth(120); // Data Requisição
-        columnModel.getColumn(5).setPreferredWidth(120); // Data Devolução
-        columnModel.getColumn(6).setPreferredWidth(100); // Ação
 
         JScrollPane bookScrollPane = new JScrollPane(bookTable);
         bookScrollPane.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, 200)); // Altura fixa para o painel de informações do livro
         bookScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0x99D4FF))); // Borda com a cor desejada
+        bookScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); // Margem em baixo
         bookInfoPanel.add(bookScrollPane, BorderLayout.CENTER);
 
         // Adiciona o painel de informações do livro ao mainPanel
@@ -220,6 +213,16 @@ public class RequisicoesPorSocio extends BasePage {
         setVisible(true);
     }
 
+    // Método para verificar se o NIF já existe
+    private boolean nifJaExiste(String nif) {
+        for (Socio s : socios) {
+            if (s.getNif().equals(nif)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Método para carregar as reservas a partir de um arquivo serializado
     private ArrayList<Requisitar> carregarReservas(String filename) {
         ArrayList<Requisitar> reservas = new ArrayList<>();
@@ -229,6 +232,17 @@ public class RequisicoesPorSocio extends BasePage {
             e.printStackTrace();
         }
         return reservas;
+    }
+
+    // Método para carregar os sócios a partir de um arquivo serializado
+    private ArrayList<Socio> carregarSocios(String filename) {
+        ArrayList<Socio> socios = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            socios = (ArrayList<Socio>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return socios;
     }
 
     // Método para criar os dados da tabela de reservas
@@ -244,29 +258,206 @@ public class RequisicoesPorSocio extends BasePage {
             data[i][3] = reserva.getLivro().getGenero();
             data[i][4] = reserva.getDataRequisicao().format(formatter);
             data[i][5] = reserva.getDataDevolucao() != null ? reserva.getDataDevolucao().format(formatter) : "-";
-            data[i][6] = "Devolver";
+            data[i][6] = "";
         }
 
         return data;
     }
 
-    // Método utilitário para criar uma tabela com os dados e os nomes das colunas fornecidos
-    private JTable createTable(Object[][] data, String[] columnNames) {
-        JTable table = new JTable(data, columnNames) {
+    // Método utilitário para criar uma tabela estilizada
+    private JTable createStyledTable(Object[][] data, String[] columnNames) {
+        JTable table = new JTable(new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Permitir edição apenas na coluna "Pago" e "Tipo de Sócio" da tabela de sócios
-                return column == 5 || column == 6;
+                return column == 6; // Somente a coluna de ações é editável
+            }
+        }) {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                if (component instanceof JComponent) {
+                    ((JComponent) component).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+                    component.setBackground(new Color(0xDFF3FF)); // Define a cor de fundo para azul claro
+                    ((JComponent) component).setOpaque(true); // Garante que seja opaco
+                }
+                return component;
             }
         };
-        table.getTableHeader().setFont(new Font("Inter", Font.BOLD, 14));
-        table.setFont(new Font("Inter", Font.PLAIN, 14));
         table.setRowHeight(30);
+        table.getTableHeader().setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
+        table.getTableHeader().setBackground(new Color(0x6EC2FF));
+        table.getTableHeader().setForeground(Color.BLACK);
+        table.setFont(new Font("Inter", Font.PLAIN, 16));
+        table.setGridColor(Color.WHITE);
+        table.setShowGrid(true);
+        table.getTableHeader().setReorderingAllowed(false);
 
-        // Centraliza o texto nas células
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        table.setDefaultRenderer(Object.class, centerRenderer);
+        centerRenderer.setOpaque(true); // Garante que seja opaco
+        centerRenderer.setBackground(new Color(0x6EC2FF)); // Define a cor de fundo para azul claro
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            columnModel.getColumn(i).setPreferredWidth(120);
+        }
+
+        table.setPreferredScrollableViewportSize(table.getPreferredSize());
+
+        columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
+            private final JPanel panel = new JPanel(new GridBagLayout());
+            private final JButton actionButton = new RoundButton("Devolver");
+
+            {
+                actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
+                actionButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 14)); // Ajusta o tamanho da fonte
+                actionButton.setBorder(null);
+                actionButton.setContentAreaFilled(true);
+                actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                actionButton.setBackground(Color.BLACK);
+                actionButton.setForeground(Color.WHITE);
+
+                actionButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int row = bookTable.getEditingRow();
+                        String isbn = (String) bookTable.getValueAt(row, 0);
+                        devolverLivro(isbn);
+                    }
+                });
+
+                panel.add(actionButton);
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                panel.setOpaque(true);
+                if (isSelected) {
+                    panel.setBackground(table.getSelectionBackground());
+                } else {
+                    panel.setBackground(table.getBackground());
+                }
+                return panel;
+            }
+        });
+
+        columnModel.getColumn(6).setCellEditor(new TableCellEditor() {
+            private final JPanel panel = new JPanel(new GridBagLayout());
+            private final JButton actionButton = new RoundButton("Devolver");
+
+            {
+                actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
+                actionButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 14)); // Ajusta o tamanho da fonte
+                actionButton.setBorder(null);
+                actionButton.setContentAreaFilled(true);
+                actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                actionButton.setBackground(Color.BLACK);
+                actionButton.setForeground(Color.WHITE);
+
+                actionButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int row = bookTable.getEditingRow();
+                        String isbn = (String) bookTable.getValueAt(row, 0);
+                        devolverLivro(isbn);
+                    }
+                });
+
+                panel.add(actionButton);
+            }
+
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                panel.setOpaque(true);
+                if (isSelected) {
+                    panel.setBackground(table.getSelectionBackground());
+                } else {
+                    panel.setBackground(table.getBackground());
+                }
+                return panel;
+            }
+
+            @Override
+            public Object getCellEditorValue() {
+                return "";
+            }
+
+            @Override
+            public boolean isCellEditable(java.util.EventObject e) {
+                return true;
+            }
+
+            @Override
+            public boolean shouldSelectCell(java.util.EventObject anEvent) {
+                return true;
+            }
+
+            @Override
+            public boolean stopCellEditing() {
+                return true;
+            }
+
+            @Override
+            public void cancelCellEditing() {
+            }
+
+            @Override
+            public void addCellEditorListener(javax.swing.event.CellEditorListener l) {
+            }
+
+            @Override
+            public void removeCellEditorListener(javax.swing.event.CellEditorListener l) {
+            }
+        });
+
+        return table;
+    }
+
+    // Método utilitário para criar uma tabela editável e estilizada
+    private JTable createEditableStyledTable(Object[][] data, String[] columnNames) {
+        JTable table = new JTable(new DefaultTableModel(data, columnNames)) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return true; // Permite a edição das células
+            }
+
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                if (component instanceof JComponent) {
+                    ((JComponent) component).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+                    component.setBackground(new Color(0xDFF3FF)); // Define a cor de fundo para azul claro
+                    ((JComponent) component).setOpaque(true); // Garante que seja opaco
+                }
+                return component;
+            }
+        };
+        table.setRowHeight(30);
+        table.getTableHeader().setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
+        table.getTableHeader().setBackground(new Color(0x6EC2FF));
+        table.getTableHeader().setForeground(Color.BLACK);
+        table.setFont(new Font("Inter", Font.PLAIN, 16));
+        table.setGridColor(Color.WHITE);
+        table.setShowGrid(true);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        centerRenderer.setOpaque(true); // Garante que seja opaco
+        centerRenderer.setBackground(new Color(0x6EC2FF)); // Define a cor de fundo para azul claro
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            columnModel.getColumn(i).setPreferredWidth(120);
+        }
+
+        table.setPreferredScrollableViewportSize(table.getPreferredSize());
 
         return table;
     }

@@ -1,9 +1,6 @@
 package org.example.FrontEnd.Livro;
 
-import org.example.BackEnd.Livro;
-import org.example.BackEnd.Requisitar;
-import org.example.BackEnd.Socio;
-import org.example.BackEnd.GerirRequisitar;
+import org.example.BackEnd.*;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -23,6 +20,7 @@ import java.util.ArrayList;
 public class ConfirmaRequisicao extends BasePage {
     private Socio socio;
     private Livro livro;
+    private Configuracoes configuracoes;
 
     public ConfirmaRequisicao(Socio socio, Livro livro) {
         super("Confirmar Requisição", "/HeaderConfirmaRequisicao.png", new ActionListener() {
@@ -35,6 +33,7 @@ public class ConfirmaRequisicao extends BasePage {
 
         this.socio = socio;
         this.livro = livro;
+        this.configuracoes = new Configuracoes();
 
         JPanel wrapperPanel = new JPanel(new BorderLayout(10, 10));
         wrapperPanel.add(headerPanel, BorderLayout.NORTH);
@@ -105,18 +104,21 @@ public class ConfirmaRequisicao extends BasePage {
         datesPanel.setPreferredSize(new Dimension(220, 130));
         datesPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20)); // Adiciona margens ao painel
 
+        // Get the number of days based on the type of member
+        int diasEmprestimo = configuracoes.getDiasEmprestimo(socio.getTipoDeSocio());
+
         // Add data labels on top of the dates panel
         JLabel date1Label = new JLabel(LocalDate.now().toString());
         date1Label.setFont(new Font("Inter", Font.BOLD, 18));
         date1Label.setBounds(53, 30, 180, 30);
         datesPanel.add(date1Label);
 
-        JLabel date2Label = new JLabel(LocalDate.now().plusDays(30).toString());
+        JLabel date2Label = new JLabel(LocalDate.now().plusDays(diasEmprestimo).toString());
         date2Label.setFont(new Font("Inter", Font.BOLD, 18));
         date2Label.setBounds(53, 95, 180, 30);
         datesPanel.add(date2Label);
 
-        JLabel periodLabel = new JLabel("30 Dias");
+        JLabel periodLabel = new JLabel(diasEmprestimo + " Dias");
         periodLabel.setFont(new Font("Inter", Font.BOLD, 18));
         periodLabel.setBounds(120, 153, 180, 30);
         datesPanel.add(periodLabel);
@@ -154,7 +156,7 @@ public class ConfirmaRequisicao extends BasePage {
                 if (response == JOptionPane.YES_OPTION) {
                     // Guardar os dados
                     LocalDate dataRequisicao = LocalDate.now();
-                    LocalDate dataDevolucaoPrevista = dataRequisicao.plusDays(30);
+                    LocalDate dataDevolucaoPrevista = dataRequisicao.plusDays(diasEmprestimo);
                     Requisitar requisitar = new Requisitar(socio, livro, dataRequisicao, dataDevolucaoPrevista);
                     GerirRequisitar.adicionarRequisicao(requisitar);
 

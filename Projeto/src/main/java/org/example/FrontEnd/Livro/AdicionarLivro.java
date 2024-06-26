@@ -7,12 +7,11 @@ import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-import java.text.ParseException;
+import java.io.*;
+import java.util.ArrayList;
 
 public class AdicionarLivro extends BasePage {
     private JTextField fieldTitulo;
@@ -153,8 +152,12 @@ public class AdicionarLivro extends BasePage {
                         // Exibe uma mensagem de erro se alguma caixa de texto estiver vazia
                         JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.", "Erro", JOptionPane.ERROR_MESSAGE);
                     } else {
-
                         try {
+                            String newISBN = fieldISBN.getText().trim();
+                            if (isbnExists(newISBN)) {
+                                JOptionPane.showMessageDialog(null, "Já existe um livro com este ISBN.", "Erro", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
 
                             int ISBN = Integer.parseInt(fieldISBN.getText().trim());
                             int diasLeitorValue = Integer.parseInt(fieldAno.getText().trim());
@@ -217,5 +220,25 @@ public class AdicionarLivro extends BasePage {
 
         add(wrapperPanel, BorderLayout.CENTER);
         setVisible(true);
+    }
+
+    private boolean isbnExists(String isbn) {
+        ArrayList<Livro> livros = carregarLivros("livros.ser");
+        for (Livro livro : livros) {
+            if (livro.getIsbn().equals(isbn)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<Livro> carregarLivros(String nomeArquivo) {
+        ArrayList<Livro> livros = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            livros = (ArrayList<Livro>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return livros;
     }
 }

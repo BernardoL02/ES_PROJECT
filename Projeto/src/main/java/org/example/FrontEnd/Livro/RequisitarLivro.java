@@ -196,13 +196,16 @@ public class RequisitarLivro extends BasePage {
 
                         // Coletar dados do livro selecionado
                         Livro livro = livros.get(row);
-
-                        if (quantidade > 0) {
-                            new ConfirmaRequisicao(socio, livro);
+                        if (socio.getCota().isPago()) {
+                            if (quantidade > 0) {
+                                new ConfirmaRequisicao(socio, livro);
+                            } else {
+                                new ConfirmaReserva(socio, livro);
+                            }
+                            dispose(); // Fecha a janela principal
                         } else {
-                            new ConfirmaReserva(socio, livro);
+                            JOptionPane.showMessageDialog(null, "Impossivel Requisitar o Socio tem cotas por pagar!", "Erro", JOptionPane.ERROR_MESSAGE);
                         }
-                        dispose(); // Fecha a janela principal
                     }
                 });
 

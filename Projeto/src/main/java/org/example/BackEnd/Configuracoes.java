@@ -68,4 +68,19 @@ public class Configuracoes {
         }
         return 0.0;
     }
+
+    public int getDiasEmprestimo(TipoDeSocio tipoDeSocio) {
+        String key = "dias" + tipoDeSocio.name();
+        String value = properties.getProperty(key);
+        if (value != null) {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                System.err.println("Valor inválido para dias de empréstimo do tipo de sócio " + tipoDeSocio + ": " + value);
+            }
+        } else {
+            System.err.println("Chave não encontrada no arquivo de configuração: " + key);
+        }
+        return 0; // default value in case of error
+    }
 }

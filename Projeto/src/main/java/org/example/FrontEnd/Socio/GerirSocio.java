@@ -3,6 +3,7 @@ package org.example.FrontEnd.Socio;
 import org.example.BackEnd.Socio;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
+import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
@@ -233,9 +234,18 @@ public class GerirSocio extends BasePage {
                     public void actionPerformed(ActionEvent e) {
                         int selectedRow = table.getSelectedRow();
                         if (selectedRow != -1) {
-                            socios.remove(selectedRow);
-                            tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
-                            salvarSocios("socios.ser"); // Salva os sócios após a exclusão
+                            // Verifica se a coluna "Pago" na linha selecionada é "Não"
+                            String pagoStatus = (String) table.getValueAt(selectedRow, 5); // substitua columnIndexPago pelo índice da coluna "Pago"
+                            if ("Não".equals(pagoStatus)) {
+                                JOptionPane.showMessageDialog(null, "O utilizador tem cotas por pagar.");
+                            } else {
+                                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que deseja eliminar este sócio?", "Confirmação", "Cancelar", "Confirmar");
+                                if (response == JOptionPane.YES_OPTION) {
+                                    socios.remove(selectedRow);
+                                    tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
+                                    salvarSocios("socios.ser"); // Salva os sócios após a exclusão
+                                }
+                            }
                         }
                     }
                 });

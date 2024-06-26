@@ -48,7 +48,7 @@ public class RequisicoesPorSocio extends BasePage {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Alinha o botão à esquerda
         topPanel.setBackground(Color.WHITE);
@@ -76,7 +76,6 @@ public class RequisicoesPorSocio extends BasePage {
 
         JLabel memberInfoLabel = new JLabel("Sócio Associado", SwingConstants.CENTER);
         memberInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
-        memberInfoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaçamento
         memberInfoPanel.add(memberInfoLabel, BorderLayout.NORTH);
 
         String[] memberColumnNames = {"Nif", "Nome", "Morada", "Telefone", "Email", "Pago", "Tipo de Sócio"};
@@ -86,11 +85,19 @@ public class RequisicoesPorSocio extends BasePage {
         memberTable = createTable(memberData, memberColumnNames);
         memberTable.setRowHeight(30); // Ajusta a altura da linha da tabela de sócios
         memberTable.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, memberTable.getRowHeight() + memberTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de sócios
-        JScrollPane memberScrollPane = new JScrollPane(memberTable);
-        memberScrollPane.setPreferredSize(memberTable.getPreferredSize());
-        memberScrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Remover a borda preta
-        memberScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
 
+        // Define o editor de célula para a coluna "Pago"
+        JComboBox<String> pagoComboBox = new JComboBox<>(new String[]{"Sim", "Não"});
+        memberTable.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(pagoComboBox));
+
+        // Define o editor de célula para a coluna "Tipo de Sócio"
+        JComboBox<String> tipoDeSocioComboBox = new JComboBox<>(new String[]{"Entusiasta", "Académico", "Leitor"});
+        memberTable.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(tipoDeSocioComboBox));
+
+        JScrollPane memberScrollPane = new JScrollPane(memberTable);
+        memberScrollPane.setPreferredSize(new Dimension(memberTable.getPreferredSize().width, 120)); // Altura fixa para o painel de informações do sócio
+        memberScrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Borda com a cor desejada
+        memberScrollPane.getViewport().setBackground(Color.WHITE);
         memberInfoPanel.add(memberScrollPane, BorderLayout.CENTER);
 
         // Adiciona o painel de informações do sócio ao mainPanel
@@ -161,12 +168,10 @@ public class RequisicoesPorSocio extends BasePage {
         buttonPanel.add(buttonGuardar);
         mainPanel.add(buttonPanel);
 
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
         // Painel de informação do livro
         JPanel bookInfoPanel = new JPanel(new BorderLayout());
         bookInfoPanel.setBackground(Color.WHITE);
-        bookInfoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 0)); // Remover a borda preta
+        bookInfoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 0)); // Borda com a cor desejada
 
         JLabel bookInfoLabel = new JLabel("Livros Requisitados", SwingConstants.CENTER);
         bookInfoLabel.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 18));
@@ -177,184 +182,120 @@ public class RequisicoesPorSocio extends BasePage {
         Object[][] bookData = criarReservasData();
         bookTable = createTable(bookData, bookColumnNames);
         bookTable.setRowHeight(30); // Ajusta a altura da linha da tabela de livro
-        bookTable.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, bookTable.getRowHeight() + bookTable.getTableHeader().getPreferredSize().height)); // Ajuste o tamanho da tabela de livro
 
-        bookTable.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer());
-        bookTable.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor());
+
+
+        // Ajuste para centralizar o texto nas células da tabela de livros
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        bookTable.setDefaultRenderer(Object.class, centerRenderer);
+
+        // Ajusta o tamanho das colunas da tabela de livros
+        TableColumnModel columnModel = bookTable.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(100); // ISBN
+        columnModel.getColumn(1).setPreferredWidth(250); // Título
+        columnModel.getColumn(2).setPreferredWidth(80); // Edição
+        columnModel.getColumn(3).setPreferredWidth(150); // Género
+        columnModel.getColumn(4).setPreferredWidth(120); // Data Requisição
+        columnModel.getColumn(5).setPreferredWidth(120); // Data Devolução
+        columnModel.getColumn(6).setPreferredWidth(100); // Ação
 
         JScrollPane bookScrollPane = new JScrollPane(bookTable);
-        bookScrollPane.setPreferredSize(bookTable.getPreferredSize());
-        bookScrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Remover a borda preta
-        bookScrollPane.getViewport().setBackground(Color.WHITE); // Define o fundo do viewport para branco
-
+        bookScrollPane.setPreferredSize(new Dimension(bookTable.getPreferredSize().width, 200)); // Altura fixa para o painel de informações do livro
+        bookScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0x99D4FF))); // Borda com a cor desejada
         bookInfoPanel.add(bookScrollPane, BorderLayout.CENTER);
 
-        // Adiciona o painel de informação do livro ao mainPanel
+        // Adiciona o painel de informações do livro ao mainPanel
         mainPanel.add(bookInfoPanel);
 
+        // Adiciona o mainPanel ao wrapperPanel
         wrapperPanel.add(mainPanel, BorderLayout.CENTER);
 
-        add(wrapperPanel, BorderLayout.CENTER);
+        // Adiciona o wrapperPanel ao JFrame
+        add(wrapperPanel);
 
+        // Configurações do JFrame
+        pack();
+        setLocationRelativeTo(null); // Centraliza a janela na tela
         setVisible(true);
     }
 
+    // Método para carregar as reservas a partir de um arquivo serializado
+    private ArrayList<Requisitar> carregarReservas(String filename) {
+        ArrayList<Requisitar> reservas = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            reservas = (ArrayList<Requisitar>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return reservas;
+    }
+
+    // Método para criar os dados da tabela de reservas
     private Object[][] criarReservasData() {
-        ArrayList<Object[]> data = new ArrayList<>();
+        Object[][] data = new Object[reservas.size()][7];
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        for (Requisitar reserva : reservas) {
-            if (reserva.getSocio().getNif().equals(socio.getNif())) {
-                data.add(new Object[]{
-                        reserva.getLivro().getIsbn(),
-                        reserva.getLivro().getTitulo(),
-                        reserva.getLivro().getEdicao(),
-                        reserva.getLivro().getGenero(),
-                        reserva.getDataRequisicao().format(formatter),
-                        reserva.getDataDevolucao() != null ? reserva.getDataDevolucao().format(formatter) : "",
-                        ""
-                });
-            }
+
+        for (int i = 0; i < reservas.size(); i++) {
+            Requisitar reserva = reservas.get(i);
+            data[i][0] = reserva.getLivro().getIsbn();
+            data[i][1] = reserva.getLivro().getTitulo();
+            data[i][2] = reserva.getLivro().getEdicao();
+            data[i][3] = reserva.getLivro().getGenero();
+            data[i][4] = reserva.getDataRequisicao().format(formatter);
+            data[i][5] = reserva.getDataDevolucao() != null ? reserva.getDataDevolucao().format(formatter) : "-";
+            data[i][6] = "Devolver";
         }
-        return data.toArray(new Object[0][0]);
+
+        return data;
     }
 
-    private void devolverLivro(int row) {
-        String isbnLivro = (String) bookTable.getValueAt(row, 0);
-        for (Requisitar reserva : reservas) {
-            if (reserva.getLivro().getIsbn().equals(isbnLivro) && reserva.getSocio().getNif().equals(socio.getNif())) {
-                reserva.setDataDevolucao(LocalDate.now());
-                JOptionPane.showMessageDialog(this, "Livro devolvido com sucesso!");
-                break;
-            }
-        }
-        // Update the table data
-        Object[][] updatedData = criarReservasData();
-        ((DefaultTableModel) bookTable.getModel()).setDataVector(updatedData, new String[]{"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolucao", "Ação"});
-    }
-
+    // Método utilitário para criar uma tabela com os dados e os nomes das colunas fornecidos
     private JTable createTable(Object[][] data, String[] columnNames) {
-        JTable table = new JTable(new DefaultTableModel(data, columnNames) {
+        JTable table = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Torna todos os campos editáveis, exceto a coluna "Ação"
-                return column != 6;
-            }
-        }) {
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                Component component = super.prepareRenderer(renderer, row, column);
-                if (component instanceof JComponent) {
-                    ((JComponent) component).setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-                    component.setBackground(new Color(0xDFF3FF)); // Define a cor de fundo para azul claro
-                    ((JComponent) component).setOpaque(true); // Garante que seja opaco
-                }
-                return component;
+                // Permitir edição apenas na coluna "Pago" e "Tipo de Sócio" da tabela de sócios
+                return column == 5 || column == 6;
             }
         };
+        table.getTableHeader().setFont(new Font("Inter", Font.BOLD, 14));
+        table.setFont(new Font("Inter", Font.PLAIN, 14));
         table.setRowHeight(30);
-        table.getTableHeader().setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 16));
-        table.getTableHeader().setBackground(new Color(0x6EC2FF));
-        table.getTableHeader().setForeground(Color.BLACK);
-        table.setFont(new Font("Inter", Font.PLAIN, 16));
-        table.setGridColor(Color.WHITE);
-        table.setShowGrid(true);
-        table.getTableHeader().setReorderingAllowed(true); // Permite redimensionar as colunas
 
+        // Centraliza o texto nas células
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        centerRenderer.setOpaque(true); // Garante que seja opaco
-        centerRenderer.setBackground(new Color(0x6EC2FF)); // Define a cor de fundo para azul claro
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        TableColumnModel columnModel = table.getColumnModel();
-        for (int i = 0; i < columnModel.getColumnCount(); i++) {
-            columnModel.getColumn(i).setPreferredWidth(120);
-        }
-        table.setPreferredScrollableViewportSize(table.getPreferredSize());
-        table.getTableHeader().setResizingAllowed(true);
-        table.getTableHeader().setReorderingAllowed(false);
+        table.setDefaultRenderer(Object.class, centerRenderer);
 
         return table;
     }
 
-    private ArrayList<Requisitar> carregarReservas(String nomeArquivo) {
-        ArrayList<Requisitar> requisitars = new ArrayList<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
-            requisitars = (ArrayList<Requisitar>) ois.readObject();
-        } catch (FileNotFoundException e) {
-            // If the file does not exist, create it
-            salvarReservas(requisitars, nomeArquivo);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+    // Método para devolver o livro
+    public void devolverLivro(String isbn) {
+        for (Requisitar reserva : reservas) {
+            if (reserva.getLivro().getIsbn().equals(isbn) && reserva.getSocio().getNif().equals(socio.getNif())) {
+                reservas.remove(reserva);
+                salvarReservas("requisitar.ser", reservas);
+                atualizarTabelaLivros();
+                break;
+            }
         }
-        return requisitars;
     }
 
-    private void salvarReservas(ArrayList<Requisitar> requisitars, String nomeArquivo) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
-            oos.writeObject(requisitars);
+    // Método para salvar as reservas em um arquivo serializado
+    private void salvarReservas(String filename, ArrayList<Requisitar> reservas) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(reservas);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private class ButtonRenderer extends JButton implements TableCellRenderer {
-        public ButtonRenderer() {
-            setOpaque(true); // Garante que o botão seja opaco
-            setBackground(Color.BLACK); // Define a cor de fundo do botão como preto
-            setForeground(Color.WHITE); // Define a cor do texto do botão como branco
-            setFont(new Font("Inter", Font.BOLD, 14));
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText("Devolver"); // Define o texto do botão
-            return this;
-        }
-    }
-
-    private class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
-        private final JPanel panel = new JPanel(new GridBagLayout());
-        private final JButton actionButton = new RoundButton("Devolver");
-
-        public ButtonEditor() {
-            actionButton.setPreferredSize(new Dimension(100, 35)); // Define o tamanho fixo dos botões
-            actionButton.setFont(new Font("Inter", Font.BOLD | Font.ITALIC, 14)); // Ajusta o tamanho da fonte
-            actionButton.setBorder(null);
-            actionButton.setContentAreaFilled(true);
-            actionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            actionButton.setBackground(Color.BLACK);
-            actionButton.setForeground(Color.WHITE);
-
-            actionButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int row = bookTable.getEditingRow();
-                    // Perform action when button is clicked
-                    devolverLivro(row);
-                    fireEditingStopped();
-                }
-            });
-
-            panel.add(actionButton);
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            panel.setOpaque(true);
-            if (isSelected) {
-                panel.setBackground(table.getSelectionBackground());
-            } else {
-                panel.setBackground(table.getBackground());
-            }
-            return panel;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return "";
-        }
+    // Método para atualizar a tabela de livros
+    private void atualizarTabelaLivros() {
+        Object[][] bookData = criarReservasData();
+        DefaultTableModel model = (DefaultTableModel) bookTable.getModel();
+        model.setDataVector(bookData, new String[]{"ISBN", "Título", "Edição", "Género", "Data Requisição", "Data Devolução", "Ação"});
     }
 }

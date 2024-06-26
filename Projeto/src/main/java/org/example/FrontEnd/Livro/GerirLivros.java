@@ -386,7 +386,6 @@ public class GerirLivros extends BasePage {
         }
     }
 }
-
 class LivroTableModel extends AbstractTableModel {
     private ArrayList<Livro> livros;
     private String[] columnNames;

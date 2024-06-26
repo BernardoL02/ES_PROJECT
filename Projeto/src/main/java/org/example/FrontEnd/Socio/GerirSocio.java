@@ -3,21 +3,29 @@ package org.example.FrontEnd.Socio;
 import org.example.BackEnd.Socio;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
-import org.example.FrontEnd.Resources.CustomPopUP;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GerirSocio extends BasePage {
     private static ArrayList<Socio> socios = new ArrayList<>();
     private JTable table;
     private SocioTableModel tableModel;
+    private JTextField searchText;
 
     public GerirSocio() {
         super("Gerir Sócios", "/HeaderGerirSocio.png", new ActionListener() {
@@ -55,10 +63,27 @@ public class GerirSocio extends BasePage {
         searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         searchPanel.setBackground(Color.WHITE);
 
-        JTextField searchText = new JTextField();
+        searchText = new JTextField();
         searchText.setOpaque(false);
         searchText.setBorder(BorderFactory.createEmptyBorder(5, 55, 5, 5));
         searchPanel.add(searchText, BorderLayout.CENTER);
+
+        searchText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchSocios();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchSocios();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchSocios();
+            }
+        });
 
         RoundButton addButton = new RoundButton("Adicionar Sócio");
         addButton.setBackground(new Color(0x99D4FF));
@@ -154,7 +179,6 @@ public class GerirSocio extends BasePage {
                 Image deleteImg = deleteIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
                 deleteButton.setIcon(new ImageIcon(deleteImg));
 
-
                 panel.add(editButton);
                 panel.add(deleteButton);
             }
@@ -191,8 +215,6 @@ public class GerirSocio extends BasePage {
                 ImageIcon deleteIcon = new ImageIcon(getClass().getResource("/delete.png"));
                 Image deleteImg = deleteIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
                 deleteButton.setIcon(new ImageIcon(deleteImg));
-
-
 
                 editButton.addActionListener(new ActionListener() {
                     @Override
@@ -276,6 +298,31 @@ public class GerirSocio extends BasePage {
         add(wrapperPanel, BorderLayout.CENTER);
 
         setVisible(true);
+
+        pack();
+    }
+
+    private void searchSocios() {
+        String query = searchText.getText().trim().toLowerCase();
+        if (query.isEmpty()) {
+            // Se a barra de pesquisa estiver vazia, mostrar todos os sócios não pagos
+            tableModel.setSocios(socios);
+        } else {
+            // Filtrar pelo nome ou NIF do sócio
+            List<Socio> filteredSocios = new ArrayList<>();
+            for (Socio socio : socios) {
+                if (socio.getNome().toLowerCase().contains(query) || socio.getNif().contains(query)) {
+                    filteredSocios.add(socio);
+                }
+            }
+            if (filteredSocios.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Não existem sócios com esse Nome ou NIF", "Erro", JOptionPane.ERROR_MESSAGE);
+                tableModel.setSocios(socios);
+                SwingUtilities.invokeLater(() -> searchText.setText(""));
+            } else {
+                tableModel.setSocios(filteredSocios);
+            }
+        }
     }
 
     public static void adicionarSocio(Socio socio) {
@@ -283,16 +330,15 @@ public class GerirSocio extends BasePage {
         salvarSocios("socios.ser");
     }
 
-        public static void atualizarSocio(Socio socio) {
-            for (int i = 0; i < socios.size(); i++) {
-                if (socios.get(i).getNif().equals(socio.getNif())) {
-                    socios.set(i, socio);
-                    salvarSocios("socios.ser");
-                    return;
-                }
+    public static void atualizarSocio(Socio socio) {
+        for (int i = 0; i < socios.size(); i++) {
+            if (socios.get(i).getNif().equals(socio.getNif())) {
+                socios.set(i, socio);
+                salvarSocios("socios.ser");
+                return;
             }
         }
-
+    }
 
     private void carregarSocios(String nomeArquivo) {
         File file = new File(nomeArquivo);
@@ -377,5 +423,10 @@ class SocioTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 6; // Apenas a coluna de ações é editável
+    }
+
+    public void setSocios(List<Socio> socios) {
+        this.socios = new ArrayList<>(socios);
+        fireTableDataChanged(); // Notifica a tabela que os dados foram alterados
     }
 }

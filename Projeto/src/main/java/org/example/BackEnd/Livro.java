@@ -1,6 +1,9 @@
 package org.example.BackEnd;
+import java.io.Serializable;
 
-public class Livro {
+public class Livro implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String titulo;
     private String isbn;
     private String edicao;
@@ -10,10 +13,12 @@ public class Livro {
     private String autor;
     private String editora;
     private int ano;
-    private String quantidade;
+    private int quantidade;
+    private Fornecedor fornecedor;  // Novo atributo
 
     // Construtor
-    public Livro(String titulo, String isbn, String edicao, String genero, String subGenero, String localizacao, String autor, String editora, int ano, String quantidade) {
+    public Livro(String titulo, String isbn, String edicao, String genero, String subGenero, String localizacao,
+                 String autor, String editora, int ano, int quantidade, Fornecedor fornecedor) {
         this.titulo = titulo;
         this.isbn = isbn;
         this.edicao = edicao;
@@ -24,6 +29,7 @@ public class Livro {
         this.editora = editora;
         this.ano = ano;
         this.quantidade = quantidade;
+        this.fornecedor = fornecedor;  // Inicializando o novo atributo
     }
 
     // Getters e Setters
@@ -99,12 +105,20 @@ public class Livro {
         this.ano = ano;
     }
 
-    public String getQuantidade() {
+    public int getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(String quantidade) {
+    public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public Fornecedor getFornecedor() {
+        return fornecedor;
+    }
+
+    public void setFornecedor(Fornecedor fornecedor) {
+        this.fornecedor = fornecedor;
     }
 
     @Override
@@ -119,7 +133,8 @@ public class Livro {
                 ", autor='" + autor + '\'' +
                 ", editora='" + editora + '\'' +
                 ", ano=" + ano +
-                ", quantidade='" + quantidade + '\'' +
+                ", quantidade=" + quantidade +
+                ", fornecedor=" + fornecedor +  // Incluindo o fornecedor na representação de string
                 '}';
     }
 }

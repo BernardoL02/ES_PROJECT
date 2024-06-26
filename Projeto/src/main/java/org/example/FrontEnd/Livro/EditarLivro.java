@@ -1,5 +1,6 @@
 package org.example.FrontEnd.Livro;
 
+import org.example.BackEnd.Livro;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.CustomPopUP;
@@ -11,19 +12,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EditarLivro extends BasePage {
-    public EditarLivro() {
-        super("Gerir Livros", "/HeaderEditarLivro.png", new ActionListener() {
+    private Livro livro;
+    private JTextField fieldTitulo;
+    private JTextField fieldISBN;
+    private JTextField fieldEdicao;
+    private JTextField fieldGenero;
+    private JTextField fieldSubGenero;
+    private JTextField fieldLocalizacao;
+    private JTextField fieldAutor;
+    private JTextField fieldEditora;
+    private JTextField fieldAno;
+    private JTextField fieldQuantidade;
+
+    public EditarLivro(Livro livro) {
+        super("Editar Livro", "/HeaderEditarLivro.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Ação personalizada ao clicar no botão de voltar
-                // Exemplo: Voltar para a página inicial
                 new GerirLivros();
                 ((JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
             }
-        }, true); // Passe "true" para exibir o ícone de configuração, "false" para ocultá-lo
+        }, true);
 
-
-
+        this.livro = livro;
 
         // Painel principal para centralizar verticalmente
         JPanel wrapperPanel = new JPanel(new BorderLayout());
@@ -52,60 +62,60 @@ public class EditarLivro extends BasePage {
         backgroundPanel.setLayout(null); // Definindo layout absoluto para posicionamento personalizado
 
         // Adicionando caixas de texto ao painel de fundo
-        JTextField fieldTitulo = new JTextField();
-        fieldTitulo.setBounds(160, 90, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldTitulo = new JTextField(livro.getTitulo());
+        fieldTitulo.setBounds(160, 90, 250, 30);
         fieldTitulo.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldTitulo);
 
-        JTextField fieldISBN = new JTextField();
-        fieldISBN.setBounds(160, 165, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldISBN = new JTextField(livro.getIsbn());
+        fieldISBN.setBounds(160, 165, 250, 30);
         fieldISBN.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldISBN);
 
-        JTextField fieldEdicao = new JTextField();
-        fieldEdicao.setBounds(160, 240, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldEdicao = new JTextField(livro.getEdicao());
+        fieldEdicao.setBounds(160, 240, 250, 30);
         fieldEdicao.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldEdicao);
 
-        JTextField fieldGenero = new JTextField();
-        fieldGenero.setBounds(160, 315, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldGenero = new JTextField(livro.getGenero());
+        fieldGenero.setBounds(160, 315, 250, 30);
         fieldGenero.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldGenero);
 
-        JTextField fieldSubGenero = new JTextField();
-        fieldSubGenero.setBounds(160, 390, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldSubGenero = new JTextField(livro.getSubGenero());
+        fieldSubGenero.setBounds(160, 390, 250, 30);
         fieldSubGenero.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldSubGenero);
 
-        //Coluna 2
-        JTextField fieldLocalizacao = new JTextField();
-        fieldLocalizacao.setBounds(510, 90, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        // Coluna 2
+        fieldLocalizacao = new JTextField(livro.getLocalizacao());
+        fieldLocalizacao.setBounds(510, 90, 250, 30);
         fieldLocalizacao.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldLocalizacao);
 
-        JTextField fieldAutor = new JTextField();
-        fieldAutor.setBounds(510, 165, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldAutor = new JTextField(livro.getAutor());
+        fieldAutor.setBounds(510, 165, 250, 30);
         fieldAutor.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldAutor);
 
-        JTextField fieldEditora = new JTextField();
-        fieldEditora.setBounds(510, 240, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldEditora = new JTextField(livro.getEditora());
+        fieldEditora.setBounds(510, 240, 250, 30);
         fieldEditora.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldEditora);
 
-        JTextField fieldAno = new JTextField();
-        fieldAno.setBounds(510, 315, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldAno = new JTextField(String.valueOf(livro.getAno()));
+        fieldAno.setBounds(510, 315, 250, 30);
         fieldAno.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldAno);
 
-        JTextField fieldQuantidade = new JTextField();
-        fieldQuantidade.setBounds(510, 390, 250, 30); // Posicionando a primeira caixa de texto com coordenadas absolutas
+        fieldQuantidade = new JTextField(String.valueOf(livro.getQuantidade()));
+        fieldQuantidade.setBounds(510, 390, 250, 30);
         fieldQuantidade.setHorizontalAlignment(SwingConstants.LEFT);
         backgroundPanel.add(fieldQuantidade);
 
         wrapperPanel.add(backgroundPanel, BorderLayout.CENTER);
 
-        //Butões
+        // Botões
         RoundButton buttonGuardar = new RoundButton("Guardar");
         buttonGuardar.setBackground(new Color(0x99D4FF));
         buttonGuardar.setForeground(Color.BLACK);
@@ -122,7 +132,20 @@ public class EditarLivro extends BasePage {
 
                 // Verifica a resposta
                 if (response == JOptionPane.YES_OPTION) {
-                    //Guardar os dados
+                    // Atualiza os dados do livro
+                    livro.setTitulo(fieldTitulo.getText());
+                    livro.setIsbn(fieldISBN.getText());
+                    livro.setEdicao(fieldEdicao.getText());
+                    livro.setGenero(fieldGenero.getText());
+                    livro.setSubGenero(fieldSubGenero.getText());
+                    livro.setLocalizacao(fieldLocalizacao.getText());
+                    livro.setAutor(fieldAutor.getText());
+                    livro.setEditora(fieldEditora.getText());
+                    livro.setAno(Integer.parseInt(fieldAno.getText()));
+                    livro.setQuantidade(Integer.parseInt(fieldQuantidade.getText()));
+
+                    // Salvar os livros atualizados no arquivo
+                    GerirLivros.salvarLivros("livros.ser");
 
                     new GerirLivros();
                     dispose();
@@ -153,6 +176,6 @@ public class EditarLivro extends BasePage {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(EditarLivro::new);
+        SwingUtilities.invokeLater(() -> new EditarLivro(null));
     }
 }

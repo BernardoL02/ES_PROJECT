@@ -1,19 +1,24 @@
 package org.example.FrontEnd.Livro;
 
+import org.example.BackEnd.Fornecedor;
+import org.example.BackEnd.Livro;
 import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.BiblioLiz;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.ArrayList;
 
 public class GerirLivros extends BasePage {
+    private static ArrayList<Livro> livros = new ArrayList<>();
+    private JTable table;
+    private LivroTableModel tableModel;
+
     public GerirLivros() {
         super("Gerir Livros", "/HeaderGerirLivros.png", new ActionListener() {
             @Override
@@ -75,15 +80,13 @@ public class GerirLivros extends BasePage {
         topPanel.add(buttonPanel, BorderLayout.EAST);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        String[] columnNames = {"ISBN", "Título", "Edição", "Gênero", "Localização", "Quantidade", "Ações"};
-        Object[][] data = {
-                {"78853330227123123123123", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-                {"78853330227123123123123", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-                {"78853330227", "A Fórmula de Deus", "2ª Edição", "Romance", "2 - 10 - 1B", "2/5", ""},
-        };
+        String[] columnNames = {"ISBN", "Título", "Edição", "Gênero", "Localização", "Quantidade", "Fornecedor", "Ações"};
 
-        JTable table = new JTable(data, columnNames) {
+        // Carregar livros do arquivo
+        carregarLivros("livros.ser");
+
+        tableModel = new LivroTableModel(livros, columnNames);
+        table = new JTable(tableModel) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);
@@ -100,7 +103,7 @@ public class GerirLivros extends BasePage {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 6; // Somente a coluna de ações é editável
+                return column == 7; // Somente a coluna de ações é editável
             }
         };
 
@@ -128,14 +131,15 @@ public class GerirLivros extends BasePage {
         columnModel.getColumn(4).setPreferredWidth(120);
         columnModel.getColumn(5).setPreferredWidth(120);
         columnModel.getColumn(6).setPreferredWidth(180);
+        columnModel.getColumn(7).setPreferredWidth(180);
 
         table.getTableHeader().setResizingAllowed(true);
 
-        columnModel.getColumn(6).setCellRenderer(new TableCellRenderer() {
+        columnModel.getColumn(7).setCellRenderer(new TableCellRenderer() {
             private final JPanel panel = new JPanel(new GridBagLayout());
             private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
             private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");  // Use RoundButton here
+            private final JButton reserveButton = new RoundButton("Reservas");
 
             {
                 editButton.setBorder(null);
@@ -174,11 +178,11 @@ public class GerirLivros extends BasePage {
             }
         });
 
-        columnModel.getColumn(6).setCellEditor(new TableCellEditor() {
+        columnModel.getColumn(7).setCellEditor(new TableCellEditor() {
             private final JPanel panel = new JPanel(new GridBagLayout());
             private final JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
             private final JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/delete.png")));
-            private final JButton reserveButton = new RoundButton("Reservas");  // Use RoundButton here
+            private final JButton reserveButton = new RoundButton("Reservas");
 
             {
                 editButton.setBorder(null);
@@ -203,7 +207,8 @@ public class GerirLivros extends BasePage {
                 editButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        new EditarLivro();
+                        Livro livro = livros.get(table.getSelectedRow());
+                        new EditarLivro(livro);
                         dispose(); // Fecha a janela principal
                     }
                 });
@@ -211,7 +216,12 @@ public class GerirLivros extends BasePage {
                 deleteButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "Excluir Livro");
+                        int selectedRow = table.getSelectedRow();
+                        if (selectedRow != -1) {
+                            livros.remove(selectedRow);
+                            tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
+                            salvarLivros("livros.ser"); // Salva os livros após a exclusão
+                        }
                     }
                 });
 
@@ -284,7 +294,99 @@ public class GerirLivros extends BasePage {
         setVisible(true);
     }
 
+    private void carregarLivros(String nomeArquivo) {
+        File file = new File(nomeArquivo);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                System.out.println("Arquivo de livros criado.");
+            } catch (IOException e) {
+                System.err.println("Erro ao criar o arquivo de livros: " + e.getMessage());
+            }
+        }
+
+        if (file.length() == 0) {
+            livros = new ArrayList<>();
+        } else {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+                livros = (ArrayList<Livro>) ois.readObject();
+                System.out.println("Livros carregados com sucesso.");
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Erro ao carregar livros: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void adicionarLivro(Livro livro) {
+        livros.add(livro);
+        salvarLivros("livros.ser");
+    }
+
+    public static void salvarLivros(String nomeArquivo) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
+            oos.writeObject(livros);
+            System.out.println("Livros salvos com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar livros: " + e.getMessage());
+        }
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GerirLivros::new);
+    }
+}
+
+class LivroTableModel extends AbstractTableModel {
+    private ArrayList<Livro> livros;
+    private String[] columnNames;
+
+    public LivroTableModel(ArrayList<Livro> livros, String[] columnNames) {
+        this.livros = livros;
+        this.columnNames = columnNames;
+    }
+
+    @Override
+    public int getRowCount() {
+        return livros.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
+
+    @Override
+    public String getColumnName(int columnIndex) {
+        return columnNames[columnIndex];
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Livro livro = livros.get(rowIndex);
+        switch (columnIndex) {
+            case 0:
+                return livro.getIsbn();
+            case 1:
+                return livro.getTitulo();
+            case 2:
+                return livro.getEdicao();
+            case 3:
+                return livro.getGenero();
+            case 4:
+                return livro.getLocalizacao();
+            case 5:
+                return livro.getQuantidade();
+            case 6:
+                return livro.getFornecedor().getNome();  // Exibir o nome do fornecedor
+            case 7:
+                return "Ações";
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex == 7; // Apenas a coluna de ações é editável
     }
 }

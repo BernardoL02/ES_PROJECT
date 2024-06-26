@@ -6,10 +6,14 @@ import org.example.FrontEnd.Resources.BasePage;
 import org.example.FrontEnd.Resources.RoundButton;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +26,9 @@ public class RequisitarLivro extends BasePage {
     private ArrayList<Livro> livros;
     private ArrayList<Requisitar> requisitars;
     private ArrayList<Reserva> reservas;
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private TableRowSorter<DefaultTableModel> sorter;
 
     public RequisitarLivro(Socio socio) {
         super("Requisitar Livro", "/HeaderRequisitarLivro.png", new ActionListener() {
@@ -76,23 +83,8 @@ public class RequisitarLivro extends BasePage {
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = {"ISBN", "Título", "Edição", "Gênero", "Localização", "Quantidade", "Ações"};
-        Object[][] data = new Object[livros.size()][columnNames.length];
-
-        for (int i = 0; i < livros.size(); i++) {
-            Livro livro = livros.get(i);
-            int reservasAtivas = contarReservasAtivas(livro);
-            int quantidadeDisponivel = livro.getQuantidade() - reservasAtivas;
-
-            data[i][0] = livro.getIsbn();
-            data[i][1] = livro.getTitulo();
-            data[i][2] = livro.getEdicao();
-            data[i][3] = livro.getGenero();
-            data[i][4] = livro.getLocalizacao();
-            data[i][5] = quantidadeDisponivel + "/" + livro.getQuantidade();
-            data[i][6] = ""; // Placeholder for actions
-        }
-
-        JTable table = new JTable(data, columnNames) {
+        tableModel = new DefaultTableModel(columnNames, 0);
+        table = new JTable(tableModel) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component component = super.prepareRenderer(renderer, row, column);
@@ -191,8 +183,8 @@ public class RequisitarLivro extends BasePage {
                 actionButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        int row = table.getEditingRow();
-                        int quantidade = Integer.parseInt(table.getValueAt(row, 5).toString().split("/")[0]);
+                        int row = table.convertRowIndexToModel(table.getEditingRow());
+                        int quantidade = Integer.parseInt(table.getModel().getValueAt(row, 5).toString().split("/")[0]);
 
                         // Coletar dados do livro selecionado
                         Livro livro = livros.get(row);
@@ -214,7 +206,7 @@ public class RequisitarLivro extends BasePage {
 
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-                int quantidade = Integer.parseInt(table.getValueAt(row, 5).toString().split("/")[0]);
+                int quantidade = Integer.parseInt(table.getModel().getValueAt(table.convertRowIndexToModel(row), 5).toString().split("/")[0]);
                 if (quantidade > 0) {
                     actionButton.setText("Requisitar");
                     actionButton.setBackground(new Color(0x99D4FF));
@@ -277,7 +269,50 @@ public class RequisitarLivro extends BasePage {
 
         add(wrapperPanel, BorderLayout.CENTER);
 
+        populateTable();
+
+        // Adicionar funcionalidade de pesquisa
+        searchText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchTable(searchText.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchTable(searchText.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchTable(searchText.getText());
+            }
+        });
+
         setVisible(true);
+    }
+
+    private void populateTable() {
+        for (Livro livro : livros) {
+            int reservasAtivas = contarReservasAtivas(livro);
+            int quantidadeDisponivel = livro.getQuantidade() - reservasAtivas;
+
+            tableModel.addRow(new Object[]{
+                    livro.getIsbn(),
+                    livro.getTitulo(),
+                    livro.getEdicao(),
+                    livro.getGenero(),
+                    livro.getLocalizacao(),
+                    quantidadeDisponivel + "/" + livro.getQuantidade(),
+                    "" // Placeholder for actions
+            });
+        }
+    }
+
+    private void searchTable(String query) {
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
     }
 
     private ArrayList<Livro> carregarLivros(String nomeArquivo) {
@@ -304,5 +339,4 @@ public class RequisitarLivro extends BasePage {
         }
         return count;
     }
-
 }

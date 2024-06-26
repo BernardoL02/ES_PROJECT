@@ -257,7 +257,7 @@ public class VerReservas extends BasePage {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             // Exibe o diálogo de confirmação personalizado
-                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende cancelar a reserva?", "Confirmação", "Não", "Sim");
+                            int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende cancelar a reserva?", "Confirmar Cancelamento", "Não", "Sim");
 
                             // Verifica a resposta
                             if (response == JOptionPane.YES_OPTION) {

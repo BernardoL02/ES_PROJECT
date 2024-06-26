@@ -169,7 +169,7 @@ public class AdicionarLivro extends BasePage {
         buttonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmar Dados", "Cancelar", "Confirmar");
 
                 if (response == JOptionPane.YES_OPTION) {
                     // Verifica se alguma caixa de texto está vazia ou contém valor nulo

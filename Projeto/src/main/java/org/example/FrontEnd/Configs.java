@@ -160,6 +160,9 @@ public class Configs extends BasePage {
             public void actionPerformed(ActionEvent e) {
                 int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
 
+                if(response == JOptionPane.NO_OPTION){
+                    return;
+                }
                 // Verifica se alguma caixa de texto está vazia ou contém valor nulo
                 if (diasLeitor.getText().trim().isEmpty() ||
                         diasAcademico.getText().trim().isEmpty() ||
@@ -206,7 +209,7 @@ public class Configs extends BasePage {
                         configuracoes.setProperty("multa", multa.getText());
                         configuracoes.saveProperties();
 
-                        new GerirLivros();
+                        new BiblioLiz();
                         dispose();
                     } catch (NumberFormatException ex) {
                         // Exibe uma mensagem de erro se algum valor não for um número válido
@@ -234,5 +237,4 @@ public class Configs extends BasePage {
         add(wrapperPanel, BorderLayout.CENTER);
         setVisible(true);
     }
-
 }

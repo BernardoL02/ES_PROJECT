@@ -178,7 +178,7 @@ public class EditarLivro extends BasePage {
             public void actionPerformed(ActionEvent e) {
 
                 // Exibe o diálogo de confirmação personalizado
-                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmação", "Cancelar", "Confirmar");
+                int response = CustomPopUP.showCustomConfirmDialog("Tem a certeza que pretende guardar os dados do livro?", "Confirmar Dados", "Cancelar", "Confirmar");
 
                 // Verifica a resposta
                 if (response == JOptionPane.YES_OPTION) {

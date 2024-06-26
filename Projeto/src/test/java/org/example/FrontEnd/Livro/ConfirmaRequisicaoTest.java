@@ -54,7 +54,6 @@ public class ConfirmaRequisicaoTest {
         ActionEvent actionEvent = new ActionEvent(buttonGuardar, ActionEvent.ACTION_PERFORMED, null);
         buttonGuardar.getActionListeners()[0].actionPerformed(actionEvent);
 
-        // Simula resposta do diálogo personalizado como "Confirmar"
         LocalDate dataRequisicao = LocalDate.now();
         LocalDate dataDevolucaoPrevista = dataRequisicao.plusDays(configuracoes.getDiasEmprestimo(socio.getTipoDeSocio()));
         Requisitar requisitar = new Requisitar(socio, livro, dataRequisicao, dataDevolucaoPrevista);
@@ -63,7 +62,6 @@ public class ConfirmaRequisicaoTest {
         assertEquals(livro, requisitar.getLivro(), "O livro deve ser o esperado");
     }
 
-    // Método utilitário para encontrar botão por texto
     private Component findButtonByText(Container container, String text) {
         for (Component component : container.getComponents()) {
             if (component instanceof JButton) {

@@ -1,6 +1,7 @@
 package org.example.FrontEnd.Livro;
 
 import org.example.BackEnd.*;
+import org.example.FrontEnd.Resources.CustomPopUP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,6 @@ public class ConfirmaReservaTest {
         livro = new Livro("Livro Teste", "ISBN123", "1ª Edição", "Gênero Teste", "SubGênero Teste", "Localização Teste",
                 "Autor Teste", "Editora Teste", 2021, 5, new Fornecedor("Fornecedor Teste", "123456789"));
 
-        // Certifica-se de que a lista de reservas está vazia antes de cada teste
         ArrayList<Reserva> reservas = new ArrayList<>();
         GerirRequisitar.salvarReservas(reservas);
 
@@ -42,11 +42,15 @@ public class ConfirmaReservaTest {
         JButton buttonCancelar = (JButton) findButtonByText(confirmaReserva, "Cancelar");
         assertNotNull(buttonCancelar, "Botão 'Cancelar' não deve ser nulo");
 
+        // Simula resposta do diálogo personalizado como "Sim"
+        CustomPopUP.setUserResponse(JOptionPane.YES_OPTION);
+
         ActionEvent actionEvent = new ActionEvent(buttonCancelar, ActionEvent.ACTION_PERFORMED, null);
         buttonCancelar.getActionListeners()[0].actionPerformed(actionEvent);
 
-        // Simula resposta do diálogo personalizado como "Sim"
-        assertNotNull(buttonCancelar.getActionListeners()[0]);
+        assertFalse(confirmaReserva.isDisplayable(), "A janela ConfirmaReserva deve ser fechada");
+
+        CustomPopUP.clearUserResponse();
     }
 
     @Test
@@ -54,18 +58,21 @@ public class ConfirmaReservaTest {
         JButton buttonGuardar = (JButton) findButtonByText(confirmaReserva, "Guardar");
         assertNotNull(buttonGuardar, "Botão 'Guardar' não deve ser nulo");
 
+        CustomPopUP.setUserResponse(JOptionPane.YES_OPTION);
+
         ActionEvent actionEvent = new ActionEvent(buttonGuardar, ActionEvent.ACTION_PERFORMED, null);
         buttonGuardar.getActionListeners()[0].actionPerformed(actionEvent);
 
-        // Verifica se a reserva foi adicionada corretamente
         ArrayList<Reserva> reservas = GerirRequisitar.carregarReservas();
         assertEquals(1, reservas.size(), "Deve haver uma reserva na lista");
         Reserva reserva = reservas.get(0);
         assertEquals(socio.getNif(), reserva.getSocio().getNif(), "O NIF do sócio deve ser o esperado");
         assertEquals(livro.getIsbn(), reserva.getLivro().getIsbn(), "O ISBN do livro deve ser o esperado");
+
+
+        CustomPopUP.clearUserResponse();
     }
 
-    // Método utilitário para encontrar botão por texto
     private Component findButtonByText(Container container, String text) {
         for (Component component : container.getComponents()) {
             if (component instanceof JButton) {
